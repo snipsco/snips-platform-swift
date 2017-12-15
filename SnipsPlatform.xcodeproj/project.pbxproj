@@ -1,0 +1,540 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
+		F71181E51FDECD8500512C79 /* libsnips_kaldi.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
+		F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F81FBDCD09005AAD1D /* libresolv.tbd */; };
+		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
+		F7CF589F1FBDA00200027852 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; };
+		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
+		F7CF58A61FBDA00200027852 /* SnipsPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = F7CF58981FBDA00200027852 /* SnipsPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F7CF58B01FBDA16E00027852 /* SnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */; };
+		F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAD1FBF519A00595F07 /* libc++.tbd */; };
+		F7FF0FB01FBF51B000595F07 /* libprotobuf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */; };
+		F7FF0FB11FBF51C400595F07 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F7CF58A01FBDA00200027852 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F7CF588C1FBDA00200027852 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7CF58941FBDA00200027852;
+			remoteInfo = SnipsPlatform;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F704FFB61FE40FC20027F6C5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F71181E41FDECD7A00512C79 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */,
+				F71181E51FDECD8500512C79 /* libsnips_kaldi.dylib in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsnips_kaldi.dylib; path = Dependencies/ios/libsnips_kaldi.dylib; sourceTree = "<group>"; };
+		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
+		F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		F7CF58951FBDA00200027852 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7CF58981FBDA00200027852 /* SnipsPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SnipsPlatform.h; sourceTree = "<group>"; };
+		F7CF58991FBDA00200027852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7CF589E1FBDA00200027852 /* SnipsPlatformTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnipsPlatformTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsPlatformTests.swift; sourceTree = "<group>"; };
+		F7CF58A51FBDA00200027852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsPlatform.swift; sourceTree = "<group>"; };
+		F7FF0FAD1FBF519A00595F07 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Dependencies/ios/libprotobuf.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F7CF58911FBDA00200027852 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7FF0FB11FBF51C400595F07 /* Accelerate.framework in Frameworks */,
+				F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */,
+				F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */,
+				F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */,
+				F7FF0FB01FBF51B000595F07 /* libprotobuf.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7CF589B1FBDA00200027852 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7CF589F1FBDA00200027852 /* SnipsPlatform.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */,
+				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
+				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,
+				F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */,
+				F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F7CF588B1FBDA00200027852 = {
+			isa = PBXGroup;
+			children = (
+				F7CF58971FBDA00200027852 /* SnipsPlatform */,
+				F7CF58A21FBDA00200027852 /* SnipsPlatformTests */,
+				F7CF58961FBDA00200027852 /* Products */,
+				F704946B1FBDCC3800FFD0B8 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F7CF58961FBDA00200027852 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F7CF58951FBDA00200027852 /* SnipsPlatform.framework */,
+				F7CF589E1FBDA00200027852 /* SnipsPlatformTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7CF58971FBDA00200027852 /* SnipsPlatform */ = {
+			isa = PBXGroup;
+			children = (
+				F7CF58981FBDA00200027852 /* SnipsPlatform.h */,
+				F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */,
+				F746A2BA1FCC1951005E09E9 /* Ontology.swift */,
+				F7CF58991FBDA00200027852 /* Info.plist */,
+			);
+			path = SnipsPlatform;
+			sourceTree = "<group>";
+		};
+		F7CF58A21FBDA00200027852 /* SnipsPlatformTests */ = {
+			isa = PBXGroup;
+			children = (
+				F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */,
+				F7CF58A51FBDA00200027852 /* Info.plist */,
+			);
+			path = SnipsPlatformTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F7CF58921FBDA00200027852 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7CF58A61FBDA00200027852 /* SnipsPlatform.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F7CF58941FBDA00200027852 /* SnipsPlatform */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7CF58A91FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatform" */;
+			buildPhases = (
+				F7CF58B11FBDA5DF00027852 /* Download Core */,
+				F7CF58901FBDA00200027852 /* Sources */,
+				F7CF58911FBDA00200027852 /* Frameworks */,
+				F7CF58921FBDA00200027852 /* Headers */,
+				F7CF58931FBDA00200027852 /* Resources */,
+				F704FFB61FE40FC20027F6C5 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SnipsPlatform;
+			productName = SnipsPlatform;
+			productReference = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		F7CF589D1FBDA00200027852 /* SnipsPlatformTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7CF58AC1FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatformTests" */;
+			buildPhases = (
+				F7CF589A1FBDA00200027852 /* Sources */,
+				F7CF589B1FBDA00200027852 /* Frameworks */,
+				F7CF589C1FBDA00200027852 /* Resources */,
+				F71181E41FDECD7A00512C79 /* Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F7CF58A11FBDA00200027852 /* PBXTargetDependency */,
+			);
+			name = SnipsPlatformTests;
+			productName = SnipsPlatformTests;
+			productReference = F7CF589E1FBDA00200027852 /* SnipsPlatformTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F7CF588C1FBDA00200027852 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0910;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = Snips;
+				TargetAttributes = {
+					F7CF58941FBDA00200027852 = {
+						CreatedOnToolsVersion = 9.1;
+						LastSwiftMigration = 0910;
+						ProvisioningStyle = Automatic;
+					};
+					F7CF589D1FBDA00200027852 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = F7CF588F1FBDA00200027852 /* Build configuration list for PBXProject "SnipsPlatform" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F7CF588B1FBDA00200027852;
+			productRefGroup = F7CF58961FBDA00200027852 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F7CF58941FBDA00200027852 /* SnipsPlatform */,
+				F7CF589D1FBDA00200027852 /* SnipsPlatformTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F7CF58931FBDA00200027852 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7CF589C1FBDA00200027852 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F7CF58B11FBDA5DF00027852 /* Download Core */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Download Core";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_core.sh ios";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F7CF58901FBDA00200027852 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */,
+				F7CF58B01FBDA16E00027852 /* SnipsPlatform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7CF589A1FBDA00200027852 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F7CF58A11FBDA00200027852 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F7CF58941FBDA00200027852 /* SnipsPlatform */;
+			targetProxy = F7CF58A01FBDA00200027852 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		F7CF58A71FBDA00200027852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		F7CF58A81FBDA00200027852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F7CF58AA1FBDA00200027852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = SnipsPlatform/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"$(PROJECT_DIR)/Dependencies/ios/libtensorflow.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F7CF58AB1FBDA00200027852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = SnipsPlatform/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				OTHER_LDFLAGS = (
+					"-force_load",
+					"$(PROJECT_DIR)/Dependencies/ios/libtensorflow.a",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F7CF58AD1FBDA00200027852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SnipsPlatformTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatformTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F7CF58AE1FBDA00200027852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = SnipsPlatformTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatformTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F7CF588F1FBDA00200027852 /* Build configuration list for PBXProject "SnipsPlatform" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7CF58A71FBDA00200027852 /* Debug */,
+				F7CF58A81FBDA00200027852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7CF58A91FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatform" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7CF58AA1FBDA00200027852 /* Debug */,
+				F7CF58AB1FBDA00200027852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F7CF58AC1FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatformTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F7CF58AD1FBDA00200027852 /* Debug */,
+				F7CF58AE1FBDA00200027852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F7CF588C1FBDA00200027852 /* Project object */;
+}
