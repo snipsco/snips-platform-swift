@@ -1,5 +1,40 @@
 # snips-platform-swift
-A demo of the Snips Platform for iOS
+
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage)
+[![CocoaPods compatible](https://img.shields.io/cocoapods/v/ReactiveCocoa.svg)](#cocoapods)
+![Swift 4.0.x](https://img.shields.io/badge/Swift-4.0.x-orange.svg)
+![platforms](https://img.shields.io/badge/platforms-iOS%20-lightgrey.svg)
+
+The Swift framework for the Snips Platform
+
+## Installation
+
+SnipsPlatform supports iOS 9.0+.
+
+#### Carthage
+
+If you use [Carthage][] to manage your dependencies, simply add snips-platform-swift to your Cartfile:
+
+```
+github "snipsco/snips-platform-swift"
+```
+
+If you use Carthage to build your dependencies, make sure you have added SnipsPlatform.framework and libsnips_kaldi.dylib the "Linked Frameworks and Libraries" section of your target, and have included them in your Carthage framework copying build phase.
+
+#### Cocoapods
+
+If you use [CocoaPods][] to manage your dependencies, simply add SnipsPlatform to your Podfile:
+
+```
+pod 'SnipsPlatform'
+```
+
+#### Git submodule
+
+ 1. Add the snips-platform-swift repository as a [submodule][] of your application’s repository.
+ 1. Run git `submodule update --init --recursive` from within the snips-platform-swift folder.
+ 1. Drag and drop SnipsPlatform.xcodeproj into your application’s Xcode project or workspace.
+ 1. On the “General” tab of your application target’s settings, add SnipsPlatform.framework and libsnips_kaldi.dylib to the “Embedded Binaries” section.
 
 ## License
 
@@ -13,3 +48,7 @@ at your option.
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall
 be dual licensed as above, without any additional terms or conditions.
+
+[Carthage]: https://github.com/Carthage/Carthage
+[CocoaPods]: https://cocoapods.org/
+[submodule]: https://git-scm.com/book/en/v2/Git-Tools-Submodules
