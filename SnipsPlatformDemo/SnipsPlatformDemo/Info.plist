@@ -13,7 +13,7 @@
 			</array>
 			<key>CFBundleTypeIconFiles</key>
 			<array>
-				<string>snips-assistant-320х320</string>
+				<string>snips-assistant-320x320</string>
 				<string>snips-assistant-64x64</string>
 				<string>snips-assistant-44x58</string>
 				<string>snips-assistant-22x29</string>
@@ -82,7 +82,7 @@
 			<key>UTTypeIdentifier</key>
 			<string>ai.snips.assistant.snips</string>
 			<key>UTTypeSize320IconFile</key>
-			<string>snips-assistant-320х320</string>
+			<string>snips-assistant-320x320</string>
 			<key>UTTypeSize64IconFile</key>
 			<string>snips-assistant-64x64</string>
 			<key>UTTypeTagSpecification</key>

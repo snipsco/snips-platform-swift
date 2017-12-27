@@ -11,9 +11,9 @@
 		F704FFBF1FE4121D0027F6C5 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */; };
 		F704FFC01FE412300027F6C5 /* libsnips_kaldi.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F7233A241FC43EA200665CAC /* snips-assistant-64x64.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */; };
-		F7233A291FC4558400665CAC /* snips-assistant-22х29.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A261FC4558400665CAC /* snips-assistant-22х29.png */; };
-		F7233A2A1FC4558400665CAC /* snips-assistant-44х58.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A271FC4558400665CAC /* snips-assistant-44х58.png */; };
-		F7233A2B1FC4558400665CAC /* snips-assistant-320х320.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A281FC4558400665CAC /* snips-assistant-320х320.png */; };
+		F7233A291FC4558400665CAC /* snips-assistant-22x29.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A261FC4558400665CAC /* snips-assistant-22x29.png */; };
+		F7233A2A1FC4558400665CAC /* snips-assistant-44x58.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A271FC4558400665CAC /* snips-assistant-44x58.png */; };
+		F7233A2B1FC4558400665CAC /* snips-assistant-320x320.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A281FC4558400665CAC /* snips-assistant-320x320.png */; };
 		F7BB4FE21FBF2F56005243F0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */; };
 		F7CF587A1FBD9FDA00027852 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58791FBD9FDA00027852 /* AppDelegate.swift */; };
 		F7CF587C1FBD9FDA00027852 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF587B1FBD9FDA00027852 /* ViewController.swift */; };
@@ -37,11 +37,11 @@
 
 /* Begin PBXFileReference section */
 		F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsnips_kaldi.dylib; path = libsnips_kaldi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsnips_kaldi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-64x64.png"; sourceTree = "<group>"; };
-		F7233A261FC4558400665CAC /* snips-assistant-22х29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-22х29.png"; sourceTree = "<group>"; };
-		F7233A271FC4558400665CAC /* snips-assistant-44х58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-44х58.png"; sourceTree = "<group>"; };
-		F7233A281FC4558400665CAC /* snips-assistant-320х320.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-320х320.png"; sourceTree = "<group>"; };
+		F7233A261FC4558400665CAC /* snips-assistant-22x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-22x29.png"; sourceTree = "<group>"; };
+		F7233A271FC4558400665CAC /* snips-assistant-44x58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-44x58.png"; sourceTree = "<group>"; };
+		F7233A281FC4558400665CAC /* snips-assistant-320x320.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-320x320.png"; sourceTree = "<group>"; };
 		F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F7CF58761FBD9FDA00027852 /* SnipsPlatformDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnipsPlatformDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7CF58791FBD9FDA00027852 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -66,10 +66,10 @@
 		F7233A251FC4557B00665CAC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F7233A281FC4558400665CAC /* snips-assistant-320х320.png */,
+				F7233A281FC4558400665CAC /* snips-assistant-320x320.png */,
 				F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */,
-				F7233A271FC4558400665CAC /* snips-assistant-44х58.png */,
-				F7233A261FC4558400665CAC /* snips-assistant-22х29.png */,
+				F7233A271FC4558400665CAC /* snips-assistant-44x58.png */,
+				F7233A261FC4558400665CAC /* snips-assistant-22x29.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -178,10 +178,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7233A2B1FC4558400665CAC /* snips-assistant-320х320.png in Resources */,
+				F7233A2B1FC4558400665CAC /* snips-assistant-320x320.png in Resources */,
 				F7CF58811FBD9FDA00027852 /* Assets.xcassets in Resources */,
-				F7233A291FC4558400665CAC /* snips-assistant-22х29.png in Resources */,
-				F7233A2A1FC4558400665CAC /* snips-assistant-44х58.png in Resources */,
+				F7233A291FC4558400665CAC /* snips-assistant-22x29.png in Resources */,
+				F7233A2A1FC4558400665CAC /* snips-assistant-44x58.png in Resources */,
 				F7233A241FC43EA200665CAC /* snips-assistant-64x64.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
