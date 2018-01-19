@@ -49,12 +49,20 @@ public class SnipsPlatform {
         guard megazord_set_hotword_sensitivity(hotwordSensitivity, ptr) == OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_snips_watch_html(enableHtml ? 1 : 0, ptr) == OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(enableLogs ? 1 : 0, ptr) == OK else { throw SnipsPlatformError.getLast }
+        
+        self.hotwordSensitivity = hotwordSensitivity
     }
 
     deinit {
         if ptr != nil {
             megazord_destroy(ptr)
             ptr = nil
+        }
+    }
+    
+    public var hotwordSensitivity: Float {
+        didSet {
+            megazord_update_hotword_sensitivity(hotwordSensitivity, ptr)
         }
     }
     
