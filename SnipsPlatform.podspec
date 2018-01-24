@@ -23,7 +23,13 @@ Pod::Spec.new do |s|
 
   s.prepare_command = <<-CMD
     mkdir -p Dependencies/ios && cd "$_"
-    curl -s https://s3.amazonaws.com/snips/snips-platform-dev/snips-platform-ios.#{s.version.to_s}.tgz | tar zxv
+    if [ -n "$(find . -maxdepth 0 -type d -empty 2>/dev/null)" ]; then
+        echo "Downloading core-platform..."
+        curl -s https://s3.amazonaws.com/snips/snips-platform-dev/snips-platform-ios.#{s.version.to_s}.tgz | tar zxv
+    else
+        echo "Dependencies/ios isn't empty. Skipping download core-platform..."
+        ls -l
+    fi
     CMD
   s.pod_target_xcconfig = {
     'ENABLE_BITCODE' => 'NO',
