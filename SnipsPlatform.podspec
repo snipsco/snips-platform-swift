@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.license =  'Apache 2.0 / MIT'
   s.author = { 'Snips' => 'contact@snips.ai' }
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '11.0'
 
   s.source = {
     :git => 'https://github.com/snipsco/snips-platform-swift.git',
@@ -36,6 +36,7 @@ Pod::Spec.new do |s|
     'SWIFT_INCLUDE_PATHS' => '"${SRCROOT}/SnipsPlatform/Dependencies/ios"',
     'LIBRARY_SEARCH_PATHS' => '"${SRCROOT}/SnipsPlatform/Dependencies/ios"',
     'OTHER_LDFLAGS' => '"-force_load ${SRCROOT}/SnipsPlatform/Dependencies/ios/libtensorflow.a"',
+    'VALID_ARCHS' => 'arm64',
   }
 
   s.frameworks = 'Accelerate'
