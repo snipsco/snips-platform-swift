@@ -9,7 +9,7 @@ The Swift framework for the Snips Platform
 
 ## Installation
 
-SnipsPlatform supports iOS 9.0+.
+SnipsPlatform supports iOS 11.0+.
 
 #### Carthage
 
