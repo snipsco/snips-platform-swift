@@ -78,7 +78,7 @@ class ViewController: UIViewController {
     
     @objc
     private func startDialogueTapped() {
-        try! snips?.startSession(text: nil, intentFilter: ["blabla", "abon"], canBeEnqueued: true, customData: nil)
+        try! snips?.startSession(text: nil, intentFilter: [], canBeEnqueued: true, customData: nil)
     }
     
     @objc

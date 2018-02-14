@@ -15,7 +15,7 @@ public struct IntentMessage {
     public var input: String
     public var intent: IntentClassifierResult?
     public var slots: [Slot]
-    
+
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
         self.customData = String.fromCStringPtr(cString: cResult.custom_data)
@@ -37,7 +37,7 @@ public struct IntentMessage {
 public struct IntentClassifierResult {
     public let intentName: String
     public let probability: Float
-    
+
     init(cResult: CIntentClassifierResult) {
         self.intentName = String(cString: cResult.intent_name)
         self.probability = cResult.probability
@@ -53,41 +53,41 @@ public enum SlotValue {
     case amountOfMoney(AmountOfMoneyValue)
     case temperature(TemperatureValue)
     case duration(DurationValue)
-    
+
     init(cSlotValue: CSlotValue) throws {
         switch cSlotValue.value_type {
         case CUSTOM:
             let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
             self = .custom(String(cString: x))
-            
+
         case NUMBER:
             let x = cSlotValue.value.assumingMemoryBound(to: CDouble.self)
             self = .number(x.pointee)
-            
+
         case ORDINAL:
             let x = cSlotValue.value.assumingMemoryBound(to: CInt.self)
             self = .ordinal(OrdinalValue(x.pointee))
-            
+
         case INSTANTTIME:
             let x = cSlotValue.value.assumingMemoryBound(to: CInstantTimeValue.self)
             self = .instantTime(try InstantTimeValue(cValue: x.pointee))
-            
+
         case TIMEINTERVAL:
             let x = cSlotValue.value.assumingMemoryBound(to: CTimeIntervalValue.self)
             self = .timeInterval(TimeIntervalValue(cValue: x.pointee))
-            
+
         case AMOUNTOFMONEY:
             let x = cSlotValue.value.assumingMemoryBound(to: CAmountOfMoneyValue.self)
             self = .amountOfMoney(try AmountOfMoneyValue(cValue: x.pointee))
-            
+
         case TEMPERATURE:
             let x = cSlotValue.value.assumingMemoryBound(to: CTemperatureValue.self)
             self = .temperature(TemperatureValue(cValue: x.pointee))
-            
+
         case DURATION:
             let x = cSlotValue.value.assumingMemoryBound(to: CDurationValue.self)
             self = .duration(try DurationValue(cValue: x.pointee))
-            
+
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
     }
@@ -101,7 +101,7 @@ public struct InstantTimeValue {
     public let value: String
     public let grain: Grain
     public let precision: Precision
-    
+
     init(cValue: CInstantTimeValue) throws {
         self.value = String(cString: cValue.value)
         self.grain = try Grain(cValue: cValue.grain)
@@ -112,7 +112,7 @@ public struct InstantTimeValue {
 public struct TimeIntervalValue {
     public let from: String?
     public let to: String?
-    
+
     init(cValue: CTimeIntervalValue) {
         self.from = String.fromCStringPtr(cString: cValue.from)
         self.to = String.fromCStringPtr(cString: cValue.to)
@@ -123,7 +123,7 @@ public struct AmountOfMoneyValue {
     public let value: Float
     public let precision: Precision
     public let unit: String?
-    
+
     init(cValue: CAmountOfMoneyValue) throws {
         self.value = cValue.value
         self.precision = try Precision(cValue: cValue.precision)
@@ -134,7 +134,7 @@ public struct AmountOfMoneyValue {
 public struct TemperatureValue {
     public let value: Float
     public let unit: String?
-    
+
     init(cValue: CTemperatureValue) {
         self.value = cValue.value
         self.unit = String.fromCStringPtr(cString: cValue.unit)
@@ -151,7 +151,7 @@ public struct DurationValue {
     public let minutes: Int
     public let seconds: Int
     public let precision: Precision
-    
+
     init(cValue: CDurationValue) throws {
         self.years = cValue.years
         self.quarters = cValue.quarters
@@ -174,7 +174,7 @@ public enum Grain {
     case hour
     case minute
     case second
-    
+
     init(cValue: CGrain) throws {
         switch cValue {
         case YEAR: self = .year
@@ -193,7 +193,7 @@ public enum Grain {
 public enum Precision {
     case approximate
     case exact
-    
+
     init(cValue: CPrecision) throws {
         switch cValue {
         case APPROXIMATE: self = .approximate
@@ -209,7 +209,7 @@ public struct Slot {
     public let range: Range<Int>
     public let entity: String
     public let slotName: String
-    
+
     init(cSlot: CSlot) throws {
         self.rawValue = String(cString: cSlot.raw_value)
         self.value = try SlotValue(cSlotValue: cSlot.value)

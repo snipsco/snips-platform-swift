@@ -27,7 +27,7 @@ public struct SnipsPlatformError: Error {
         megazord_destroy_string(UnsafeMutablePointer(mutating: buffer.pointee!))
         return SnipsPlatformError(message: message)
     }
-    
+
     public var localizedDescription: String { return self.message }
 }
 
@@ -59,13 +59,13 @@ public class SnipsPlatform {
             ptr = nil
         }
     }
-    
+
     public var hotwordSensitivity: Float {
         didSet {
             megazord_update_hotword_sensitivity(ptr, hotwordSensitivity)
         }
     }
-    
+
     public var snipsWatchHandler: SnipsWatchHandler? {
         get {
             return _snipsWatchHandler
@@ -85,7 +85,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     public var onIntentDetected: IntentHandler? {
         get {
             return _onIntentDetected
@@ -133,7 +133,7 @@ public class SnipsPlatform {
     public func unpause() throws {
         guard megazord_unpause(ptr) == OK else { throw SnipsPlatformError.getLast }
     }
-    
+
     public func startSession(text: String?, intentFilter: [String], canBeEnqueued: Bool, customData: String?) throws {
         try startSession(
             message: StartSessionMessage(
@@ -141,7 +141,7 @@ public class SnipsPlatform {
                 customData: customData,
                 siteId: nil))
     }
-    
+
     public func startNotification(text: String?, customData: String?) throws {
         try startSession(
             message: StartSessionMessage(
@@ -157,7 +157,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     public func continueSession(sessionId: String, text: String, intentFilter: [String]) throws {
         try continueSession(
             message: ContinueSessionMessage(
@@ -185,7 +185,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     public func appendBuffer(_ buffer: AVAudioPCMBuffer) {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
         megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
