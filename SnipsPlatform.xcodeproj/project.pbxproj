@@ -13,6 +13,7 @@
 		F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
 		F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F81FBDCD09005AAD1D /* libresolv.tbd */; };
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
+		F76DFB8B2032ECB10021D6F9 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */; };
 		F7CF589F1FBDA00200027852 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; };
 		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 		F7CF58A61FBDA00200027852 /* SnipsPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = F7CF58981FBDA00200027852 /* SnipsPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,6 +62,7 @@
 		F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsnips_kaldi.dylib; path = Dependencies/ios/libsnips_kaldi.dylib; sourceTree = "<group>"; };
 		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
+		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F79B6F5820120DA700394C57 /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F7CF58951FBDA00200027852 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,6 +138,7 @@
 				F7CF58981FBDA00200027852 /* SnipsPlatform.h */,
 				F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */,
 				F746A2BA1FCC1951005E09E9 /* Ontology.swift */,
+				F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */,
 				F7CF58991FBDA00200027852 /* Info.plist */,
 			);
 			path = SnipsPlatform;
@@ -283,6 +286,7 @@
 			files = (
 				F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */,
 				F7CF58B01FBDA16E00027852 /* SnipsPlatform.swift in Sources */,
+				F76DFB8B2032ECB10021D6F9 /* String+Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

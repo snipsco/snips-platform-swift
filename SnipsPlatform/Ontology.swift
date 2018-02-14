@@ -18,11 +18,7 @@ public struct IntentMessage {
     
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
-        if let cCustomData = cResult.custom_data {
-            self.customData = String(cString: cCustomData)
-        } else {
-            self.customData = nil
-        }
+        self.customData = String.fromCStringPtr(cString: cResult.custom_data)
         self.siteId = String(cString: cResult.site_id)
         self.input = String(cString: cResult.input)
         if let cClassifierResult = cResult.intent?.pointee {
@@ -118,16 +114,8 @@ public struct TimeIntervalValue {
     public let to: String?
     
     init(cValue: CTimeIntervalValue) {
-        if let cFrom = cValue.from {
-            self.from = String(cString: cFrom)
-        } else {
-            self.from = nil
-        }
-        if let cTo = cValue.from {
-            self.to = String(cString: cTo)
-        } else {
-            self.to = nil
-        }
+        self.from = String.fromCStringPtr(cString: cValue.from)
+        self.to = String.fromCStringPtr(cString: cValue.to)
     }
 }
 
@@ -139,11 +127,7 @@ public struct AmountOfMoneyValue {
     init(cValue: CAmountOfMoneyValue) throws {
         self.value = cValue.value
         self.precision = try Precision(cValue: cValue.precision)
-        if let cUnit = cValue.unit {
-            self.unit = String(cString: cUnit)
-        } else {
-            self.unit = nil
-        }
+        self.unit = String.fromCStringPtr(cString: cValue.unit)
     }
 }
 
@@ -153,11 +137,7 @@ public struct TemperatureValue {
     
     init(cValue: CTemperatureValue) {
         self.value = cValue.value
-        if let cUnit = cValue.unit {
-            self.unit = String(cString: cUnit)
-        } else {
-            self.unit = nil
-        }
+        self.unit = String.fromCStringPtr(cString: cValue.unit)
     }
 }
 
