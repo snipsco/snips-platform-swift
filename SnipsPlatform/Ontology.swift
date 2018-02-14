@@ -218,3 +218,87 @@ public struct Slot {
         self.slotName = String(cString: cSlot.slot_name)
     }
 }
+
+public enum SessionInitType {
+    case action(text: String?, intentFilter: [String], canBeEnqueued: Bool)
+    case notification(text: String?)
+
+    func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
+        switch self {
+        case .action(let text, let intentFilter, let canBeEnqueued):
+            var arrayString = CArrayString(array: intentFilter)
+            try withUnsafePointer(to: &arrayString) {
+                var actionInit = CActionSessionInit(text: text, intent_filter: $0, can_be_enqueued: canBeEnqueued ? 1 : 0)
+                try withUnsafePointer(to: &actionInit) {
+                    var sessionInit = CSessionInit(init_type: ACTION, value: $0)
+                    try withUnsafePointer(to: &sessionInit) {
+                        try body($0)
+                    }
+                }
+            }
+            arrayString.destroy()
+
+        case .notification(let text):
+            var sessionInit = CSessionInit(init_type: NOTIFICATION, value: text)
+            try withUnsafePointer(to: &sessionInit) { try body($0) }
+        }
+    }
+}
+
+public struct StartSessionMessage {
+    public let initType: SessionInitType
+    public let customData: String?
+    public let siteId: String?
+
+    public init(initType: SessionInitType, customData: String? = nil, siteId: String? = nil) {
+        self.initType = initType
+        self.customData = customData
+        self.siteId = siteId
+    }
+
+    func toUnsafeCMessage(body: (UnsafePointer<CStartSessionMessage>) throws -> ()) rethrows {
+        try self.initType.toUnsafeCMessage {
+            var cMessage = CStartSessionMessage(
+                session_init: $0.pointee,
+                custom_data: self.customData,
+                site_id: self.siteId)
+            try withUnsafePointer(to: &cMessage) { try body($0) }
+        }
+    }
+}
+
+public struct ContinueSessionMessage {
+    public let sessionId: String
+    public let text: String
+    public let intentFilter: [String]
+
+    public init(sessionId: String, text: String, intentFilter: [String] = []) {
+        self.sessionId = sessionId
+        self.text = text
+        self.intentFilter = intentFilter
+    }
+
+    func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
+        var arrayString = CArrayString(array: intentFilter)
+        try withUnsafePointer(to: &arrayString) {
+            var cMessage = CContinueSessionMessage(session_id: self.sessionId, text: self.text, intent_filter: UnsafeMutablePointer(mutating: $0))
+            try withUnsafePointer(to: &cMessage) { try body($0) }
+        }
+        arrayString.destroy()
+    }
+}
+
+public struct EndSessionMessage {
+    public let sessionId: String
+    public let text: String?
+
+    public init(sessionId: String, text: String? = nil) {
+        self.sessionId = sessionId
+        self.text = text
+    }
+
+    func toUnsafeCMessage(body: (UnsafePointer<CEndSessionMessage>) throws -> ()) rethrows {
+        var cMessage = CEndSessionMessage(session_id: self.sessionId, text: self.text)
+        try withUnsafePointer(to: &cMessage) { try body($0) }
+    }
+}

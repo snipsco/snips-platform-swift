@@ -45,11 +45,11 @@ public class SnipsPlatform {
         var client: UnsafePointer<MegazordClient>? = nil
         guard megazord_create(assistantURL.path, &client) == OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
-        guard megazord_enable_streaming(1, ptr) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_set_hotword_sensitivity(hotwordSensitivity, ptr) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_enable_snips_watch_html(enableHtml ? 1 : 0, ptr) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_enable_logs(enableLogs ? 1 : 0, ptr) == OK else { throw SnipsPlatformError.getLast }
-        
+        guard megazord_enable_streaming(ptr, 1) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == OK else { throw SnipsPlatformError.getLast }
+
         self.hotwordSensitivity = hotwordSensitivity
     }
 
@@ -62,7 +62,7 @@ public class SnipsPlatform {
     
     public var hotwordSensitivity: Float {
         didSet {
-            megazord_update_hotword_sensitivity(hotwordSensitivity, ptr)
+            megazord_update_hotword_sensitivity(ptr, hotwordSensitivity)
         }
     }
     
@@ -73,15 +73,15 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _snipsWatchHandler = newValue
-                megazord_set_snips_watch_handler({ buffer in
+                megazord_set_snips_watch_handler(ptr) { buffer in
                     defer {
                         megazord_destroy_string(UnsafeMutablePointer(mutating: buffer))
                     }
                     guard let buffer = buffer else { return }
                     _snipsWatchHandler?(String(cString: buffer))
-                }, ptr)
+                }
             } else {
-                megazord_set_snips_watch_handler(nil, ptr)
+                megazord_set_snips_watch_handler(ptr, nil)
             }
         }
     }
@@ -93,19 +93,19 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onIntentDetected = newValue
-                megazord_set_intent_detected_handler({ cIntent in
+                megazord_set_intent_detected_handler(ptr) { cIntent in
                     defer {
                         megazord_destroy_intent_message(UnsafeMutablePointer(mutating: cIntent))
                     }
                     guard let cIntent = cIntent?.pointee else { return }
                     _onIntentDetected?(try! IntentMessage(cResult: cIntent))
-                }, ptr)
+                }
             } else {
-                megazord_set_intent_detected_handler(nil, ptr)
+                megazord_set_intent_detected_handler(ptr, nil)
             }
         }
     }
-    
+
     public var onHotwordDetected: HotwordHandler? {
         get {
             return _onHotwordDetected
@@ -113,11 +113,11 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onHotwordDetected = newValue
-                megazord_set_hotword_detected_handler({
+                megazord_set_hotword_detected_handler(ptr) {
                     _onHotwordDetected?()
-                }, ptr)
+                }
             } else {
-                megazord_set_intent_detected_handler(nil, ptr)
+                megazord_set_intent_detected_handler(ptr, nil)
             }
         }
     }
@@ -135,59 +135,59 @@ public class SnipsPlatform {
     }
     
     public func startSession(text: String?, intentFilter: [String], canBeEnqueued: Bool, customData: String?) throws {
-        try withArrayOfCStrings(intentFilter) { cIntentFilter in
-            try cIntentFilter.withUnsafeBufferPointer { cIntentFilter2 in
-                let result = megazord_dialogue_start_session(
-                    ptr,
-                    text,
-                    cIntentFilter2.baseAddress,
-                    UInt32(intentFilter.count),
-                    canBeEnqueued ? 1 : 0,
-                    customData
-                )
-                guard result == OK else { throw SnipsPlatformError.getLast }
+        try startSession(
+            message: StartSessionMessage(
+                initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued),
+                customData: customData,
+                siteId: nil))
+    }
+    
+    public func startNotification(text: String?, customData: String?) throws {
+        try startSession(
+            message: StartSessionMessage(
+                initType: .notification(text: text),
+                customData: customData,
+                siteId: nil))
+    }
+
+    public func startSession(message: StartSessionMessage) throws {
+        try message.toUnsafeCMessage {
+            guard megazord_dialogue_start_session(ptr, $0) == OK else {
+                throw SnipsPlatformError.getLast
             }
         }
     }
     
-    public func startNotification(text: String?, customData: String?) throws {
-        guard megazord_dialogue_start_notification(ptr, text, customData) == OK else {
-            throw SnipsPlatformError.getLast
-        }
-    }
-    
     public func continueSession(sessionId: String, text: String, intentFilter: [String]) throws {
-        try withArrayOfCStrings(intentFilter) { cIntentFilter in
-            try cIntentFilter.withUnsafeBufferPointer { cIntentFilter2 in
-                let result = megazord_dialogue_continue_session(
-                    ptr,
-                    sessionId,
-                    text,
-                    cIntentFilter2.baseAddress,
-                    UInt32(intentFilter.count)
-                )
-                guard result == OK else { throw SnipsPlatformError.getLast }
+        try continueSession(
+            message: ContinueSessionMessage(
+                sessionId: sessionId,
+                text: text,
+                intentFilter: intentFilter))
+    }
+
+    public func continueSession(message: ContinueSessionMessage) throws {
+        try message.toUnsafeCMessage {
+            guard megazord_dialogue_continue_session(ptr, $0) == OK else {
+                throw SnipsPlatformError.getLast
             }
         }
     }
 
     public func endSession(sessionId: String, text: String?) throws {
-        guard megazord_dialogue_end_session(ptr, sessionId, text) == OK else {
-            throw SnipsPlatformError.getLast
+        try endSession(message: EndSessionMessage(sessionId: sessionId, text: text))
+    }
+
+    public func endSession(message: EndSessionMessage) throws {
+        try message.toUnsafeCMessage {
+            guard megazord_dialogue_end_session(ptr, $0) == OK else {
+                throw SnipsPlatformError.getLast
+            }
         }
     }
     
     public func appendBuffer(_ buffer: AVAudioPCMBuffer) {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
-        megazord_send_audio_buffer(frame, UInt32(buffer.frameLength), ptr)
+        megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
     }
-}
-
-func withArrayOfCStrings<R>(_ args: [String], _ body: ([UnsafePointer<CChar>?]) throws -> R) rethrows -> R {
-    var cStrings = args.map { UnsafePointer(strdup($0)) }
-    cStrings.append(nil)
-    defer {
-        cStrings.forEach { free(UnsafeMutablePointer(mutating: $0)) }
-    }
-    return try body(cStrings)
 }
