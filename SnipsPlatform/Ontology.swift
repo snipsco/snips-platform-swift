@@ -302,3 +302,34 @@ public struct EndSessionMessage {
         try withUnsafePointer(to: &cMessage) { try body($0) }
     }
 }
+
+public struct SayMessage {
+    public let text: String
+    public let lang: String?
+    public let messageId: String?
+    public let siteId: String
+    public let sessionId: String?
+
+    public init(cMessage: CSayMessage) {
+        self.text = String(cString: cMessage.text)
+        self.lang = String.fromCStringPtr(cString: cMessage.lang)
+        self.messageId = String.fromCStringPtr(cString: cMessage.message_id)
+        self.siteId = String(cString: cMessage.site_id)
+        self.sessionId = String.fromCStringPtr(cString: cMessage.session_id)
+    }
+}
+
+public struct SayFinishedMessage {
+    public let messageId: String?
+    public let sessionId: String?
+
+    public init(messageId: String?, sessionId: String?) {
+        self.messageId = messageId
+        self.sessionId = sessionId
+    }
+
+    func toUnsafeCMessage(body: (UnsafePointer<CSayFinishedMessage>) throws -> ()) rethrows {
+        var cMessage = CSayFinishedMessage(message_id: self.messageId, session_id: self.sessionId)
+        try withUnsafePointer(to: &cMessage) { try body($0) }
+    }
+}

@@ -69,7 +69,7 @@ class ViewController: UIViewController {
         startButton.isEnabled = false
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         requestRecordPermission()
     }
@@ -194,7 +194,7 @@ private extension ViewController {
 }
 
 extension ViewController: UIDocumentPickerDelegate {
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else { fatalError("Should have at least one url") }
         
         if url.startAccessingSecurityScopedResource() == true {

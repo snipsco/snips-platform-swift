@@ -10,10 +10,12 @@ import AVFoundation
 import Clibsnips_megazord
 
 private typealias CIntentHandler = @convention(c) (UnsafePointer<CChar>?) -> Void
+private typealias CSnipsTtsHandler = @convention(c) (UnsafePointer<CSayMessage>?) -> Void
 private typealias CSnipsWatchHandler = @convention(c) (UnsafePointer<CChar>?) -> Void
 private typealias CHotwordHandler = @convention(c) () -> Void
 
 public typealias IntentHandler = (IntentMessage) -> ()
+public typealias SpeechHandler = (SayMessage) -> ()
 public typealias SnipsWatchHandler = (String) -> ()
 public typealias HotwordHandler = () -> ()
 
@@ -31,8 +33,9 @@ public struct SnipsPlatformError: Error {
     public var localizedDescription: String { return self.message }
 }
 
-private var _snipsWatchHandler: SnipsWatchHandler? = nil
 private var _onIntentDetected: IntentHandler? = nil
+private var _speechHandler: SpeechHandler? = nil
+private var _snipsWatchHandler: SnipsWatchHandler? = nil
 private var _onHotwordDetected: HotwordHandler? = nil
 
 public class SnipsPlatform {
@@ -122,6 +125,26 @@ public class SnipsPlatform {
         }
     }
 
+    public var speechHandler: SpeechHandler? {
+        get {
+            return _speechHandler
+        }
+        set {
+            if newValue != nil {
+                _speechHandler = newValue
+                megazord_set_tts_handler(ptr) { message in
+                    defer {
+                        megazord_destroy_say_message(UnsafeMutablePointer(mutating: message))
+                    }
+                    guard let message = message?.pointee else { return }
+                    _speechHandler?(SayMessage(cMessage: message))
+                }
+            } else {
+                megazord_set_tts_handler(ptr, nil)
+            }
+        }
+    }
+
     public func start() throws {
         guard megazord_start(ptr) == OK else { throw SnipsPlatformError.getLast }
     }
@@ -181,6 +204,18 @@ public class SnipsPlatform {
     public func endSession(message: EndSessionMessage) throws {
         try message.toUnsafeCMessage {
             guard megazord_dialogue_end_session(ptr, $0) == OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
+
+    public func notifySpeechEnded(messageId: String?, sessionId: String?) throws {
+        try notifySpeechEnded(message: SayFinishedMessage(messageId: messageId, sessionId: sessionId))
+    }
+
+    public func notifySpeechEnded(message: SayFinishedMessage) throws {
+        try message.toUnsafeCMessage {
+            guard megazord_notify_tts_finished(ptr, $0) == OK else {
                 throw SnipsPlatformError.getLast
             }
         }
