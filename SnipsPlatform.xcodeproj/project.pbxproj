@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
+		F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F71181E51FDECD8500512C79 /* libsnips_kaldi.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
