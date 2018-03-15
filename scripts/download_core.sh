@@ -25,6 +25,7 @@ install_remote_core_platform () {
     local filename=snips-platform-${SYSTEM}.${VERSION}.tgz
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
+    rm -f ${OUTDIR}/*
     if ! core_platform_is_present; then
         echo "Will download '${filename}'"
         cd ${PROJECT_DIR}/Dependencies/${SYSTEM}
@@ -40,6 +41,7 @@ install_local_core_platform () {
 
     make -C ${ROOT_DIR} package-megazord-dependencies-ios
 
+    rm -f ${OUTDIR}/*
     for arch in "${ARCHS_ARRAY[@]}"; do
         if [ ${arch} = arm64 ]; then
             local arch=aarch64
@@ -49,9 +51,16 @@ install_local_core_platform () {
             return 1
         fi
         cp ${library_path} ${OUTDIR}/${LIBRARY_NAME}-${arch}.a
+
+        local kaldi_path=`find ${ROOT_DIR}/target/${arch}-apple-ios -type f -name libsnips_kaldi.dylib | head -n 1`
+        if [ ! -e ${kaldi_path} ]; then
+            return 1
+        fi
+        cp ${kaldi_path} ${OUTDIR}/libsnips_kaldi-${arch}.dylib
     done
 
     lipo -create `find ${OUTDIR}/${LIBRARY_NAME}-*.a` -output ${OUTDIR}/${LIBRARY_NAME_A}
+    lipo -create `find ${OUTDIR}/libsnips_kaldi-*.dylib` -output ${OUTDIR}/libsnips_kaldi.dylib
     cp ${ROOT_DIR}/target/ios-universal/megazord/* ${OUTDIR}
 
     return 0
@@ -78,13 +87,17 @@ case ${SYSTEM} in
     ios)
         ARCHS_ARRAY=( ${ARCHS} )
 
-        if core_platform_is_present; then
-            exit 0
-        fi
+        if [ ${SNIPS_USE_LOCAL_PLATFORM} == 1 ]; then
+            install_local_core_platform && exit 0
+        else
+            if core_platform_is_present; then
+                # TODO: Should check for version
+                exit 0
+            fi
 
-        if ! install_local_core_platform; then
-            rm -f ${OUTDIR}/*
-            install_remote_core_platform && exit 0
+            if ! install_local_core_platform; then
+                install_remote_core_platform && exit 0
+            fi
         fi
     ;;
     *)
