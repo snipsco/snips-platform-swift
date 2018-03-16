@@ -15,6 +15,7 @@
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
 		F76DFB8B2032ECB10021D6F9 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */; };
 		F76DFB8D203319230021D6F9 /* COntology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8C203319230021D6F9 /* COntology.swift */; };
+		F76E41F5205C0C8500E6067E /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F76E41F4205C0C8500E6067E /* libbz2.tbd */; };
 		F7CF589F1FBDA00200027852 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; };
 		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 		F7CF58A61FBDA00200027852 /* SnipsPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = F7CF58981FBDA00200027852 /* SnipsPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,6 +66,7 @@
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F76DFB8C203319230021D6F9 /* COntology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COntology.swift; sourceTree = "<group>"; };
+		F76E41F4205C0C8500E6067E /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		F79B6F5820120DA700394C57 /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F7CF58951FBDA00200027852 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7FF0FB11FBF51C400595F07 /* Accelerate.framework in Frameworks */,
+				F76E41F5205C0C8500E6067E /* libbz2.tbd in Frameworks */,
 				F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */,
 				F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */,
 				F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */,
@@ -105,6 +108,7 @@
 		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */,
 				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
 				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,
