@@ -1,5 +1,6 @@
 # snips-platform-swift
 
+[![Build Status](https://travis-ci.org/snipsco/snips-platform-swift.svg?branch=master)](https://travis-ci.org/snipsco/snips-platform-swift)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage)
 [![CocoaPods compatible](https://img.shields.io/cocoapods/v/ReactiveCocoa.svg)](#cocoapods)
 ![Swift 4.0.x](https://img.shields.io/badge/Swift-4.0.x-orange.svg)
