@@ -1,5 +1,8 @@
 language: objective-c
 osx_image: xcode9.2
+branches:
+  only:
+    - master
 
 env:
   global:
@@ -7,8 +10,10 @@ env:
   - LANG=en_US.UTF-8
   - WORKSPACE=SnipsPlatformDemo.xcworkspace
   - IOS_FRAMEWORK_SCHEME=SnipsPlatform
+  - EXAMPLE_SCHEME=SnipsPlatformDemo
   matrix:
-    - DESTINATION="OS=11.2,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME" POD_LINT="YES"
+    - DESTINATION="OS=11.2,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="YES"  BUILD_EXAMPLE="YES"  POD_LINT="YES"
+    - DESTINATION="generic/platform=iOS"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="NO"   BUILD_EXAMPLE="YES"  POD_LINT="NO"
 
 before_install:
   - gem install cocoapods --pre --no-rdoc --no-ri --no-document --quiet
@@ -17,7 +22,17 @@ script:
   - set -o pipefail
   - xcodebuild -version
   - xcodebuild -showsdks
-  - travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
+
+  - if [ $RUN_TESTS == "YES" ]; then
+      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
+    else
+      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
+    fi
+
+  - if [ $BUILD_EXAMPLE == "YES"]; then
+      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build | xcpretty;
+    fi
+
   - if [ $POD_LINT == "YES" ]; then
       sed -i.bk "s:\${SRCROOT}/SnipsPlatform:$(pwd):g" SnipsPlatform.podspec && pod lib lint --verbose;
     fi
