@@ -2,7 +2,7 @@
 
  : ${PROJECT_DIR:?"${0##*/} must be invoked as part of an Xcode script phase"}
 
-VERSION="0.53.11"
+VERSION="0.53.12"
 SYSTEM=$(echo $1 | tr '[:upper:]' '[:lower:]')
 LIBRARY_NAME=libsnips_megazord
 LIBRARY_NAME_A=${LIBRARY_NAME}.a
