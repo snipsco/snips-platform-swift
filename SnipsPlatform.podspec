@@ -23,13 +23,20 @@ Pod::Spec.new do |s|
 
   s.prepare_command = <<-CMD
     mkdir -p Dependencies/ios && cd "$_"
-    if [ -n "$(find . -maxdepth 0 -type d -empty 2>/dev/null)" ]; then
+    if [ -n "$(find . -maxdepth 0 -type d -empty 2>/dev/null)" ] && [ -z "$SNIPS_USE_LOCAL_PLATFORM" ]; then
         echo "Downloading core-platform..."
         curl -s https://s3.amazonaws.com/snips/snips-platform-dev/snips-platform-ios.#{s.version.to_s}.tgz | tar zxv
     else
         echo "Dependencies/ios isn't empty. Skipping download core-platform..."
         ls -l
     fi
+
+    # Check if everything is here
+    ls libprotobuf.a > /dev/null
+    ls libsnips_megazord.h > /dev/null
+    ls libsnips_megazord.a > /dev/null
+    ls libtensorflow.a > /dev/null
+    ls module.modulemap > /dev/null
     CMD
   s.pod_target_xcconfig = {
     'ENABLE_BITCODE' => 'NO',
