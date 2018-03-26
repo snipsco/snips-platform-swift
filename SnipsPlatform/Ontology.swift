@@ -8,12 +8,19 @@
 import Foundation
 import Clibsnips_megazord
 
+/// A detected intent.
 public struct IntentMessage {
+    /// ID of the session.
     public let sessionId: String
+    /// Custom data provided by the developer at the beginning of the session.
     public var customData: String?
+    /// Site ID where the intent was detected.
     public var siteId: String
+    /// The user input.
     public var input: String
+    /// The intent classification result. If `nil`, the `input` wasn't recognized.
     public var intent: IntentClassifierResult?
+    /// Lists of parsed slots.
     public var slots: [Slot]
 
     init(cResult: CIntentMessage) throws {
@@ -34,8 +41,11 @@ public struct IntentMessage {
     }
 }
 
+/// An intent description.
 public struct IntentClassifierResult {
+    /// The name of the intent.
     public let intentName: String
+    /// The probability between 0.0 and 1.0 of the intent.
     public let probability: Float
 
     init(cResult: CIntentClassifierResult) {
@@ -44,6 +54,16 @@ public struct IntentClassifierResult {
     }
 }
 
+/// A slot value.
+///
+/// - custom: An entity defined on the console (not builtin entities).
+/// - number: A value number e.g. "9", "42.1".
+/// - ordinal: An ordinal number e.g. "first".
+/// - instantTime: A date e.g. "tomorrow".
+/// - timeInterval: A date range e.g. "between 1pm and 2pm".
+/// - amountOfMoney: An amount of money e.g. "$400.68", "10€".
+/// - temperature: A temperature e.g. "30°C", "86°F".
+/// - duration: A duration e.g. "2 hours", "5 minutes".
 public enum SlotValue {
     case custom(String)
     case number(NumberValue)
@@ -97,9 +117,13 @@ public typealias NumberValue = Double
 
 public typealias OrdinalValue = Int
 
+/// A date.
 public struct InstantTimeValue {
+    /// The date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
     public let value: String
+    /// Granularity of the date e.g. for "tomorrow" the granularity would be `Grain.day`.
     public let grain: Grain
+    /// Precision of the date.
     public let precision: Precision
 
     init(cValue: CInstantTimeValue) throws {
@@ -109,8 +133,11 @@ public struct InstantTimeValue {
     }
 }
 
+/// A date range.
 public struct TimeIntervalValue {
+    /// Start date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
     public let from: String?
+    /// End date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
     public let to: String?
 
     init(cValue: CTimeIntervalValue) {
@@ -119,9 +146,13 @@ public struct TimeIntervalValue {
     }
 }
 
+/// A quantity of money.
 public struct AmountOfMoneyValue {
+    /// The amount.
     public let value: Float
+    /// The precision of this amount.
     public let precision: Precision
+    /// Currency of this amount e.g. "EUR", "USD", "$".
     public let unit: String?
 
     init(cValue: CAmountOfMoneyValue) throws {
@@ -131,8 +162,11 @@ public struct AmountOfMoneyValue {
     }
 }
 
+/// A temperature.
 public struct TemperatureValue {
+    /// The value of the temperature.
     public let value: Float
+    /// The unit of this temperature e.g. "degree", "celcius", "fahrenheit".
     public let unit: String?
 
     init(cValue: CTemperatureValue) {
@@ -141,15 +175,25 @@ public struct TemperatureValue {
     }
 }
 
+/// A duration.
 public struct DurationValue {
+    /// Numbers of years.
     public let years: Int
+    /// Numbers of quarters.
     public let quarters: Int
+    /// Numbers of months.
     public let months: Int
+    /// Numbers of weeks.
     public let weeks: Int
+    /// Numbers of days.
     public let days: Int
+    /// Numbers of hours.
     public let hours: Int
+    /// Numbers of minutes.
     public let minutes: Int
+    /// Numbers of seconds.
     public let seconds: Int
+    /// Precision of the duration.
     public let precision: Precision
 
     init(cValue: CDurationValue) throws {
@@ -165,6 +209,16 @@ public struct DurationValue {
     }
 }
 
+/// Represent the granularity of a date.
+///
+/// - year: When a date represent a year e.g. "in 2 years".
+/// - quarter: When a date represent a quarter e.g. "Q3".
+/// - month: When a date represent a month e.g. "in 4 months".
+/// - week: When a date represent a week e.g. "the next week".
+/// - day: When a date represent a day e.g. "tomorrow".
+/// - hour: When a date represent an hour e.g. "1pm".
+/// - minute: When a date represent a minute e.g. "1h30".
+/// - second: When a date represent seconds e.g. "1:40:02".
 public enum Grain {
     case year
     case quarter
@@ -190,6 +244,10 @@ public enum Grain {
     }
 }
 
+/// Precision of a slot.
+///
+/// - approximate: When a user explicitly gave an approximation quantifier with the slot.
+/// - exact: Default case when no information about the precision of the slot is available.
 public enum Precision {
     case approximate
     case exact
@@ -203,11 +261,17 @@ public enum Precision {
     }
 }
 
+/// A slot.
 public struct Slot {
+    /// The matching string.
     public let rawValue: String
+    /// The structured representation of the slot.
     public let value: SlotValue
+    /// The range of the matching string in the given sentence.
     public let range: Range<Int>
+    /// The entity name.
     public let entity: String
+    /// The name of the slot.
     public let slotName: String
 
     init(cSlot: CSlot) throws {
@@ -219,6 +283,10 @@ public struct Slot {
     }
 }
 
+/// A session type of a session
+///
+/// - action: When an intent is expected to be parsed.
+/// - notification: Notify the user about something via the tts.
 public enum SessionInitType {
     case action(text: String?, intentFilter: [String], canBeEnqueued: Bool)
     case notification(text: String?)
@@ -245,9 +313,13 @@ public enum SessionInitType {
     }
 }
 
+/// A message to start a session.
 public struct StartSessionMessage {
+    /// The type of the session.
     public let initType: SessionInitType
+    /// Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data
     public let customData: String?
+    /// Site where the user started the interaction.
     public let siteId: String?
 
     public init(initType: SessionInitType, customData: String? = nil, siteId: String? = nil) {
@@ -267,9 +339,13 @@ public struct StartSessionMessage {
     }
 }
 
+/// Message to send to continue a session.
 public struct ContinueSessionMessage {
+    /// Session identifier to continue.
     public let sessionId: String
+    /// The text the TTS should say to start this additional request of the session.
     public let text: String
+    /// A list of intents names to restrict the NLU resolution on the answer of this query.
     public let intentFilter: [String]
 
     public init(sessionId: String, text: String, intentFilter: [String] = []) {
@@ -288,8 +364,11 @@ public struct ContinueSessionMessage {
     }
 }
 
+/// Message to send to end a session.
 public struct EndSessionMessage {
+    /// Session identifier to end.
     public let sessionId: String
+    /// The text the TTS should say to end the session.
     public let text: String?
 
     public init(sessionId: String, text: String? = nil) {
@@ -303,11 +382,17 @@ public struct EndSessionMessage {
     }
 }
 
+/// A message to say to the user.
 public struct SayMessage {
+    /// The text to say.
     public let text: String
+    /// The lang of the message to say.
     public let lang: String?
+    /// A unique id of the message to say.
     public let messageId: String?
+    /// The site id where come from the message to say.
     public let siteId: String
+    /// The id of the session.
     public let sessionId: String?
 
     public init(cMessage: CSayMessage) {
@@ -319,8 +404,12 @@ public struct SayMessage {
     }
 }
 
+/// A message to send to the platform when a message was said
+/// (typically when a text-to-speech finished to say its message)
 public struct SayFinishedMessage {
+    /// The unique id of message that what was said.
     public let messageId: String?
+    /// The id of the session.
     public let sessionId: String?
 
     public init(messageId: String?, sessionId: String?) {
