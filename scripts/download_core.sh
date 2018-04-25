@@ -87,7 +87,7 @@ case ${SYSTEM} in
     ios)
         ARCHS_ARRAY=( ${ARCHS} )
 
-        if [ ${SNIPS_USE_LOCAL_PLATFORM} == 1 ]; then
+        if [ "${SNIPS_USE_LOCAL_PLATFORM}" == 1 ]; then
             install_local_core_platform && exit 0
         else
             if core_platform_is_present; then

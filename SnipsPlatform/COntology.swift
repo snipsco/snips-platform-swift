@@ -15,6 +15,7 @@ extension CArrayString {
             data.advanced(by: $0).pointee = UnsafePointer(strdup($1))
         }
 
+        self.init()
         self.data = UnsafePointer(data)
         self.size = Int32(array.count)
     }
@@ -24,12 +25,12 @@ extension CArrayString {
         for idx in 0..<size {
             free(UnsafeMutableRawPointer(mutating: data.advanced(by: Int(idx)).pointee))
         }
-        mutating?.deallocate(capacity: Int(size))
+        mutating?.deallocate()
     }
 
     func toSwiftArray() -> [String] {
         return UnsafeBufferPointer(start: data, count: Int(size))
-            .flatMap { $0 }
+            .compactMap { $0 }
             .map { String(cString: $0) }
     }
 }
