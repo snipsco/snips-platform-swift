@@ -91,10 +91,15 @@ class ViewController: UIViewController {
             startButton.isEnabled = false
             recordButton.setTitle("Start", for: .normal)
         } else {
-            let documentPicker = UIDocumentPickerViewController(documentTypes: ["ai.snips.assistant.snips"], in: .open)
-            documentPicker.delegate = self
-            documentPicker.allowsMultipleSelection = false
-            navigationController?.present(documentPicker, animated: true)
+            let assistantURL = Bundle.main.url(forResource: "my_assistant", withExtension: nil)!
+            let assistantIsEmpty = try! FileManager.default.contentsOfDirectory(at: assistantURL, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+                .isEmpty
+
+            if assistantIsEmpty {
+                startSnips(assistantURL: assistantURL)
+            } else {
+                fatalError("Unzip an assistant downloaded on https://console.snips.ai in the folder `my_assistant`")
+            }
         }
     }
 }
@@ -190,18 +195,6 @@ private extension ViewController {
         
         audioEngine.prepare()
         try audioEngine.start()
-    }
-}
-
-extension ViewController: UIDocumentPickerDelegate {
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        guard let url = urls.first else { fatalError("Should have at least one url") }
-        
-        if url.startAccessingSecurityScopedResource() == true {
-            startSnips(assistantURL: url)
-        } else {
-            print("Can't access securely to this URL")
-        }
     }
 }
 

@@ -8,10 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F704FFB51FE40F650027F6C5 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F7233A241FC43EA200665CAC /* snips-assistant-64x64.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */; };
-		F7233A291FC4558400665CAC /* snips-assistant-22x29.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A261FC4558400665CAC /* snips-assistant-22x29.png */; };
-		F7233A2A1FC4558400665CAC /* snips-assistant-44x58.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A271FC4558400665CAC /* snips-assistant-44x58.png */; };
-		F7233A2B1FC4558400665CAC /* snips-assistant-320x320.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A281FC4558400665CAC /* snips-assistant-320x320.png */; };
+		F7A8290520976BA7007554FE /* my_assistant in Resources */ = {isa = PBXBuildFile; fileRef = F7A8290420976BA7007554FE /* my_assistant */; };
 		F7BB4FE21FBF2F56005243F0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */; };
 		F7CF587A1FBD9FDA00027852 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58791FBD9FDA00027852 /* AppDelegate.swift */; };
 		F7CF587C1FBD9FDA00027852 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF587B1FBD9FDA00027852 /* ViewController.swift */; };
@@ -35,10 +32,7 @@
 /* Begin PBXFileReference section */
 		F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libsnips_kaldi.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-64x64.png"; sourceTree = "<group>"; };
-		F7233A261FC4558400665CAC /* snips-assistant-22x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-22x29.png"; sourceTree = "<group>"; };
-		F7233A271FC4558400665CAC /* snips-assistant-44x58.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-44x58.png"; sourceTree = "<group>"; };
-		F7233A281FC4558400665CAC /* snips-assistant-320x320.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snips-assistant-320x320.png"; sourceTree = "<group>"; };
+		F7A8290420976BA7007554FE /* my_assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = my_assistant; sourceTree = "<group>"; };
 		F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F7CF58761FBD9FDA00027852 /* SnipsPlatformDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnipsPlatformDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7CF58791FBD9FDA00027852 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -59,17 +53,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		F7233A251FC4557B00665CAC /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				F7233A281FC4558400665CAC /* snips-assistant-320x320.png */,
-				F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */,
-				F7233A271FC4558400665CAC /* snips-assistant-44x58.png */,
-				F7233A261FC4558400665CAC /* snips-assistant-22x29.png */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		F73956FA1FBDDB1D005AAD1D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -102,7 +85,7 @@
 			children = (
 				F7CF58791FBD9FDA00027852 /* AppDelegate.swift */,
 				F7CF587B1FBD9FDA00027852 /* ViewController.swift */,
-				F7233A251FC4557B00665CAC /* Resources */,
+				F7A8290420976BA7007554FE /* my_assistant */,
 				F7CF58801FBD9FDA00027852 /* Assets.xcassets */,
 				F7CF58851FBD9FDA00027852 /* Info.plist */,
 			);
@@ -174,11 +157,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7233A2B1FC4558400665CAC /* snips-assistant-320x320.png in Resources */,
 				F7CF58811FBD9FDA00027852 /* Assets.xcassets in Resources */,
-				F7233A291FC4558400665CAC /* snips-assistant-22x29.png in Resources */,
-				F7233A2A1FC4558400665CAC /* snips-assistant-44x58.png in Resources */,
-				F7233A241FC43EA200665CAC /* snips-assistant-64x64.png in Resources */,
+				F7A8290520976BA7007554FE /* my_assistant in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

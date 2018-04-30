@@ -4,34 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>snips</string>
-			</array>
-			<key>CFBundleTypeIconFiles</key>
-			<array>
-				<string>snips-assistant-320x320</string>
-				<string>snips-assistant-64x64</string>
-				<string>snips-assistant-44x58</string>
-				<string>snips-assistant-22x29</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>Snips Assistant Package</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>LSIsAppleDefaultForType</key>
-			<true/>
-			<key>LSItemContentTypes</key>
-			<array>
-				<string>ai.snips.assistant.snips</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -49,7 +21,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Isn't it obvious ?</string>
+	<string>Isn&apos;t it obvious ?</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -68,31 +40,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.composite-content</string>
-				<string>com.apple.package</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>Snips Assistant Package</string>
-			<key>UTTypeIdentifier</key>
-			<string>ai.snips.assistant.snips</string>
-			<key>UTTypeSize320IconFile</key>
-			<string>snips-assistant-320x320</string>
-			<key>UTTypeSize64IconFile</key>
-			<string>snips-assistant-64x64</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>snips</string>
-				</array>
-			</dict>
-		</dict>
 	</array>
 </dict>
 </plist>
