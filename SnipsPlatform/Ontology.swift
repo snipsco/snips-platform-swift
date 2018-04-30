@@ -64,6 +64,7 @@ public struct IntentClassifierResult {
 /// - amountOfMoney: An amount of money e.g. "$400.68", "10€".
 /// - temperature: A temperature e.g. "30°C", "86°F".
 /// - duration: A duration e.g. "2 hours", "5 minutes".
+/// - percentage: A percentage e.g. 90%
 public enum SlotValue {
     case custom(String)
     case number(NumberValue)
@@ -73,40 +74,45 @@ public enum SlotValue {
     case amountOfMoney(AmountOfMoneyValue)
     case temperature(TemperatureValue)
     case duration(DurationValue)
+    case percentage(Double)
 
     init(cSlotValue: CSlotValue) throws {
         switch cSlotValue.value_type {
-        case CUSTOM:
+        case SNIPS_SLOT_VALUE_TYPE_CUSTOM:
             let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
             self = .custom(String(cString: x))
 
-        case NUMBER:
+        case SNIPS_SLOT_VALUE_TYPE_NUMBER:
             let x = cSlotValue.value.assumingMemoryBound(to: CDouble.self)
             self = .number(x.pointee)
 
-        case ORDINAL:
+        case SNIPS_SLOT_VALUE_TYPE_ORDINAL:
             let x = cSlotValue.value.assumingMemoryBound(to: CInt.self)
             self = .ordinal(OrdinalValue(x.pointee))
 
-        case INSTANTTIME:
+        case SNIPS_SLOT_VALUE_TYPE_INSTANTTIME:
             let x = cSlotValue.value.assumingMemoryBound(to: CInstantTimeValue.self)
             self = .instantTime(try InstantTimeValue(cValue: x.pointee))
 
-        case TIMEINTERVAL:
+        case SNIPS_SLOT_VALUE_TYPE_TIMEINTERVAL:
             let x = cSlotValue.value.assumingMemoryBound(to: CTimeIntervalValue.self)
             self = .timeInterval(TimeIntervalValue(cValue: x.pointee))
 
-        case AMOUNTOFMONEY:
+        case SNIPS_SLOT_VALUE_TYPE_AMOUNTOFMONEY:
             let x = cSlotValue.value.assumingMemoryBound(to: CAmountOfMoneyValue.self)
             self = .amountOfMoney(try AmountOfMoneyValue(cValue: x.pointee))
 
-        case TEMPERATURE:
+        case SNIPS_SLOT_VALUE_TYPE_TEMPERATURE:
             let x = cSlotValue.value.assumingMemoryBound(to: CTemperatureValue.self)
             self = .temperature(TemperatureValue(cValue: x.pointee))
 
-        case DURATION:
+        case SNIPS_SLOT_VALUE_TYPE_DURATION:
             let x = cSlotValue.value.assumingMemoryBound(to: CDurationValue.self)
             self = .duration(try DurationValue(cValue: x.pointee))
+
+        case SNIPS_SLOT_VALUE_TYPE_PERCENTAGE:
+            let x = cSlotValue.value.assumingMemoryBound(to: CDouble.self)
+            self = .percentage(x.pointee)
 
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
@@ -229,16 +235,16 @@ public enum Grain {
     case minute
     case second
 
-    init(cValue: CGrain) throws {
+    init(cValue: SNIPS_GRAIN) throws {
         switch cValue {
-        case YEAR: self = .year
-        case QUARTER: self = .quarter
-        case MONTH: self = .month
-        case WEEK: self = .week
-        case DAY: self = .day
-        case HOUR: self = .hour
-        case MINUTE: self = .minute
-        case SECOND: self = .second
+        case SNIPS_GRAIN_YEAR: self = .year
+        case SNIPS_GRAIN_QUARTER: self = .quarter
+        case SNIPS_GRAIN_MONTH: self = .month
+        case SNIPS_GRAIN_WEEK: self = .week
+        case SNIPS_GRAIN_DAY: self = .day
+        case SNIPS_GRAIN_HOUR: self = .hour
+        case SNIPS_GRAIN_MINUTE: self = .minute
+        case SNIPS_GRAIN_SECOND: self = .second
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
     }
@@ -252,10 +258,10 @@ public enum Precision {
     case approximate
     case exact
 
-    init(cValue: CPrecision) throws {
+    init(cValue: SNIPS_PRECISION) throws {
         switch cValue {
-        case APPROXIMATE: self = .approximate
-        case EXACT: self = .exact
+        case SNIPS_PRECISION_APPROXIMATE: self = .approximate
+        case SNIPS_PRECISION_EXACT: self = .exact
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
     }
@@ -294,11 +300,11 @@ public enum SessionInitType {
     func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
         switch self {
         case .action(let text, let intentFilter, let canBeEnqueued):
-            var arrayString = CArrayString(array: intentFilter)
+            var arrayString = CStringArray(array: intentFilter)
             try withUnsafePointer(to: &arrayString) {
                 var actionInit = CActionSessionInit(text: text, intent_filter: $0, can_be_enqueued: canBeEnqueued ? 1 : 0)
                 try withUnsafePointer(to: &actionInit) {
-                    var sessionInit = CSessionInit(init_type: ACTION, value: $0)
+                    var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: $0)
                     try withUnsafePointer(to: &sessionInit) {
                         try body($0)
                     }
@@ -307,7 +313,7 @@ public enum SessionInitType {
             arrayString.destroy()
 
         case .notification(let text):
-            var sessionInit = CSessionInit(init_type: NOTIFICATION, value: text)
+            var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_NOTIFICATION, value: text)
             try withUnsafePointer(to: &sessionInit) { try body($0) }
         }
     }
@@ -355,7 +361,7 @@ public struct ContinueSessionMessage {
     }
 
     func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
-        var arrayString = CArrayString(array: intentFilter)
+        var arrayString = CStringArray(array: intentFilter)
         try withUnsafePointer(to: &arrayString) {
             var cMessage = CContinueSessionMessage(session_id: self.sessionId, text: self.text, intent_filter: UnsafeMutablePointer(mutating: $0))
             try withUnsafePointer(to: &cMessage) { try body($0) }

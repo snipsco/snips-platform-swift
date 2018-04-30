@@ -8,7 +8,7 @@
 import Foundation
 import Clibsnips_megazord
 
-extension CArrayString {
+extension CStringArray {
     init(array: [String]) {
         let data = UnsafeMutablePointer<UnsafePointer<Int8>?>.allocate(capacity: array.count)
         array.enumerated().forEach {

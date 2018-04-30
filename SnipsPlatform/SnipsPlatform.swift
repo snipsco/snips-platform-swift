@@ -57,12 +57,12 @@ public class SnipsPlatform {
                 enableHtml: Bool = false,
                 enableLogs: Bool = false) throws {
         var client: UnsafePointer<MegazordClient>? = nil
-        guard megazord_create(assistantURL.path, &client) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
-        guard megazord_enable_streaming(ptr, 1) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == OK else { throw SnipsPlatformError.getLast }
-        guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_streaming(ptr, 1) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
 
         self.hotwordSensitivity = hotwordSensitivity
     }
@@ -166,21 +166,21 @@ public class SnipsPlatform {
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
     public func start() throws {
-        guard megazord_start(ptr) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_start(ptr) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
     }
 
     /// Pause the platform.
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
     public func pause() throws {
-        guard megazord_pause(ptr) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_pause(ptr) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
     }
 
     /// Restore the paused platform.
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
     public func unpause() throws {
-        guard megazord_unpause(ptr) == OK else { throw SnipsPlatformError.getLast }
+        guard megazord_unpause(ptr) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
     }
 
     /// Start manually a dialogue session.
@@ -219,7 +219,7 @@ public class SnipsPlatform {
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func startSession(message: StartSessionMessage) throws {
         try message.toUnsafeCMessage {
-            guard megazord_dialogue_start_session(ptr, $0) == OK else {
+            guard megazord_dialogue_start_session(ptr, $0) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
@@ -246,13 +246,13 @@ public class SnipsPlatform {
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func continueSession(message: ContinueSessionMessage) throws {
         try message.toUnsafeCMessage {
-            guard megazord_dialogue_continue_session(ptr, $0) == OK else {
+            guard megazord_dialogue_continue_session(ptr, $0) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
     }
 
-    /// <#Description#>
+    /// End a session.
     ///
     /// - Parameters:
     ///   - sessionId: Session identifier to end.
@@ -268,7 +268,7 @@ public class SnipsPlatform {
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func endSession(message: EndSessionMessage) throws {
         try message.toUnsafeCMessage {
-            guard megazord_dialogue_end_session(ptr, $0) == OK else {
+            guard megazord_dialogue_end_session(ptr, $0) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
@@ -292,7 +292,7 @@ public class SnipsPlatform {
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func notifySpeechEnded(message: SayFinishedMessage) throws {
         try message.toUnsafeCMessage {
-            guard megazord_notify_tts_finished(ptr, $0) == OK else {
+            guard megazord_notify_tts_finished(ptr, $0) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
