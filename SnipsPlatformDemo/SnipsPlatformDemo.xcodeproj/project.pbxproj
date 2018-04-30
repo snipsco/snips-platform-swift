@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		F704FFB51FE40F650027F6C5 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F704FFBF1FE4121D0027F6C5 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */; };
-		F704FFC01FE412300027F6C5 /* libsnips_kaldi.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFBE1FE4121D0027F6C5 /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F7233A241FC43EA200665CAC /* snips-assistant-64x64.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A231FC43EA200665CAC /* snips-assistant-64x64.png */; };
 		F7233A291FC4558400665CAC /* snips-assistant-22x29.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A261FC4558400665CAC /* snips-assistant-22x29.png */; };
 		F7233A2A1FC4558400665CAC /* snips-assistant-44x58.png in Resources */ = {isa = PBXBuildFile; fileRef = F7233A271FC4558400665CAC /* snips-assistant-44x58.png */; };
@@ -27,7 +25,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F704FFC01FE412300027F6C5 /* libsnips_kaldi.dylib in Copy Frameworks */,
 				F704FFB51FE40F650027F6C5 /* SnipsPlatform.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -55,7 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F704FFBF1FE4121D0027F6C5 /* libsnips_kaldi.dylib in Frameworks */,
 				F7BB4FE21FBF2F56005243F0 /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

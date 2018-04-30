@@ -51,16 +51,9 @@ install_local_core_platform () {
             return 1
         fi
         cp ${library_path} ${OUTDIR}/${LIBRARY_NAME}-${arch}.a
-
-        local kaldi_path=`find ${ROOT_DIR}/target/${arch}-apple-ios -type f -name libsnips_kaldi.dylib | head -n 1`
-        if [ ! -e ${kaldi_path} ]; then
-            return 1
-        fi
-        cp ${kaldi_path} ${OUTDIR}/libsnips_kaldi-${arch}.dylib
     done
 
     lipo -create `find ${OUTDIR}/${LIBRARY_NAME}-*.a` -output ${OUTDIR}/${LIBRARY_NAME_A}
-    lipo -create `find ${OUTDIR}/libsnips_kaldi-*.dylib` -output ${OUTDIR}/libsnips_kaldi.dylib
     cp ${ROOT_DIR}/target/ios-universal/megazord/* ${OUTDIR}
 
     return 0
@@ -69,7 +62,6 @@ install_local_core_platform () {
 core_platform_is_present () {
     if [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/libprotobuf.a ] &&
        [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/libtensorflow.a ] &&
-       [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/libsnips_kaldi.dylib ] &&
        [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/module.modulemap ] &&
        [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/${LIBRARY_NAME_A} ] &&
        [ -e ${PROJECT_DIR}/Dependencies/${SYSTEM}/${HEADER_NAME_H} ]; then

@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		F71181E51FDECD8500512C79 /* libsnips_kaldi.dylib in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */; };
 		F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F81FBDCD09005AAD1D /* libresolv.tbd */; };
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
 		F76DFB8B2032ECB10021D6F9 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */; };
@@ -36,16 +33,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		F704FFB61FE40FC20027F6C5 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				F704FFB71FE40FCB0027F6C5 /* libsnips_kaldi.dylib in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F71181E41FDECD7A00512C79 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -53,7 +40,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */,
-				F71181E51FDECD8500512C79 /* libsnips_kaldi.dylib in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,7 +47,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsnips_kaldi.dylib; path = Dependencies/ios/libsnips_kaldi.dylib; sourceTree = "<group>"; };
 		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
@@ -89,7 +74,6 @@
 				F76E41F5205C0C8500E6067E /* libbz2.tbd in Frameworks */,
 				F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */,
 				F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */,
-				F73956F71FBDCCEA005AAD1D /* libsnips_kaldi.dylib in Frameworks */,
 				F7FF0FB01FBF51B000595F07 /* libprotobuf.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -108,11 +92,10 @@
 		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */,
+				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
 				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,
-				F73956F61FBDCCEA005AAD1D /* libsnips_kaldi.dylib */,
 				F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */,
 			);
 			name = Frameworks;
@@ -183,7 +166,6 @@
 				F7CF58911FBDA00200027852 /* Frameworks */,
 				F7CF58921FBDA00200027852 /* Headers */,
 				F7CF58931FBDA00200027852 /* Resources */,
-				F704FFB61FE40FC20027F6C5 /* CopyFiles */,
 			);
 			buildRules = (
 			);
