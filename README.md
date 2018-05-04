@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/snipsco/snips-platform-swift.svg?branch=master)](https://travis-ci.org/snipsco/snips-platform-swift)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage)
-![Swift 4.0.x](https://img.shields.io/badge/Swift-4.0.x-orange.svg)
+![Swift 4.1.x](https://img.shields.io/badge/Swift-4.1.x-orange.svg)
 ![platforms](https://img.shields.io/badge/platforms-iOS%20-lightgrey.svg)
 
 The Swift framework for the Snips Platform
@@ -19,12 +19,18 @@ If you use [Carthage][] to manage your dependencies, simply add snips-platform-s
 github "snipsco/snips-platform-swift"
 ```
 
-If you use Carthage to build your dependencies, make sure you have added `SnipsPlatform.framework` and `libsnips_kaldi.dylib` the "Linked Frameworks and Libraries" section of your target, and have included them in your Carthage framework copying build phase.
+If you use Carthage to build your dependencies, make sure you have added `SnipsPlatform.framework` into the "Linked Frameworks and Libraries" section of your target, and have included them in your Carthage framework copying build phase.
 
 #### Cocoapods
 
-If you use [CocoaPods][] to manage your dependencies, simply add SnipsPlatform to your Podfile:
+If you use [CocoaPods][] to manage your dependencies, 
 
+First you'll need to add the Snips source repo at the top of your Podfile:
+```
+source 'https://github.com/snipsco/Specs'
+```
+
+Then symply add SnipsPlatform to your Podfile:
 ```
 pod 'SnipsPlatform'
 ```
@@ -34,7 +40,7 @@ pod 'SnipsPlatform'
  1. Add the snips-platform-swift repository as a [submodule][] of your application’s repository.
  1. Run `git submodule update --init --recursive` from within the snips-platform-swift folder.
  1. Drag and drop `SnipsPlatform.xcodeproj` into your application’s Xcode project or workspace.
- 1. On the “General” tab of your application target’s settings, add `SnipsPlatform.framework` and `libsnips_kaldi.dylib` to the “Embedded Binaries” section.
+ 1. On the “General” tab of your application target’s settings, add `SnipsPlatform.framework` to the “Embedded Binaries” section.
 
 ## License
 
