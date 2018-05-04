@@ -95,7 +95,7 @@ class ViewController: UIViewController {
             let assistantIsEmpty = try! FileManager.default.contentsOfDirectory(at: assistantURL, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
                 .isEmpty
 
-            if assistantIsEmpty {
+            if !assistantIsEmpty {
                 startSnips(assistantURL: assistantURL)
             } else {
                 fatalError("Unzip an assistant downloaded on https://console.snips.ai in the folder `my_assistant`")
