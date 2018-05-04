@@ -86,6 +86,8 @@ core_is_present () {
 
 if [ "${SNIPS_USE_LOCAL_PLATFORM}" == 1 ]; then
     install_local_core && exit 0
+elif [ "${SNIPS_USE_REMOTE}" == 1 ]; then
+    install_remote_core && exit 0
 else
     if core_is_present; then
         # TODO: Should check for version
