@@ -4,7 +4,7 @@
 
 set -e
 
-VERSION="0.55.3"
+VERSION="0.56.0"
 SYSTEM=$(echo $1 | tr '[:upper:]' '[:lower:]')
 LIBRARY_NAME=libsnips_megazord
 LIBRARY_NAME_A=${LIBRARY_NAME}.a
