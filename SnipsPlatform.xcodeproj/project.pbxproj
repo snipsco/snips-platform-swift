@@ -18,7 +18,6 @@
 		F7CF58A61FBDA00200027852 /* SnipsPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = F7CF58981FBDA00200027852 /* SnipsPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F7CF58B01FBDA16E00027852 /* SnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */; };
 		F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAD1FBF519A00595F07 /* libc++.tbd */; };
-		F7FF0FB01FBF51B000595F07 /* libprotobuf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */; };
 		F7FF0FB11FBF51C400595F07 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
@@ -62,7 +61,6 @@
 		F7CF58A51FBDA00200027852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsPlatform.swift; sourceTree = "<group>"; };
 		F7FF0FAD1FBF519A00595F07 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libprotobuf.a; path = Dependencies/ios/libprotobuf.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +72,6 @@
 				F76E41F5205C0C8500E6067E /* libbz2.tbd in Frameworks */,
 				F7FF0FAE1FBF519B00595F07 /* libc++.tbd in Frameworks */,
 				F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */,
-				F7FF0FB01FBF51B000595F07 /* libprotobuf.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +93,6 @@
 				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
 				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,
-				F7FF0FAF1FBF51B000595F07 /* libprotobuf.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -435,10 +431,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
-				OTHER_LDFLAGS = (
-					"-force_load",
-					"$(PROJECT_DIR)/Dependencies/ios/libtensorflow.a",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -465,10 +457,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
-				OTHER_LDFLAGS = (
-					"-force_load",
-					"$(PROJECT_DIR)/Dependencies/ios/libtensorflow.a",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

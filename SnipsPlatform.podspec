@@ -35,11 +35,10 @@ Pod::Spec.new do |s|
     'ENABLE_BITCODE' => 'NO',
     'SWIFT_INCLUDE_PATHS' => '"${SRCROOT}/SnipsPlatform/Dependencies/ios"',
     'LIBRARY_SEARCH_PATHS' => '"${SRCROOT}/SnipsPlatform/Dependencies/ios"',
-    'OTHER_LDFLAGS' => '"-force_load ${SRCROOT}/SnipsPlatform/Dependencies/ios/libtensorflow.a"',
     'VALID_ARCHS' => 'arm64',
   }
 
   s.frameworks = 'Accelerate'
-  s.libraries = 'c++', 'bz2', 'resolv', 'iconv', 'protobuf'
+  s.libraries = 'c++', 'bz2', 'resolv', 'iconv'
 
 end

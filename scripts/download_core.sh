@@ -73,9 +73,7 @@ install_local_core () {
 }
 
 core_is_present () {
-    if [ -e ${OUT_DIR}/libprotobuf.a ] &&
-       [ -e ${OUT_DIR}/libtensorflow.a ] &&
-       [ -e ${OUT_DIR}/module.modulemap ] &&
+    if [ -e ${OUT_DIR}/module.modulemap ] &&
        [ -e ${OUT_DIR}/${LIBRARY_NAME_A} ] &&
        [ -e ${OUT_DIR}/${LIBRARY_NAME_H} ]; then
         return 0
