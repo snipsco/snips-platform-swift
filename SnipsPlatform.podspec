@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SnipsPlatform'
-  s.version = '0.56.1'
+  s.version = '0.56.2'
   s.summary = 'The Swift framework for the Snips Platform'
   s.description = <<-DESC
     The Snips Voice Platform allows anyone to integrate AI powered voice interaction in their devices with ease.
