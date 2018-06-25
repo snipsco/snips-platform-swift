@@ -27,7 +27,7 @@ install_remote_core () {
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
     rm -f ${OUT_DIR}/*
-    if ! core_is_present; then
+    if ! core_is_present || ! core_is_up_to_date; then
         echo "Will download '${filename}'"
         $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
     fi
@@ -82,13 +82,23 @@ core_is_present () {
     return 1
 }
 
+core_is_up_to_date () {
+    local header_path = ${OUT_DIR}/${LIBRARY_NAME_H}
+    local core_version=$(grep "SNIPS_VERSION" $header_path | cut -d'"' -f2)
+
+    if [ "$core_version" = ${VERSION} ]; then
+        return 0
+    fi
+
+    return 1
+}
+
 if [ "${SNIPS_USE_LOCAL_PLATFORM}" == 1 ]; then
     install_local_core && exit 0
 elif [ "${SNIPS_USE_REMOTE}" == 1 ]; then
     install_remote_core && exit 0
 else
-    if core_is_present; then
-        # TODO: Should check for version
+    if core_is_present && core_is_up_to_date; then
         exit 0
     fi
 
