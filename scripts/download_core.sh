@@ -83,7 +83,7 @@ core_is_present () {
 }
 
 core_is_up_to_date () {
-    local header_path = ${OUT_DIR}/${LIBRARY_NAME_H}
+    local header_path=${OUT_DIR}/${LIBRARY_NAME_H}
     local core_version=$(grep "SNIPS_VERSION" $header_path | cut -d'"' -f2)
 
     if [ "$core_version" = ${VERSION} ]; then
