@@ -13,11 +13,19 @@ private typealias CIntentHandler = @convention(c) (UnsafePointer<CChar>?) -> Voi
 private typealias CSnipsTtsHandler = @convention(c) (UnsafePointer<CSayMessage>?) -> Void
 private typealias CSnipsWatchHandler = @convention(c) (UnsafePointer<CChar>?) -> Void
 private typealias CHotwordHandler = @convention(c) () -> Void
+private typealias CListeningHandler = @convention(c) (Bool) -> Void
+private typealias CSessionEndedHandler = @convention(c) (UnsafePointer<CSessionEndedMessage>) -> Void
+private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSessionQueuedMessage>) -> Void
+private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> ()
 public typealias SpeechHandler = (SayMessage) -> ()
 public typealias SnipsWatchHandler = (String) -> ()
 public typealias HotwordHandler = () -> ()
+public typealias ListeningStateChangedHandler = (Bool) -> ()
+public typealias SessionStartedHandler = (SessionStartedMessage) -> ()
+public typealias SessionQueuedHandler = (SessionQueuedMessage) -> ()
+public typealias SessionEndedHandler = (SessionEndedMessage) -> ()
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -39,6 +47,10 @@ private var _onIntentDetected: IntentHandler? = nil
 private var _speechHandler: SpeechHandler? = nil
 private var _snipsWatchHandler: SnipsWatchHandler? = nil
 private var _onHotwordDetected: HotwordHandler? = nil
+private var _onListeningStateChanged: ListeningStateChangedHandler? = nil
+private var _onSessionStarted: SessionStartedHandler? = nil
+private var _onSessionQueued: SessionQueuedHandler? = nil
+private var _onSessionEnded: SessionEndedHandler? = nil
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -140,7 +152,81 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
+    /// A closure executed when the listening state has changed.
+    public var onListeningStateChanged: ListeningStateChangedHandler? {
+        get {
+            return _onListeningStateChanged
+        }
+        set {
+            if newValue != nil {
+                _onListeningStateChanged = newValue
+                megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged in
+                    _onListeningStateChanged?(cListeningStateChanged)
+                }
+            } else {
+                megazord_set_listening_state_changed_handler(ptr, nil)
+            }
+        }
+    }
+    
+    /// A closure executed when the session has started.
+    public var onSessionStartedHandler: SessionStartedHandler? {
+        get {
+            return _onSessionStarted
+        }
+        set {
+            if newValue != nil {
+                _onSessionStarted = newValue
+                megazord_set_session_started_handler(ptr) { cSessionStartedMessage in
+                    defer {
+                        megazord_destroy_session_started_message(UnsafeMutablePointer(mutating: cSessionStartedMessage))
+                    }
+                    guard let cSessionStartedMessage = cSessionStartedMessage?.pointee else { return }
+                    _onSessionStarted?(SessionStartedMessage(cSessionStartedMessage: cSessionStartedMessage))
+                }
+            }
+        }
+    }
+    
+    /// A closure executed when the session is queued.
+    public var onSessionQueuedHandler: SessionQueuedHandler? {
+        get {
+            return _onSessionQueued
+        }
+        set {
+            if newValue != nil {
+                _onSessionQueued = newValue
+                megazord_set_session_queued_handler(ptr) { cSessionQueuedMessage in
+                    defer {
+                        megazord_destroy_session_queued_message(UnsafeMutablePointer(mutating: cSessionQueuedMessage))
+                    }
+                    guard let cSessionQueuedMessage = cSessionQueuedMessage?.pointee else { return }
+                    _onSessionQueued?(SessionQueuedMessage(cSessionsQueuedMessage: cSessionQueuedMessage))
+                }
+            }
+        }
+    }
+    
+    /// A closure executed when the session has ended
+    public var onSessionEndedHandler: SessionEndedHandler? {
+        get {
+            return _onSessionEnded
+        }
+        set {
+            if newValue != nil {
+                _onSessionEnded = newValue
+                megazord_set_session_ended_handler(ptr) { cSessionEndedMessage in
+                    defer {
+                        megazord_destroy_session_ended_message(UnsafeMutablePointer(mutating: cSessionEndedMessage))
+                    }
+                    guard let cSessionEndedMessage = cSessionEndedMessage?.pointee else { return }
+                    _onSessionEnded?(try! SessionEndedMessage(cSessionEndedMessage: cSessionEndedMessage))
+                }
+            }
+        }
+    }
+    
     /// A closure executed to delegate text-to-speech operations.
     public var speechHandler: SpeechHandler? {
         get {
@@ -190,13 +276,14 @@ public class SnipsPlatform {
     ///   - intentFilter: A list of intents names to restrict the NLU resolution on the first query.
     ///   - canBeEnqueued: if true, the session will start when there is no pending one on this siteId, if false, the session is just dropped if there is running one.
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
+    ///   - siteId
     /// - Throws: A `SnipsPlatformError` is something went wrong.
-    public func startSession(text: String?, intentFilter: [String], canBeEnqueued: Bool, customData: String?) throws {
+    public func startSession(text: String? = nil, intentFilter: [String], canBeEnqueued: Bool, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
             message: StartSessionMessage(
                 initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued),
                 customData: customData,
-                siteId: nil))
+                siteId: siteId))
     }
 
     /// Start a notification.
@@ -205,12 +292,12 @@ public class SnipsPlatform {
     ///   - text: Text the TTS should say.
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
     /// - Throws: A `SnipsPlatformError` if something went wrong.
-    public func startNotification(text: String?, customData: String?) throws {
+    public func startNotification(text: String, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
             message: StartSessionMessage(
                 initType: .notification(text: text),
                 customData: customData,
-                siteId: nil))
+                siteId: siteId))
     }
 
     /// Start manually a dialogue session.
@@ -258,7 +345,7 @@ public class SnipsPlatform {
     ///   - sessionId: Session identifier to end.
     ///   - text: The text the TTS should say to end the session.
     /// - Throws: A `SnipsPlatformError` if something went wrong.
-    public func endSession(sessionId: String, text: String?) throws {
+    public func endSession(sessionId: String, text: String? = nil) throws {
         try endSession(message: EndSessionMessage(sessionId: sessionId, text: text))
     }
 
@@ -280,8 +367,9 @@ public class SnipsPlatform {
     /// - Parameters:
     ///   - messageId: The id of the said message.
     ///   - sessionId: The session identifier of the message.
+    ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` if something went wrong.
-    public func notifySpeechEnded(messageId: String?, sessionId: String?) throws {
+    public func notifySpeechEnded(messageId: String? = nil, sessionId: String? = nil) throws {
         try notifySpeechEnded(message: SayFinishedMessage(messageId: messageId, sessionId: sessionId))
     }
 

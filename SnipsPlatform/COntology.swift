@@ -34,3 +34,17 @@ extension CStringArray {
             .map { String(cString: $0) }
     }
 }
+
+extension String {
+    /// Helper to create a retained pointer to a C String. We have to free it later on.
+    func unsafeMutablePointerRetained() -> UnsafeMutablePointer<Int8>! {
+        return strdup(self)
+    }
+}
+
+extension UnsafePointer where Pointee == Int8 {
+    /// Helper to free retained C String from strdup / unsafeMutablePointerRetained()
+    func freeUnsafeMemory() {
+        free(UnsafeMutableRawPointer(mutating: UnsafeRawPointer(self)))
+    }
+}

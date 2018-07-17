@@ -295,26 +295,31 @@ public struct Slot {
 /// - notification: Notify the user about something via the tts.
 public enum SessionInitType {
     case action(text: String?, intentFilter: [String], canBeEnqueued: Bool)
-    case notification(text: String?)
+    case notification(text: String)
 
     func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
         switch self {
         case .action(let text, let intentFilter, let canBeEnqueued):
-            var arrayString = CStringArray(array: intentFilter)
-            try withUnsafePointer(to: &arrayString) {
-                var actionInit = CActionSessionInit(text: text, intent_filter: $0, can_be_enqueued: canBeEnqueued ? 1 : 0)
-                try withUnsafePointer(to: &actionInit) {
-                    var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: $0)
-                    try withUnsafePointer(to: &sessionInit) {
-                        try body($0)
-                    }
-                }
+            var arrayString: CStringArray?
+            var unsafeArrayString: UnsafePointer<CStringArray>?
+            if !intentFilter.isEmpty {
+                arrayString = CStringArray(array: intentFilter)
+                unsafeArrayString = withUnsafePointer(to: &arrayString!) { $0 }
+            } else {
+                unsafeArrayString = nil
             }
-            arrayString.destroy()
-
+            var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(), intent_filter: unsafeArrayString, can_be_enqueued: canBeEnqueued ? 1 : 0)
+            let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
+            var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
+            try body(withUnsafePointer(to: &sessionInit) { $0 })
+            if text != nil {
+                free(UnsafeMutableRawPointer(mutating: actionInit.text))
+            }
+            arrayString?.destroy()
         case .notification(let text):
-            var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_NOTIFICATION, value: text)
-            try withUnsafePointer(to: &sessionInit) { try body($0) }
+            var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_NOTIFICATION, value: text.unsafeMutablePointerRetained())
+            try body(withUnsafePointer(to: &sessionInit) { $0 })
+            free(UnsafeMutableRawPointer(mutating: sessionInit.value))
         }
     }
 }
@@ -327,7 +332,7 @@ public struct StartSessionMessage {
     public let customData: String?
     /// Site where the user started the interaction.
     public let siteId: String?
-
+    
     public init(initType: SessionInitType, customData: String? = nil, siteId: String? = nil) {
         self.initType = initType
         self.customData = customData
@@ -338,9 +343,15 @@ public struct StartSessionMessage {
         try self.initType.toUnsafeCMessage {
             var cMessage = CStartSessionMessage(
                 session_init: $0.pointee,
-                custom_data: self.customData,
-                site_id: self.siteId)
-            try withUnsafePointer(to: &cMessage) { try body($0) }
+                custom_data: customData?.unsafeMutablePointerRetained(),
+                site_id: siteId?.unsafeMutablePointerRetained())
+            try body(withUnsafePointer(to: &cMessage) { $0 })
+            if customData != nil {
+                cMessage.custom_data.freeUnsafeMemory()
+            }
+            if siteId != nil {
+                cMessage.site_id.freeUnsafeMemory()
+            }
         }
     }
 }
@@ -362,10 +373,12 @@ public struct ContinueSessionMessage {
 
     func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
         var arrayString = CStringArray(array: intentFilter)
-        try withUnsafePointer(to: &arrayString) {
-            var cMessage = CContinueSessionMessage(session_id: self.sessionId, text: self.text, intent_filter: UnsafeMutablePointer(mutating: $0))
-            try withUnsafePointer(to: &cMessage) { try body($0) }
-        }
+        
+        let unsafeArrayString = withUnsafePointer(to: &arrayString) { $0 }
+        var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text.unsafeMutablePointerRetained(), intent_filter: UnsafeMutablePointer(mutating: unsafeArrayString))
+        try body(withUnsafePointer(to: &cMessage) { $0 })
+        cMessage.session_id.freeUnsafeMemory()
+        cMessage.text.freeUnsafeMemory()
         arrayString.destroy()
     }
 }
@@ -383,8 +396,110 @@ public struct EndSessionMessage {
     }
 
     func toUnsafeCMessage(body: (UnsafePointer<CEndSessionMessage>) throws -> ()) rethrows {
-        var cMessage = CEndSessionMessage(session_id: self.sessionId, text: self.text)
-        try withUnsafePointer(to: &cMessage) { try body($0) }
+        var cMessage = CEndSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text?.unsafeMutablePointerRetained())
+        try body(withUnsafePointer(to: &cMessage) { $0 })
+        cMessage.session_id.freeUnsafeMemory()
+        if text != nil {
+            cMessage.text.freeUnsafeMemory()
+        }
+    }
+}
+
+/// Message sent when a session starts.
+public struct SessionStartedMessage {
+    /// The id of the session that was started.
+    public let sessionId: String
+    /// The custom data that was given at the session creation.
+    public let customData: String?
+    /// The site on which this session was started.
+    public let siteId: String
+    /// This optional field indicates this session is a reactivation of a previously ended session.
+    /// This is for example provided when the user continues talking to the platform without saying
+    /// the hotword again after a session was ended.
+    public let reactivatedFromSessionId: String?
+    
+    init(cSessionStartedMessage: CSessionStartedMessage) {
+        self.sessionId = String(cString: cSessionStartedMessage.session_id)
+        self.customData = String.fromCStringPtr(cString: cSessionStartedMessage.custom_data)
+        self.siteId = String(cString: cSessionStartedMessage.site_id)
+        self.reactivatedFromSessionId = String.fromCStringPtr(cString: cSessionStartedMessage.reactivated_from_session_id)
+    }
+}
+
+/// Message sent when a session continues.
+public struct SessionQueuedMessage {
+    /// The id of the session that was started.
+    public let sessionId: String
+    /// The custom data that was given at the session creation.
+    public let customData: String?
+    /// The site on which this session was started.
+    public let siteId: String
+    
+    init(cSessionsQueuedMessage: CSessionQueuedMessage) {
+        self.sessionId = String(cString: cSessionsQueuedMessage.session_id)
+        self.customData = String.fromCStringPtr(cString: cSessionsQueuedMessage.custom_data)
+        self.siteId = String(cString: cSessionsQueuedMessage.site_id)
+    }
+}
+
+/// Message sent when a session has ended.
+public struct SessionEndedMessage {
+    /// The id of the session that was started.
+    public let sessionId: String
+    /// The custom data that was given at the session creation.
+    public let customData: String?
+    /// The site on which this session was started.
+    public let siteId: String
+    /// How the session was ended.
+    public let sessionTermination: SessionTermination
+    
+    init(cSessionEndedMessage: CSessionEndedMessage) throws {
+        self.sessionId = String(cString: cSessionEndedMessage.session_id)
+        self.customData = String.fromCStringPtr(cString: cSessionEndedMessage.custom_data)
+        self.siteId = String(cString: cSessionEndedMessage.site_id)
+        self.sessionTermination = try SessionTermination(cSessionTermination: cSessionEndedMessage.termination)
+    }
+}
+
+/// Session termination sent when a session has ended containing the type of termination.
+public struct SessionTermination {
+    /// The type of termination.
+    public let terminationType: SessionTerminationType
+    /// In case of an error, there can be data provided for more details.
+    public let data: String?
+    
+    init(cSessionTermination: CSessionTermination) throws {
+        self.data = String.fromCStringPtr(cString: cSessionTermination.data)
+        self.terminationType = try SessionTerminationType(cValue: cSessionTermination.termination_type)
+    }
+}
+
+/// Session termination type
+///
+/// - nominal: The session ended as expected
+/// - siteUnavailable: Dialogue was deactivated on the site the session requested
+/// - abortedByUser: The user aborted the session
+/// - intentNotRecognized: The platform didn't understand what the user said.
+/// - timeout: No response was received from one of the components in a timely manner.
+/// - error: Generic error occured, there could be associated data with it.
+public enum SessionTerminationType {
+    case nominal
+    case siteUnavailable
+    case abortedByUser
+    case intentNotRecognized
+    case timeout
+    case error
+    
+    init(cValue: SNIPS_SESSION_TERMINATION_TYPE) throws {
+        switch cValue {
+        case SNIPS_SESSION_TERMINATION_TYPE_NOMINAL: self = .nominal
+        case SNIPS_SESSION_TERMINATION_TYPE_SITEUNAVAILABLE: self = .siteUnavailable
+        case SNIPS_SESSION_TERMINATION_TYPE_ABORTEDBYUSER: self = .abortedByUser
+        case SNIPS_SESSION_TERMINATION_TYPE_INTENTNOTRECOGNIZED: self = .intentNotRecognized
+        case SNIPS_SESSION_TERMINATION_TYPE_TIMEOUT: self = .timeout
+        case SNIPS_SESSION_TERMINATION_TYPE_ERROR: self = .error
+        default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
+        }
     }
 }
 
@@ -424,7 +539,13 @@ public struct SayFinishedMessage {
     }
 
     func toUnsafeCMessage(body: (UnsafePointer<CSayFinishedMessage>) throws -> ()) rethrows {
-        var cMessage = CSayFinishedMessage(message_id: self.messageId, session_id: self.sessionId)
-        try withUnsafePointer(to: &cMessage) { try body($0) }
+        var cMessage = CSayFinishedMessage(message_id: messageId?.unsafeMutablePointerRetained(), session_id: sessionId?.unsafeMutablePointerRetained())
+        try body(withUnsafePointer(to: &cMessage) { $0 })
+        if messageId != nil {
+            cMessage.message_id.freeUnsafeMemory()
+        }
+        if sessionId != nil {
+            cMessage.session_id.freeUnsafeMemory()
+        }
     }
 }

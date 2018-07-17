@@ -1,0 +1,343 @@
+{
+  "id" : "proj_5dQKVa4odNw",
+  "name" : "Smart_Kitchen_EN",
+  "intents" : [ {
+    "id" : "thermostatTurnOff",
+    "type" : "registry",
+    "version" : "0.0.14",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "temperature_device",
+      "id" : "slot_imported_HkqC_ZQZVdz",
+      "entityId" : "entity_NX56wQPwrmPv",
+      "missingQuestion" : "",
+      "required" : false
+    }, {
+      "name" : "house_room",
+      "id" : "slot_imported_SkFRObQZ4OG",
+      "entityId" : "entity_MGr6pKPp4e7b",
+      "missingQuestion" : "",
+      "required" : false
+    } ],
+    "name" : "thermostatTurnOff"
+  }, {
+    "id" : "thermostatShift",
+    "type" : "registry",
+    "version" : "0.0.34",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "temperature_device",
+      "id" : "slot_imported_BJDPlHZI-N_M",
+      "entityId" : "entity_NX56wQPwrmPv",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the device that is controlled"
+    }, {
+      "name" : "house_room",
+      "id" : "slot_imported_ry-veBWIWVuz",
+      "entityId" : "entity_MGr6pKPp4e7b",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the part of the house concerned - can also be a group such as \"house\" or \"all\""
+    }, {
+      "name" : "temperature",
+      "id" : "slot_imported_BJOvxS-U-N_f",
+      "entityId" : "snips/temperature",
+      "missingQuestion" : "H",
+      "required" : false,
+      "description" : "the shift in temperature ( ex: two degrees )"
+    }, {
+      "name" : "up_down",
+      "id" : "HJQwL-4OM",
+      "entityId" : "entity_Ad7vNqPNNgWg",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "specifies the direction of the temperature shift ( ex: \"increase\", \"down\", ...)"
+    } ],
+    "name" : "thermostatShift"
+  }, {
+    "id" : "thermostatSet",
+    "type" : "registry",
+    "version" : "0.0.12",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "temperature_device",
+      "id" : "slot_imported_rk2vXeeSbN_z",
+      "entityId" : "entity_NX56wQPwrmPv",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the device that is controlled"
+    }, {
+      "name" : "house_room",
+      "id" : "slot_imported_HkHd7lgr-NuM",
+      "entityId" : "entity_MGr6pKPp4e7b",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the room or group of rooms ( ex: \"bedroom\" or \"house\" )"
+    }, {
+      "name" : "temperature",
+      "id" : "slot_imported_SyIdQxxrbNuz",
+      "entityId" : "snips/temperature",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the absolute temperature that is targeted ( ex: twenty two degrees )"
+    } ],
+    "name" : "thermostatSet"
+  }, {
+    "id" : "lightsSet",
+    "type" : "registry",
+    "version" : "0.0.24",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "house_room",
+      "id" : "slot_imported_S1ewa1XX3uM",
+      "entityId" : "entity_MGX6zWEYaV1W",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the room name"
+    }, {
+      "name" : "intensity_number",
+      "id" : "slot_imported_HJTS6kQ72Of",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the brightness intensity "
+    }, {
+      "name" : "intensity_percent",
+      "id" : "slot_imported_HJjBa1mQh_M",
+      "entityId" : "snips/percentage",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the brightness intensity in percent"
+    } ],
+    "name" : "lightsSet"
+  }, {
+    "id" : "lightsTurnOff",
+    "type" : "registry",
+    "version" : "0.0.21",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "house_room",
+      "id" : "slot_imported_SyQ0gSnuM",
+      "entityId" : "entity_e5qbPmkwz2we",
+      "missingQuestion" : "",
+      "required" : false
+    } ],
+    "name" : "lightsTurnOff"
+  }, {
+    "id" : "lightsShift",
+    "type" : "registry",
+    "version" : "0.0.57",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "up_down",
+      "id" : "slot_imported_SkFmFqqmh_G",
+      "entityId" : "entity_rVwpPbdNB1bq",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the direction of the shift - either up or down"
+    }, {
+      "name" : "house_room",
+      "id" : "slot_imported_H15mF99QnuM",
+      "entityId" : "entity_MGX6zWEYaV1W",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the room name"
+    }, {
+      "name" : "intensity_number",
+      "id" : "rkkFBS3_f",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the relative shift in brightness intensity"
+    }, {
+      "name" : "intensity_percentage",
+      "id" : "Sy-WsrrnuM",
+      "entityId" : "snips/percentage",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the relative shift of brightness in percent"
+    } ],
+    "name" : "lightsShift"
+  }, {
+    "id" : "pour_EN_v1-1",
+    "type" : "registry",
+    "version" : "0.0.40",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "coffee",
+      "id" : "SJUsIp6xf",
+      "entityId" : "entity_lv8ZXK3N4Y1",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the type of coffee."
+    }, {
+      "name" : "extra",
+      "id" : "SkEmP66gM",
+      "entityId" : "entity_GEWByqd0Dp7",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "an option to go along the basic drink."
+    }, {
+      "name" : "number",
+      "id" : "BJy1YapeM",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "number of coffees."
+    }, {
+      "name" : "sugar",
+      "id" : "S11o-1wZG",
+      "entityId" : "entity_PmGOYANo2mG",
+      "missingQuestion" : "",
+      "required" : false
+    }, {
+      "name" : "sugar_number",
+      "id" : "B1OoWkvZG",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false
+    } ],
+    "name" : "pour_EN_v1-1"
+  }, {
+    "id" : "heat_EN_v1-1",
+    "type" : "registry",
+    "version" : "0.0.34",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "mode",
+      "id" : "S1t2KnAxz",
+      "entityId" : "entity_kEWYxlbeNOl",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the heating mode"
+    }, {
+      "name" : "unit",
+      "id" : "Sk9aKhAgG",
+      "entityId" : "entity_p1NEdkyPNrb",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the unit of intensity of heating"
+    }, {
+      "name" : "wattage",
+      "id" : "rkvk92Cez",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the intensity of heating"
+    }, {
+      "name" : "duration",
+      "id" : "Bk1ecnAxf",
+      "entityId" : "snips/duration",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the duration of heating"
+    } ],
+    "name" : "heat_EN_v1-1"
+  }, {
+    "id" : "stopMicrowave_EN_v1-0",
+    "type" : "registry",
+    "version" : "0.0.2",
+    "language" : "en",
+    "slots" : [ ],
+    "name" : "stopMicrowave_EN_v1-0"
+  }, {
+    "id" : "turnOffOven_EN_v1-0",
+    "type" : "registry",
+    "version" : "0.0.2",
+    "language" : "en",
+    "slots" : [ ],
+    "name" : "turnOffOven_EN_v1-0"
+  }, {
+    "id" : "cook_EN_v1-1",
+    "type" : "registry",
+    "version" : "0.0.47",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "mode",
+      "id" : "SknWD60xz",
+      "entityId" : "entity_N8aZz3b9wDD",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the cooking mode of the oven"
+    }, {
+      "name" : "duration",
+      "id" : "S1hIvpRgf",
+      "entityId" : "snips/duration",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "cooking duration"
+    }, {
+      "name" : "temperature",
+      "id" : "HkrPva0gG",
+      "entityId" : "snips/temperature",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "cooking temperature"
+    }, {
+      "name" : "dish",
+      "id" : "H14iwaAxG",
+      "entityId" : "entity_WWp1xzVKd0w",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "dish to cook in the oven"
+    } ],
+    "name" : "cook_EN_v1-1"
+  }, {
+    "id" : "washCustom_EN_v1-1",
+    "type" : "registry",
+    "version" : "0.0.39",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "spin_speed",
+      "id" : "slot_imported_Hk75uM-kWG",
+      "entityId" : "snips/number",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the spin of the spin cycle"
+    }, {
+      "name" : "cycle",
+      "id" : "slot_imported_ryIcdGW1ZM",
+      "entityId" : "entity_WznNAwzaDkl",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the name of the wash cycle"
+    }, {
+      "name" : "temperature",
+      "id" : "slot_imported_B1z5dMb1WM",
+      "entityId" : "snips/temperature",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "the temperature of the wash cycle"
+    } ],
+    "name" : "washCustom_EN_v1-1"
+  }, {
+    "id" : "startWash_EN_v1-1",
+    "type" : "registry",
+    "version" : "0.0.8",
+    "language" : "en",
+    "slots" : [ ],
+    "name" : "startWash_EN_v1-1"
+  }, {
+    "id" : "stopWash_EN_v1-0",
+    "type" : "registry",
+    "version" : "0.0.2",
+    "language" : "en",
+    "slots" : [ ],
+    "name" : "stopWash_EN_v1-0"
+  } ],
+  "createdAt" : "2017-11-30T17:54:19.520Z",
+  "language" : "en",
+  "version" : {
+    "nluModel" : "0.15.0"
+  },
+  "platform" : {
+    "type" : "raspberrypi"
+  },
+  "asr" : {
+    "type" : "snips"
+  },
+  "analyticsEnabled" : true,
+  "heartbeatEnabled" : true,
+  "hotword" : "hey_snips"
+}

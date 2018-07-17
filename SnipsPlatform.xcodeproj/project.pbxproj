@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
+		006E012E20F8A7E200923180 /* Cook this chicken for 20min.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012D20F8A7E200923180 /* Cook this chicken for 20min.m4a */; };
+		006E013020F8A8DA00923180 /* kitchen_assistant_en in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* kitchen_assistant_en */; };
+		00AE68E820F760250013AA59 /* hey-snips.wav in Resources */ = {isa = PBXBuildFile; fileRef = 00AE68E720F760250013AA59 /* hey-snips.wav */; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F81FBDCD09005AAD1D /* libresolv.tbd */; };
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
@@ -46,6 +50,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
+		006E012D20F8A7E200923180 /* Cook this chicken for 20min.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Cook this chicken for 20min.m4a"; sourceTree = "<group>"; };
+		006E012F20F8A8DA00923180 /* kitchen_assistant_en */ = {isa = PBXFileReference; lastKnownFileType = folder; path = kitchen_assistant_en; sourceTree = "<group>"; };
+		006E014B20FCE0F000923180 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		006E014D20FCE0F900923180 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		00AE68E720F760250013AA59 /* hey-snips.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "hey-snips.wav"; sourceTree = "<group>"; };
 		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
@@ -89,7 +99,9 @@
 		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				006E014D20FCE0F900923180 /* libz.tbd */,
 				F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */,
+				006E014B20FCE0F000923180 /* Accelerate.framework */,
 				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
 				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,
@@ -133,6 +145,10 @@
 		F7CF58A21FBDA00200027852 /* SnipsPlatformTests */ = {
 			isa = PBXGroup;
 			children = (
+				006E012D20F8A7E200923180 /* Cook this chicken for 20min.m4a */,
+				006E012520F7B7CD00923180 /* hey snips.m4a */,
+				00AE68E720F760250013AA59 /* hey-snips.wav */,
+				006E012F20F8A8DA00923180 /* kitchen_assistant_en */,
 				F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */,
 				F7CF58A51FBDA00200027852 /* Info.plist */,
 			);
@@ -242,6 +258,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				006E013020F8A8DA00923180 /* kitchen_assistant_en in Resources */,
+				006E012620F7B7CE00923180 /* hey snips.m4a in Resources */,
+				006E012E20F8A7E200923180 /* Cook this chicken for 20min.m4a in Resources */,
+				00AE68E820F760250013AA59 /* hey-snips.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,7 +495,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatformTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -489,7 +509,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatformTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
