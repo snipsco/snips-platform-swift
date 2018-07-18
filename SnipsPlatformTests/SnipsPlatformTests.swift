@@ -64,10 +64,8 @@ class SnipsPlatformTests: XCTestCase {
         let timeSlotExpectation = expectation(description: "Time slot")
         let sessionEndedExpectation = expectation(description: "Session ended")
         
-        onListeningStateChanged = { [weak self] state in
-            if state {
-                try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
-            }
+        onSessionStartedHandler = { [weak self] _ in
+            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onIntentDetected = { [weak self] intent in
@@ -141,6 +139,28 @@ class SnipsPlatformTests: XCTestCase {
         
         try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)))
         waitForExpectations(timeout: 10)
+    }
+    
+    func test_listening_state_changed() {
+        let listeningStateChangedOn = expectation(description: "Listening state turned on")
+        let listeningStateChangedOff = expectation(description: "Listening state turned off")
+        
+        onListeningStateChanged = { state in
+            if state {
+                listeningStateChangedOn.fulfill()
+            } else {
+                listeningStateChangedOff.fulfill()
+            }
+        }
+        
+        onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
+            }
+        }
+        
+        try! snips?.startSession(intentFilter: [], canBeEnqueued: false)
+        wait(for: [listeningStateChangedOn, listeningStateChangedOff], timeout: 5)
     }
     
     func test_session_notification() {
@@ -234,7 +254,6 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         onSessionEndedHandler = { [weak self] sessionEndedMessage in
-            print("SESSION ENDED")
             XCTAssert(sessionEndedMessage.sessionTermination.terminationType == .nominal)
             
             if !hasSentContinueSessionMessage {
