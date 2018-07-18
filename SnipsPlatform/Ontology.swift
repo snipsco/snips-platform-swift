@@ -302,7 +302,6 @@ public enum SessionInitType {
         case .action(let text, let intentFilter, let canBeEnqueued):
             var arrayString: CStringArray? = intentFilter.isEmpty ? nil : CStringArray(array: intentFilter)
             let unsafeArrayString: UnsafePointer<CStringArray>? = intentFilter.isEmpty ? nil : withUnsafePointer(to: &arrayString!) { $0 }
-            
             var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(), intent_filter: unsafeArrayString, can_be_enqueued: canBeEnqueued ? 1 : 0)
             let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
@@ -369,7 +368,6 @@ public struct ContinueSessionMessage {
     func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
         var arrayString: CStringArray? = intentFilter.isEmpty ? nil : CStringArray(array: intentFilter)
         let unsafeArrayString: UnsafePointer<CStringArray>? = intentFilter.isEmpty ? nil : withUnsafePointer(to: &arrayString!) { $0 }
-        
         var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text.unsafeMutablePointerRetained(), intent_filter: UnsafeMutablePointer(mutating: unsafeArrayString))
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
