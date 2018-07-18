@@ -276,7 +276,7 @@ public class SnipsPlatform {
     ///   - intentFilter: A list of intents names to restrict the NLU resolution on the first query.
     ///   - canBeEnqueued: if true, the session will start when there is no pending one on this siteId, if false, the session is just dropped if there is running one.
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
-    ///   - siteId
+    ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` is something went wrong.
     public func startSession(text: String? = nil, intentFilter: [String], canBeEnqueued: Bool, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
@@ -291,6 +291,7 @@ public class SnipsPlatform {
     /// - Parameters:
     ///   - text: Text the TTS should say.
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
+    ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func startNotification(text: String, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
@@ -367,7 +368,6 @@ public class SnipsPlatform {
     /// - Parameters:
     ///   - messageId: The id of the said message.
     ///   - sessionId: The session identifier of the message.
-    ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func notifySpeechEnded(messageId: String? = nil, sessionId: String? = nil) throws {
         try notifySpeechEnded(message: SayFinishedMessage(messageId: messageId, sessionId: sessionId))

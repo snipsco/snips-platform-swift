@@ -26,10 +26,15 @@ class SnipsPlatformTests: XCTestCase {
     
     var onIntentDetected: ((IntentMessage) -> ())?
     var onHotwordDetected: (() -> ())?
+    var speechHandler: ((SayMessage) -> ())?
     var onSessionStartedHandler: ((SessionStartedMessage) -> ())?
     var onSessionQueuedHandler: ((SessionQueuedMessage) -> ())?
     var onSessionEndedHandler: ((SessionEndedMessage) -> ())?
     var onListeningStateChanged: ((Bool) -> ())?
+    
+    let hotwordAudioFile = "hey snips"
+    let weatherAudioFile = "What will be the weather in Madagascar in two days"
+    
     
     override func setUp() {
         super.setUp()
@@ -50,19 +55,18 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { sessionEnded in
             sessionEndedExpectation.fulfill()
         }
-        try! playAudio(forResource: "hey snips", withExtension: "m4a")
+        try! playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
         wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 10)
     }
     
     func test_intent() {
-        let ovenModeSlotExpectation = expectation(description: "Cook mode slot")
-        let dishSlotExpectation = expectation(description: "Dish name slot")
-        let durationSlotExpectation = expectation(description: "Duration slot")
+        let countrySlotExpectation = expectation(description: "City slot")
+        let timeSlotExpectation = expectation(description: "Time slot")
         let sessionEndedExpectation = expectation(description: "Session ended")
-               
+        
         onListeningStateChanged = { [weak self] state in
             if state {
-                try! self?.playAudio(forResource: "Cook this chicken for 20min", withExtension: "m4a")
+                try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
             }
         }
         
@@ -72,27 +76,27 @@ class SnipsPlatformTests: XCTestCase {
                 return
             }
             
-            XCTAssert(intent.input == "cook this chicken for twenty minutes")
-            XCTAssert(intentClassifierResult.intentName.contains("cook"))
-            XCTAssert(intent.slots.count == 3)
+            XCTAssert(intent.input == "what will be the weather in madagascar in two days")
+            XCTAssert(intentClassifierResult.intentName == "searchWeatherForecast")
+            XCTAssert(intent.slots.count == 2)
             
             intent.slots.forEach { slot in
-                if slot.entity.contains("oven_mode") {
-                    if case .custom(let slotValue) = slot.value {
-                        XCTAssert(slotValue == "Cook")
-                        ovenModeSlotExpectation.fulfill()
+                if slot.slotName.contains("forecast_country") {
+                    if case .custom(let country) = slot.value {
+                        XCTAssert(country == "Madagascar")
+                        countrySlotExpectation.fulfill()
                     }
                 }
-                else if slot.entity.contains("dish") {
-                    if case .custom(let slotValue) = slot.value {
-                        XCTAssert(slotValue == "chicken")
-                        dishSlotExpectation.fulfill()
-                    }
-                }
-                else if slot.entity.contains("snips/duration") {
-                    if case .duration(let slotValue) = slot.value {
-                        XCTAssert(slotValue.minutes == 20)
-                        durationSlotExpectation.fulfill()
+                else if slot.slotName.contains("forecast_start_datetime") {
+                    if case .instantTime(let instantTime) = slot.value {
+                        XCTAssert(instantTime.precision == .exact)
+                        XCTAssert(instantTime.grain == .day)
+                        let dateInTwoDays = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date()))
+                        let formatter = ISO8601DateFormatter()
+                        formatter.formatOptions = [.withInternetDateTime, .withTimeZone, .withDashSeparatorInDate, .withSpaceBetweenDateAndTime]
+                        let instantTimeDate = formatter.date(from: instantTime.value)
+                        XCTAssert(Calendar.current.compare(dateInTwoDays!, to: instantTimeDate!, toGranularity: .day) == .orderedSame)
+                        timeSlotExpectation.fulfill()
                     }
                 }
             }
@@ -104,14 +108,14 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: [], canBeEnqueued: true)
-        wait(for: [ovenModeSlotExpectation, dishSlotExpectation, durationSlotExpectation, sessionEndedExpectation], timeout: 30)
+        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 15)
     }
     
     func test_emtpy_intent_filter_intent_not_recognized() {
         let intentNotRecognizedExpectation = expectation(description: "Intent not recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            try! self?.playAudio(forResource: "Cook this chicken for 20min", withExtension: "m4a")
+            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onSessionEndedHandler = { sessionEndedMessage in
@@ -127,7 +131,7 @@ class SnipsPlatformTests: XCTestCase {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            try! self?.playAudio(forResource: "Cook this chicken for 20min", withExtension: "m4a")
+            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onIntentDetected = { [weak self] intent in
@@ -135,22 +139,38 @@ class SnipsPlatformTests: XCTestCase {
             intentRecognizedExpectation.fulfill()
         }
         
-        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["cook_EN_v1-1"], canBeEnqueued: false)))
+        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)))
         waitForExpectations(timeout: 10)
     }
     
     func test_session_notification() {
         let notificationSentExpectation = expectation(description: "Notification sent")
         let notificationStartMessage = StartSessionMessage(initType: .notification(text: "Notification text"), customData: "Notification custom data", siteId: "iOS notification")
+        
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssert(sessionStartedMessage.siteId == notificationStartMessage.siteId)
             XCTAssert(sessionStartedMessage.customData == notificationStartMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
+        
         onSessionEndedHandler = { _ in
             notificationSentExpectation.fulfill()
         }
         
+        try! snips?.startSession(message: notificationStartMessage)
+        waitForExpectations(timeout: 10)
+    }
+    
+    func test_session_notification_nil() {
+        let notificationSentExpectation = expectation(description: "Notification sent")
+        let notificationStartMessage = StartSessionMessage(initType: .notification(text: "Notification text"), customData: nil, siteId: nil)
+        
+        onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
+        }
+        onSessionEndedHandler = { _ in
+            notificationSentExpectation.fulfill()
+        }
         try! snips?.startSession(message: notificationStartMessage)
         waitForExpectations(timeout: 10)
     }
@@ -170,42 +190,69 @@ class SnipsPlatformTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
     
+    func test_session_action_nil() {
+        let actionSentExpectation = expectation(description: "Action sent")
+        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: [], canBeEnqueued: false), customData: nil, siteId: nil)
+        onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
+            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
+            try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
+        }
+        onSessionEndedHandler = { _ in
+            actionSentExpectation.fulfill()
+        }
+        try! snips?.startSession(message: actionStartSessionMessage)
+        waitForExpectations(timeout: 10)
+    }
+    
+    func test_speech_handler() {
+        let speechExpectation = expectation(description: "Testing speech")
+        let messageToSpeak = "Testing speech"
+        speechHandler = { [weak self] sayMessage in
+            XCTAssert(sayMessage.text == messageToSpeak)
+            guard let sessionId = sayMessage.sessionId else {
+                XCTFail("Message should have a session Id since it was sent from a notification")
+                return
+            }
+            try! self?.snips?.notifySpeechEnded(messageId: sayMessage.messageId, sessionId: sessionId)
+            try! self?.snips?.endSession(sessionId: sessionId)
+            speechExpectation.fulfill()
+        }
+        
+        try! snips?.startNotification(text: messageToSpeak)
+        waitForExpectations(timeout: 5)
+    }
+    
     func test_dialog_scenario() {
         let startSessionMessage = StartSessionMessage(initType: .notification(text: "Notification"), customData: "foobar", siteId: "iOS")
         var continueSessionMessage: ContinueSessionMessage?
-        var endSessionMessage: EndSessionMessage?
         var hasSentContinueSessionMessage = false
         let sessionEndedExpectation = expectation(description: "Session ended")
         
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssert(sessionStartedMessage.siteId == startSessionMessage.siteId!)
-            XCTAssert(sessionStartedMessage.customData! == startSessionMessage.customData!)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                continueSessionMessage = ContinueSessionMessage(sessionId: sessionStartedMessage.sessionId, text: "Continue session", intentFilter: [])
-                hasSentContinueSessionMessage = true
-                try! self?.snips?.continueSession(message: continueSessionMessage!)
-            }
+            try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         
-        onSessionQueuedHandler = { [weak self] sessionQueuedMessage in
-            if hasSentContinueSessionMessage {
-                XCTAssert(sessionQueuedMessage.customData == continueSessionMessage?.text)
-            }
-            endSessionMessage = EndSessionMessage(sessionId: sessionQueuedMessage.sessionId, text: "End session")
-            try! self?.snips?.endSession(message: endSessionMessage!)
-        }
-        
-        onSessionEndedHandler = { sessionEndedMessage in
-            XCTAssert(sessionEndedMessage.customData == startSessionMessage.customData!)
+        onSessionEndedHandler = { [weak self] sessionEndedMessage in
+            print("SESSION ENDED")
             XCTAssert(sessionEndedMessage.sessionTermination.terminationType == .nominal)
-            sessionEndedExpectation.fulfill()
+            
+            if !hasSentContinueSessionMessage {
+                hasSentContinueSessionMessage = true
+                continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: [])
+                try! self?.snips?.continueSession(message: continueSessionMessage!)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    try! self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
+                }
+            }
+            else {
+                sessionEndedExpectation.fulfill()
+            }
         }
         
         try! snips?.startSession(message: startSessionMessage)
-        wait(for: [sessionEndedExpectation], timeout: 10)
+        waitForExpectations(timeout: 10)
     }
-    
     
     override func tearDown() {
         currentAudioPlayer?.stop()
@@ -218,7 +265,7 @@ class SnipsPlatformTests: XCTestCase {
 extension SnipsPlatformTests {
     
     func setupSnipsPlatform() throws {
-        let url = Bundle(for: type(of: self)).url(forResource: "kitchen_assistant_en", withExtension: nil)!
+        let url = Bundle(for: type(of: self)).url(forResource: "weather_assistant", withExtension: nil)!
         snips = try! SnipsPlatform(assistantURL: url, enableLogs: true)
         
         snips?.onIntentDetected = { [weak self] intent in
@@ -226,9 +273,6 @@ extension SnipsPlatformTests {
         }
         snips?.onHotwordDetected = { [weak self] in
             self?.onHotwordDetected?()
-        }
-        snips?.snipsWatchHandler = { log in
-//            NSLog(log)
         }
         snips?.onSessionStartedHandler = { [weak self] sessionStartedMessage in
             self?.onSessionStartedHandler?(sessionStartedMessage)
@@ -241,6 +285,9 @@ extension SnipsPlatformTests {
         }
         snips?.onListeningStateChanged = { [weak self] state in
             self?.onListeningStateChanged?(state)
+        }
+        snips?.speechHandler = { [weak self] sayMessage in
+            self?.speechHandler?(sayMessage)
         }
         
         try! snips?.start()
@@ -255,7 +302,8 @@ extension SnipsPlatformTests {
         try audioEngine.start()
     }
     
-    func playAudio(forResource: String, withExtension: String?, completionHandler: (() -> ())? = nil) throws {
+    func playAudio(forResource: String?, withExtension: String?, completionHandler: (() -> ())? = nil) throws {
+        guard let forResource = forResource else { throw NSError(domain: "Empty resource", code: 101, userInfo: nil) }
         let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
         let audioFile = try AVAudioFile(forReading: audioURL)
         let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: UInt32(audioFile.length))!
