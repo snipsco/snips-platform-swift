@@ -294,14 +294,21 @@ public struct Slot {
 /// - action: When an intent is expected to be parsed.
 /// - notification: Notify the user about something via the tts.
 public enum SessionInitType {
-    case action(text: String?, intentFilter: [String], canBeEnqueued: Bool)
+    case action(text: String?, intentFilter: [String]?, canBeEnqueued: Bool)
     case notification(text: String)
 
     func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
         switch self {
         case .action(let text, let intentFilter, let canBeEnqueued):
-            var arrayString: CStringArray? = intentFilter.isEmpty ? nil : CStringArray(array: intentFilter)
-            let unsafeArrayString: UnsafePointer<CStringArray>? = intentFilter.isEmpty ? nil : withUnsafePointer(to: &arrayString!) { $0 }
+            var arrayString: CStringArray?
+            let unsafeArrayString: UnsafePointer<CStringArray>?
+            if let intentFilter = intentFilter {
+                arrayString = CStringArray(array: intentFilter)
+                unsafeArrayString = withUnsafePointer(to: &arrayString!) { $0 }
+            } else {
+                arrayString = nil
+                unsafeArrayString = nil
+            }
             var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(), intent_filter: unsafeArrayString, can_be_enqueued: canBeEnqueued ? 1 : 0)
             let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
@@ -356,19 +363,28 @@ public struct ContinueSessionMessage {
     public let sessionId: String
     /// The text the TTS should say to start this additional request of the session.
     public let text: String
-    /// A list of intents names to restrict the NLU resolution on the answer of this query.
-    public let intentFilter: [String]
+    /// A list of intents names to restrict the NLU resolution on the answer of this query. Filter is inclusive.
+    /// Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
+    public let intentFilter: [String]?
 
-    public init(sessionId: String, text: String, intentFilter: [String] = []) {
+    public init(sessionId: String, text: String, intentFilter: [String]? = nil) {
         self.sessionId = sessionId
         self.text = text
         self.intentFilter = intentFilter
     }
 
     func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
-        var arrayString: CStringArray? = intentFilter.isEmpty ? nil : CStringArray(array: intentFilter)
-        let unsafeArrayString: UnsafePointer<CStringArray>? = intentFilter.isEmpty ? nil : withUnsafePointer(to: &arrayString!) { $0 }
-        var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text.unsafeMutablePointerRetained(), intent_filter: UnsafeMutablePointer(mutating: unsafeArrayString))
+        var arrayString: CStringArray?
+        let unsafeMutableArrayString: UnsafeMutablePointer<CStringArray>?
+        if let intentFilter = intentFilter {
+            arrayString = CStringArray(array: intentFilter)
+            let unsafeArrayString = withUnsafePointer(to: &arrayString!) { $0 }
+            unsafeMutableArrayString = UnsafeMutablePointer(mutating: unsafeArrayString)
+        } else {
+            arrayString = nil
+            unsafeMutableArrayString = nil
+        }
+        var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text.unsafeMutablePointerRetained(), intent_filter: unsafeMutableArrayString)
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
         cMessage.text.freeUnsafeMemory()

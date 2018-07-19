@@ -278,7 +278,7 @@ public class SnipsPlatform {
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
     ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` is something went wrong.
-    public func startSession(text: String? = nil, intentFilter: [String], canBeEnqueued: Bool, customData: String? = nil, siteId: String? = nil) throws {
+    public func startSession(text: String? = nil, intentFilter: [String]? = nil, canBeEnqueued: Bool, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
             message: StartSessionMessage(
                 initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued),

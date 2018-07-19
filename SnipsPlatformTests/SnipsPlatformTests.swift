@@ -105,7 +105,7 @@ class SnipsPlatformTests: XCTestCase {
             sessionEndedExpectation.fulfill()
         }
         
-        try! snips?.startSession(intentFilter: [], canBeEnqueued: true)
+        try! snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 15)
     }
     
@@ -159,7 +159,7 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         
-        try! snips?.startSession(intentFilter: [], canBeEnqueued: false)
+        try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
         wait(for: [listeningStateChangedOn, listeningStateChangedOff], timeout: 5)
     }
     
@@ -197,7 +197,7 @@ class SnipsPlatformTests: XCTestCase {
     
     func test_session_action() {
         let actionSentExpectation = expectation(description: "Action sent")
-        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: [], canBeEnqueued: false), customData: "Action Custom data", siteId: "iOS action")
+        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false), customData: "Action Custom data", siteId: "iOS action")
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
@@ -212,7 +212,7 @@ class SnipsPlatformTests: XCTestCase {
     
     func test_session_action_nil() {
         let actionSentExpectation = expectation(description: "Action sent")
-        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: [], canBeEnqueued: false), customData: nil, siteId: nil)
+        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false), customData: nil, siteId: nil)
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
@@ -258,7 +258,7 @@ class SnipsPlatformTests: XCTestCase {
             
             if !hasSentContinueSessionMessage {
                 hasSentContinueSessionMessage = true
-                continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: [])
+                continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: nil)
                 try! self?.snips?.continueSession(message: continueSessionMessage!)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     try! self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
