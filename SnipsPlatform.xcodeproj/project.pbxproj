@@ -52,8 +52,6 @@
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* weather_assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = weather_assistant; sourceTree = "<group>"; };
-		006E014B20FCE0F000923180 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
-		006E014D20FCE0F900923180 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
@@ -97,9 +95,7 @@
 		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				006E014D20FCE0F900923180 /* libz.tbd */,
 				F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */,
-				006E014B20FCE0F000923180 /* Accelerate.framework */,
 				F76E41F4205C0C8500E6067E /* libbz2.tbd */,
 				F7FF0FAD1FBF519A00595F07 /* libc++.tbd */,
 				F73956F81FBDCD09005AAD1D /* libresolv.tbd */,

@@ -313,9 +313,7 @@ public enum SessionInitType {
             let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
             try body(withUnsafePointer(to: &sessionInit) { $0 })
-            if text != nil {
-                free(UnsafeMutableRawPointer(mutating: actionInit.text))
-            }
+            actionInit.text?.freeUnsafeMemory()
             arrayString?.destroy()
         case .notification(let text):
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_NOTIFICATION, value: text.unsafeMutablePointerRetained())
@@ -347,12 +345,8 @@ public struct StartSessionMessage {
                 custom_data: customData?.unsafeMutablePointerRetained(),
                 site_id: siteId?.unsafeMutablePointerRetained())
             try body(withUnsafePointer(to: &cMessage) { $0 })
-            if customData != nil {
-                cMessage.custom_data.freeUnsafeMemory()
-            }
-            if siteId != nil {
-                cMessage.site_id.freeUnsafeMemory()
-            }
+            cMessage.custom_data?.freeUnsafeMemory()
+            cMessage.site_id?.freeUnsafeMemory()
         }
     }
 }
@@ -408,9 +402,7 @@ public struct EndSessionMessage {
         var cMessage = CEndSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text?.unsafeMutablePointerRetained())
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
-        if text != nil {
-            cMessage.text.freeUnsafeMemory()
-        }
+        cMessage.text?.freeUnsafeMemory()
     }
 }
 
@@ -550,11 +542,7 @@ public struct SayFinishedMessage {
     func toUnsafeCMessage(body: (UnsafePointer<CSayFinishedMessage>) throws -> ()) rethrows {
         var cMessage = CSayFinishedMessage(message_id: messageId?.unsafeMutablePointerRetained(), session_id: sessionId?.unsafeMutablePointerRetained())
         try body(withUnsafePointer(to: &cMessage) { $0 })
-        if messageId != nil {
-            cMessage.message_id.freeUnsafeMemory()
-        }
-        if sessionId != nil {
-            cMessage.session_id.freeUnsafeMemory()
-        }
+        cMessage.message_id?.freeUnsafeMemory()
+        cMessage.session_id?.freeUnsafeMemory()
     }
 }

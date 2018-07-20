@@ -320,7 +320,7 @@ public class SnipsPlatform {
     ///   - text: The text the TTS should say to start this additional request of the session.
     ///   - intentFilter: A list of intents names to restrict the NLU resolution on the answer of this query.
     /// - Throws: A `SnipsPlatformError` if something went wrong.
-    public func continueSession(sessionId: String, text: String, intentFilter: [String]) throws {
+    public func continueSession(sessionId: String, text: String, intentFilter: [String]?) throws {
         try continueSession(
             message: ContinueSessionMessage(
                 sessionId: sessionId,
