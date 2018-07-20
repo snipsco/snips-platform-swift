@@ -284,7 +284,7 @@ class SnipsPlatformTests: XCTestCase {
 extension SnipsPlatformTests {
     
     func setupSnipsPlatform() throws {
-        let url = Bundle(for: type(of: self)).url(forResource: "weather_assistant", withExtension: nil)!
+        let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
         snips = try! SnipsPlatform(assistantURL: url, enableLogs: true)
         
         snips?.onIntentDetected = { [weak self] intent in

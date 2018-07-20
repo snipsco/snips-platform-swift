@@ -185,6 +185,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7CF58AC1FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatformTests" */;
 			buildPhases = (
+				0091DCE421021A40008201D9 /* Download weather assistant */,
 				F7CF589A1FBDA00200027852 /* Sources */,
 				F7CF589B1FBDA00200027852 /* Frameworks */,
 				F7CF589C1FBDA00200027852 /* Resources */,
@@ -260,6 +261,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		0091DCE421021A40008201D9 /* Download weather assistant */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Download weather assistant";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_demo_assistant.sh $PROJECT_DIR/SnipsPlatformTests/";
+		};
 		F7CF58B11FBDA5DF00027852 /* Download Core */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
