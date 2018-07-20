@@ -39,6 +39,6 @@ Pod::Spec.new do |s|
   }
 
   s.frameworks = 'Accelerate'
-  s.libraries = 'c++', 'bz2', 'resolv', 'iconv'
+  s.libraries = 'c++'
 
 end
