@@ -273,12 +273,12 @@ public class SnipsPlatform {
     ///
     /// - Parameters:
     ///   - text: Text that the TTS should say at the beginning of the session.
-    ///   - intentFilter: A list of intents names to restrict the NLU resolution on the first query.
-    ///   - canBeEnqueued: if true, the session will start when there is no pending one on this siteId, if false, the session is just dropped if there is running one.
+    ///   - intentFilter: A list of intents names to restrict the NLU resolution on the first query. Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
+    ///   - canBeEnqueued: if true, the session will start when there is no pending one on this siteId, if false, the session is just dropped if there is running one. Default to true
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
     ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` is something went wrong.
-    public func startSession(text: String? = nil, intentFilter: [String]? = nil, canBeEnqueued: Bool, customData: String? = nil, siteId: String? = nil) throws {
+    public func startSession(text: String? = nil, intentFilter: [String]? = nil, canBeEnqueued: Bool = true, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
             message: StartSessionMessage(
                 initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued),
@@ -318,7 +318,7 @@ public class SnipsPlatform {
     /// - Parameters:
     ///   - sessionId: Session identifier to continue.
     ///   - text: The text the TTS should say to start this additional request of the session.
-    ///   - intentFilter: A list of intents names to restrict the NLU resolution on the answer of this query.
+    ///   - intentFilter: A list of intents names to restrict the NLU resolution on the answer of this query. Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     public func continueSession(sessionId: String, text: String, intentFilter: [String]?) throws {
         try continueSession(

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */; };
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
-		006E013020F8A8DA00923180 /* weather_assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* weather_assistant */; };
+		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F73956F91FBDCD09005AAD1D /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F73956F81FBDCD09005AAD1D /* libresolv.tbd */; };
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
@@ -51,7 +51,7 @@
 /* Begin PBXFileReference section */
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
-		006E012F20F8A8DA00923180 /* weather_assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = weather_assistant; sourceTree = "<group>"; };
+		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
 		F73956F81FBDCD09005AAD1D /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
@@ -141,7 +141,7 @@
 			children = (
 				0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */,
 				006E012520F7B7CD00923180 /* hey snips.m4a */,
-				006E012F20F8A8DA00923180 /* weather_assistant */,
+				006E012F20F8A8DA00923180 /* assistant */,
 				F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */,
 				F7CF58A51FBDA00200027852 /* Info.plist */,
 			);
@@ -251,7 +251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				006E013020F8A8DA00923180 /* weather_assistant in Resources */,
+				006E013020F8A8DA00923180 /* assistant in Resources */,
 				006E012620F7B7CE00923180 /* hey snips.m4a in Resources */,
 				0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */,
 			);

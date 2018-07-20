@@ -34,10 +34,3 @@ extension CStringArray {
             .map { String(cString: $0) }
     }
 }
-
-extension UnsafePointer where Pointee == Int8 {
-    /// Helper to free retained C String from strdup / unsafeMutablePointerRetained()
-    func freeUnsafeMemory() {
-        free(UnsafeMutableRawPointer(mutating: UnsafeRawPointer(self)))
-    }
-}

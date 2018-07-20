@@ -20,5 +20,12 @@ extension String {
     func unsafeMutablePointerRetained() -> UnsafeMutablePointer<Int8>! {
         return strdup(self)
     }
-
 }
+
+extension UnsafePointer where Pointee == Int8 {
+    /// Helper to free retained C String from strdup / unsafeMutablePointerRetained()
+    func freeUnsafeMemory() {
+        free(UnsafeMutableRawPointer(mutating: UnsafeRawPointer(self)))
+    }
+}
+
