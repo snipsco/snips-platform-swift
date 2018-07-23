@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode9.3
+osx_image: xcode9.4
 branches:
   only:
     - master
@@ -12,7 +12,7 @@ env:
   - IOS_FRAMEWORK_SCHEME=SnipsPlatform
   - EXAMPLE_SCHEME=SnipsPlatformDemo
   matrix:
-    - DESTINATION="OS=11.2,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="YES"  BUILD_EXAMPLE="YES"  POD_LINT="YES"
+    - DESTINATION="OS=11.4,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="YES"  BUILD_EXAMPLE="YES"  POD_LINT="YES"
     - DESTINATION="generic/platform=iOS"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="NO"   BUILD_EXAMPLE="YES"  POD_LINT="NO"
 
 before_install:
