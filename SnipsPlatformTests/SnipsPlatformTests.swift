@@ -35,7 +35,6 @@ class SnipsPlatformTests: XCTestCase {
     let hotwordAudioFile = "hey snips"
     let weatherAudioFile = "What will be the weather in Madagascar in two days"
     
-    
     override func setUp() {
         super.setUp()
         try! setupSnipsPlatform()
@@ -125,7 +124,7 @@ class SnipsPlatformTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
     
-    func test_itent_filter() {
+    func test_intent_filter() {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
         
         onSessionStartedHandler = { [weak self] _ in
