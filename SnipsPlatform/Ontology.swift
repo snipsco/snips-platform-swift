@@ -560,3 +560,61 @@ public struct SayFinishedMessage {
         cMessage.session_id?.freeUnsafeMemory()
     }
 }
+
+public enum SnipsInjectionKind {
+    case add
+    
+    init(cValue: SNIPS_INJECTION_KIND) throws {
+        switch cValue {
+        case SNIPS_INJECTION_KIND_ADD: self = .add
+        default: throw SnipsPlatformError(message: "Internal error: SnipsInjectionKind")
+        }
+    }
+    
+    func toUnsafeCSnipsInjectionKind() -> SNIPS_INJECTION_KIND {
+        switch self {
+        case .add: return SNIPS_INJECTION_KIND_ADD
+        }
+    }
+}
+
+public struct InjectionRequestOperation {
+    public let values: [String: [String]]
+    public let kind: SnipsInjectionKind
+    
+    func toUnsafeCInjectionRequestOperation(body: (UnsafePointer<CInjectionRequestOperation>) throws -> ()) rethrows {
+//        var cMapStringToStringArray = try? CMapStringToStringArray(array: values)
+//        do {
+//            cMapStringToStringArray = try CMapStringToStringArray(array: values)
+//        } catch let error {
+//            try body(throw SnipsPlatformError(message: "Invalid array passed in InjectionRequestOperation. Error: \(error.localizedDescription)"))
+//        }
+//        let unsafeMap = withUnsafePointer(to: &cMapStringToStringArray) { $0 }
+//        var cInjectionRequestOperation = CInjectionRequestOperation(values: unsafeMap!, kind: kind.toUnsafeCSnipsInjectionKind())
+//        try body(withUnsafePointer(to: &cInjectionRequestOperation) { $0 })
+        
+    }
+}
+
+public struct InjectionRequestOperations {
+    public let operations: [InjectionRequestOperation]
+    public let count: Int
+    
+    public init(operations: [InjectionRequestOperation]) {
+        self.operations = operations
+        self.count = operations.count
+    }
+    
+    func toUnsafeCInjectionRequestOperations(body: (UnsafePointer<CInjectionRequestOperations>) throws -> ()) rethrows {
+        
+    }
+}
+
+public struct InjectionRequestMessage {
+    public let operations: [InjectionRequestOperations]
+    public let lexicon: [String: [String]]
+    
+    func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> ()) rethrows {
+        
+    }
+}
