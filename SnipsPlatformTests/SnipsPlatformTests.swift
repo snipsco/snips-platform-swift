@@ -120,7 +120,7 @@ class SnipsPlatformTests: XCTestCase {
             intentNotRecognizedExpectation.fulfill()
         }
         
-        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["nonExistentIntent"], canBeEnqueued: false)))
+        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["nonExistentIntent"], canBeEnqueued: false, sendIntentNotRecognized: false)))
         waitForExpectations(timeout: 10)
     }
     
@@ -136,7 +136,7 @@ class SnipsPlatformTests: XCTestCase {
             intentRecognizedExpectation.fulfill()
         }
         
-        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)))
+        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false, sendIntentNotRecognized: false)))
         waitForExpectations(timeout: 10)
     }
     
@@ -196,7 +196,7 @@ class SnipsPlatformTests: XCTestCase {
     
     func test_session_action() {
         let actionSentExpectation = expectation(description: "Action sent")
-        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false), customData: "Action Custom data", siteId: "iOS action")
+        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: "Action Custom data", siteId: "iOS action")
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
@@ -211,7 +211,7 @@ class SnipsPlatformTests: XCTestCase {
     
     func test_session_action_nil() {
         let actionSentExpectation = expectation(description: "Action sent")
-        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false), customData: nil, siteId: nil)
+        let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: nil, siteId: nil)
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
             XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)

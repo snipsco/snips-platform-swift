@@ -275,13 +275,14 @@ public class SnipsPlatform {
     ///   - text: Text that the TTS should say at the beginning of the session.
     ///   - intentFilter: A list of intents names to restrict the NLU resolution on the first query. Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
     ///   - canBeEnqueued: if true, the session will start when there is no pending one on this siteId, if false, the session is just dropped if there is running one. Default to true
+    ///   - sendIntentNotRecognized: An optional boolean to indicate whether the dialogue manager should handle non recognized intents by itself or sent them as an `IntentNotRecognizedMessage` for the client to handle. This setting applies only to the next conversation turn. The default value is false (and the dialogue manager will handle non recognized intents by itself)
     ///   - customData: Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data.
     ///   - siteId: The id where the session will take place
     /// - Throws: A `SnipsPlatformError` is something went wrong.
-    public func startSession(text: String? = nil, intentFilter: [String]? = nil, canBeEnqueued: Bool = true, customData: String? = nil, siteId: String? = nil) throws {
+    public func startSession(text: String? = nil, intentFilter: [String]? = nil, canBeEnqueued: Bool = true, sendIntentNotRecognized: Bool = false, customData: String? = nil, siteId: String? = nil) throws {
         try startSession(
             message: StartSessionMessage(
-                initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued),
+                initType: .action(text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued, sendIntentNotRecognized: sendIntentNotRecognized),
                 customData: customData,
                 siteId: siteId))
     }
