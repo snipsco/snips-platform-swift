@@ -294,12 +294,12 @@ public struct Slot {
 /// - action: When an intent is expected to be parsed.
 /// - notification: Notify the user about something via the tts.
 public enum SessionInitType {
-    case action(text: String?, intentFilter: [String]?, canBeEnqueued: Bool)
+    case action(text: String?, intentFilter: [String]?, canBeEnqueued: Bool, sendIntentNotRecognized: Bool)
     case notification(text: String)
 
     func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
         switch self {
-        case .action(let text, let intentFilter, let canBeEnqueued):
+        case .action(let text, let intentFilter, let canBeEnqueued, let sendIntentNotRecognized):
             var arrayString: CStringArray?
             let unsafeArrayString: UnsafePointer<CStringArray>?
             if let intentFilter = intentFilter {
@@ -309,7 +309,10 @@ public enum SessionInitType {
                 arrayString = nil
                 unsafeArrayString = nil
             }
-            var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(), intent_filter: unsafeArrayString, can_be_enqueued: canBeEnqueued ? 1 : 0)
+            var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(),
+                                                intent_filter: unsafeArrayString,
+                                                can_be_enqueued: canBeEnqueued ? 1 : 0,
+                                                send_intent_not_recognized: sendIntentNotRecognized ? 1 : 0)
             let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
             try body(withUnsafePointer(to: &sessionInit) { $0 })
@@ -327,7 +330,7 @@ public enum SessionInitType {
 public struct StartSessionMessage {
     /// The type of the session.
     public let initType: SessionInitType
-    /// Additional information that can be provided by the handler. Each message related to the new session - sent by the Dialogue Manager - will contain this data
+    /// An optional piece of data that will be given back in `IntentMessage`, `IntentNotRecognizedMessage`, `SessionQueuedMessage`, `SessionStartedMessage` and `SessionEndedMessage` that are related to this session
     public let customData: String?
     /// Site where the user started the interaction.
     public let siteId: String?
@@ -360,11 +363,17 @@ public struct ContinueSessionMessage {
     /// A list of intents names to restrict the NLU resolution on the answer of this query. Filter is inclusive.
     /// Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
     public let intentFilter: [String]?
+    /// An optional piece of data that will be given back in `IntentMessage` and `IntentNotRecognizedMessage` and `SessionEndedMessage` that are related to this session. If set it will replace any existing custom data previously set on this session
+    public let customData: String?
+    /// An optional boolean to indicate whether the dialogue manager should handle non recognized intents by itself or sent them as an `IntentNotRecognizedMessage` for the client to handle. This setting applies only to the next conversation turn. The default value is false (and the dialogue manager will handle non recognized intents by itself)
+    public let sendIntentNotRecognized: Bool
 
-    public init(sessionId: String, text: String, intentFilter: [String]? = nil) {
+    public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, sendIntentNotRecognized: Bool = false) {
         self.sessionId = sessionId
         self.text = text
         self.intentFilter = intentFilter
+        self.customData = customData
+        self.sendIntentNotRecognized = sendIntentNotRecognized
     }
 
     func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
@@ -378,10 +387,15 @@ public struct ContinueSessionMessage {
             arrayString = nil
             unsafeMutableArrayString = nil
         }
-        var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text.unsafeMutablePointerRetained(), intent_filter: unsafeMutableArrayString)
+        var cMessage = CContinueSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(),
+                                               text: text.unsafeMutablePointerRetained(),
+                                               intent_filter: unsafeMutableArrayString,
+                                               custom_data: customData?.unsafeMutablePointerRetained(),
+                                               send_intent_not_recognized: sendIntentNotRecognized ? 1 : 0)
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
         cMessage.text.freeUnsafeMemory()
+        cMessage.custom_data?.freeUnsafeMemory()
         arrayString?.destroy()
     }
 }
