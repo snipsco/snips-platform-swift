@@ -582,6 +582,11 @@ public struct InjectionRequestOperation {
     public let values: [String: [String]]
     public let kind: SnipsInjectionKind
     
+    public init(values: [String: [String]], kind: SnipsInjectionKind) {
+        self.values = values
+        self.kind = kind
+    }
+    
     func toUnsafeCInjectionRequestOperation() throws -> UnsafePointer<CInjectionRequestOperation> {
         var cMapStringToStringArray: CMapStringToStringArray
         do {
@@ -618,13 +623,23 @@ public struct InjectionRequestMessage {
     public let operations: InjectionRequestOperations
     public let lexicon: [String: [String]]
     
+    public init(operations: InjectionRequestOperations, lexicon: [String: [String]]) {
+        self.operations = operations
+        self.lexicon = lexicon
+    }
+    
+    public init(operations: [InjectionRequestOperation], lexicon: [String: [String]]) {
+        self.operations = InjectionRequestOperations(operations: operations)
+        self.lexicon = lexicon
+    }
+    
     func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> ()) throws {
         var cMapLexicon = try CMapStringToStringArray(array: lexicon)
         let cUnsafeLexicon = withUnsafePointer(to: &cMapLexicon) { $0 }
         let cUnsafeOperations = try operations.toUnsafeCInjectionRequestOperations()
         var cInjectionRequestMessage = CInjectionRequestMessage(operations: cUnsafeOperations, lexicon: cUnsafeLexicon)
         try body(withUnsafePointer(to: &cInjectionRequestMessage) { $0 })
-        cMapLexicon.destroy()
-        cUnsafeOperations.pointee.destroy()
+//        cMapLexicon.destroy()
+//        cUnsafeOperations.pointee.destroy()
     }
 }
