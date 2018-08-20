@@ -395,4 +395,12 @@ public class SnipsPlatform {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
         megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
     }
+    
+    public func requestInjection(with message: InjectionRequestMessage) throws {
+        try message.toUnsafeCInjectionRequestMessage {
+            guard megazord_request_injection(ptr, $0) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
 }

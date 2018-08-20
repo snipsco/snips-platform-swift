@@ -51,9 +51,9 @@ extension CMapStringToStringArrayEntry {
 extension CMapStringToStringArray {
     init(array: [String: [String]]) throws {
         let entries = UnsafeMutablePointer<UnsafePointer<CMapStringToStringArrayEntry>?>.allocate(capacity: array.count)
-        try array.enumerated().forEach { tuple in
-            var cMapStoSArrayEntry = try CMapStringToStringArrayEntry(key: tuple.element.key, value: tuple.element.value)
-            entries.advanced(by: tuple.offset).pointee = withUnsafePointer(to: &cMapStoSArrayEntry) { $0 }
+        try array.enumerated().forEach { (offset, element) in
+            var cMapStoSArrayEntry = try CMapStringToStringArrayEntry(key: element.key, value: element.value)
+            entries.advanced(by: offset).pointee = withUnsafePointer(to: &cMapStoSArrayEntry) { $0 }
         }
         self.init(entries: UnsafePointer(entries), count: Int32(array.count))
     }
@@ -66,5 +66,23 @@ extension CMapStringToStringArray {
             }
         }
         entries?.deallocate()
+    }
+}
+
+extension CInjectionRequestOperation {
+    func destroy() {
+        values?.pointee.destroy()
+    }
+}
+
+extension CInjectionRequestOperations {
+    func destroy() {
+        for idx in 0..<count {
+            if let subPointee = operations.pointee?.advanced(by: Int(idx)) {
+                subPointee.pointee.destroy()
+                free(UnsafeMutableRawPointer(mutating: subPointee))
+            }
+        }
+        operations?.deallocate()
     }
 }

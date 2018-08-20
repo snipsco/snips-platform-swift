@@ -582,17 +582,16 @@ public struct InjectionRequestOperation {
     public let values: [String: [String]]
     public let kind: SnipsInjectionKind
     
-    func toUnsafeCInjectionRequestOperation(body: (UnsafePointer<CInjectionRequestOperation>) throws -> ()) rethrows {
-//        var cMapStringToStringArray = try? CMapStringToStringArray(array: values)
-//        do {
-//            cMapStringToStringArray = try CMapStringToStringArray(array: values)
-//        } catch let error {
-//            try body(throw SnipsPlatformError(message: "Invalid array passed in InjectionRequestOperation. Error: \(error.localizedDescription)"))
-//        }
-//        let unsafeMap = withUnsafePointer(to: &cMapStringToStringArray) { $0 }
-//        var cInjectionRequestOperation = CInjectionRequestOperation(values: unsafeMap!, kind: kind.toUnsafeCSnipsInjectionKind())
-//        try body(withUnsafePointer(to: &cInjectionRequestOperation) { $0 })
-        
+    func toUnsafeCInjectionRequestOperation() throws -> UnsafePointer<CInjectionRequestOperation> {
+        var cMapStringToStringArray: CMapStringToStringArray
+        do {
+            cMapStringToStringArray = try CMapStringToStringArray(array: values)
+        } catch let error {
+            throw SnipsPlatformError(message: "Invalid array passed in InjectionRequestOperation. Error: \(error.localizedDescription)")
+        }
+        let unsafeMap = withUnsafePointer(to: &cMapStringToStringArray) { $0 }
+        var cInjectionRequestOperation = CInjectionRequestOperation(values: unsafeMap, kind: kind.toUnsafeCSnipsInjectionKind())
+        return withUnsafePointer(to: &cInjectionRequestOperation) { $0 }
     }
 }
 
@@ -605,16 +604,27 @@ public struct InjectionRequestOperations {
         self.count = operations.count
     }
     
-    func toUnsafeCInjectionRequestOperations(body: (UnsafePointer<CInjectionRequestOperations>) throws -> ()) rethrows {
-        
+    func toUnsafeCInjectionRequestOperations() throws -> UnsafePointer<CInjectionRequestOperations> {
+        let entries = UnsafeMutablePointer<UnsafePointer<CInjectionRequestOperation>?>.allocate(capacity: operations.count)
+        try operations.enumerated().forEach {
+            entries.advanced(by: $0.offset).pointee = try $0.element.toUnsafeCInjectionRequestOperation()
+        }
+        var cInjectionRequestOperations = CInjectionRequestOperations(operations: UnsafePointer(entries), count: Int32(operations.count))
+        return withUnsafePointer(to: &cInjectionRequestOperations) { $0 }
     }
 }
 
 public struct InjectionRequestMessage {
-    public let operations: [InjectionRequestOperations]
+    public let operations: InjectionRequestOperations
     public let lexicon: [String: [String]]
     
-    func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> ()) rethrows {
-        
+    func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> ()) throws {
+        var cMapLexicon = try CMapStringToStringArray(array: lexicon)
+        let cUnsafeLexicon = withUnsafePointer(to: &cMapLexicon) { $0 }
+        let cUnsafeOperations = try operations.toUnsafeCInjectionRequestOperations()
+        var cInjectionRequestMessage = CInjectionRequestMessage(operations: cUnsafeOperations, lexicon: cUnsafeLexicon)
+        try body(withUnsafePointer(to: &cInjectionRequestMessage) { $0 })
+        cMapLexicon.destroy()
+        cUnsafeOperations.pointee.destroy()
     }
 }
