@@ -93,7 +93,7 @@ core_is_up_to_date () {
     return 1
 }
 
-if [ "${SNIPS_USE_LOCAL_PLATFORM}" == 1 ]; then
+if [ "${SNIPS_USE_LOCAL}" == 1 ]; then
     install_local_core && exit 0
 elif [ "${SNIPS_USE_REMOTE}" == 1 ]; then
     install_remote_core && exit 0
