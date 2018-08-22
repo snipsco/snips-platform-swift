@@ -63,14 +63,15 @@ public class SnipsPlatform {
     ///   - hotwordSensitivity: Sensitivity of the hotword. Should be between 0.0 and 1.0. `0.5` by default.
     ///   - enableHtml: This will add html tags to `snipsWatchHandler`. `false` by default.
     ///   - enableLogs: Print Snips internal logs. This should be used only in Debug configuration. `false` by default.
+    ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
+    ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
                 enableHtml: Bool = false,
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
-                userURL: URL? = nil,
-                injectionDataURL: URL? = nil) throws {
+                userURL: URL? = nil) throws {
         var client: UnsafePointer<MegazordClient>? = nil
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -79,7 +80,7 @@ public class SnipsPlatform {
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         self.hotwordSensitivity = hotwordSensitivity
-        try megazordEnableInjection(enable: enableInjection, userURL: userURL, g2pURL: injectionDataURL)
+        try megazordEnableInjection(enable: enableInjection, userURL: userURL)
     }
 
     deinit {
@@ -399,27 +400,43 @@ public class SnipsPlatform {
         megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
     }
     
+    /// Request an injection of new entities values in the ASR model.
+    ///
+    /// - Parameters:
+    ///   - message: InjectionRequestMessage containing the new entities values. Usage:
+    ///     ```
+    ///     var newEntities: [String: [String]] = [:]
+    ///     newEntities["locality"] = ["wonderland"]
+    ///
+    ///     let operation = InjectionRequestOperation(entities: newEntities, kind: .add)
+    ///     do {
+    ///         try snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
+    ///     } catch let error {
+    ///         print(error)
+    ///     }
+    ///     ```
+    ///
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    ///
     public func requestInjection(with message: InjectionRequestMessage) throws {
-        try message.toUnsafeCInjectionRequestMessage {
-            guard megazord_request_injection(ptr, $0) == SNIPS_RESULT_OK else {
+        try message.toUnsafeCInjectionRequestMessage { cMessage in
+            guard megazord_request_injection(ptr, cMessage) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
     }
-}
-
-fileprivate extension SnipsPlatform {
-    func megazordEnableInjection(enable: Bool, userURL: URL?, g2pURL: URL?) throws {
+    
+    private func megazordEnableInjection(enable: Bool, userURL: URL?) throws {
         guard enable else { return }
-        let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         
+        let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let snipsUserDataURL: URL
-        let snipsInjectionURL: URL
+        let snipsInjectionURLPath: String?
         
         if let userURL = userURL {
             snipsUserDataURL = userURL
         } else {
-            snipsUserDataURL = userDocumentURL.appendingPathComponent("snips/user")
+            snipsUserDataURL = userDocumentURL.appendingPathComponent("snips")
             var isDirectory = ObjCBool(true)
             let exists = FileManager.default.fileExists(atPath: snipsUserDataURL.path, isDirectory: &isDirectory)
             if (exists && isDirectory.boolValue) == false {
@@ -427,18 +444,14 @@ fileprivate extension SnipsPlatform {
             }
         }
         
-        if let g2pURL = g2pURL {
-            snipsInjectionURL = g2pURL
+        if let g2pBundleURL = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil) {
+            snipsInjectionURLPath = g2pBundleURL.path
         } else {
-            snipsInjectionURL = userDocumentURL.appendingPathComponent("snips/injection")
-            var isDirectory = ObjCBool(true)
-            let exists = FileManager.default.fileExists(atPath: snipsInjectionURL.path, isDirectory: &isDirectory)
-            if (exists && isDirectory.boolValue) == false {
-                try FileManager.default.createDirectory(atPath: snipsInjectionURL.path, withIntermediateDirectories: true, attributes: nil)
-            }
+            snipsInjectionURLPath = nil
+            assertionFailure("Snips g2p resources are missing from the framework")
         }
         
-        guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURL.path) == SNIPS_RESULT_OK else {
+        guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
             throw SnipsPlatformError.getLast
         }
     }

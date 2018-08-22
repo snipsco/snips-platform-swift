@@ -1,0 +1,1 @@
+# snips-g2p-resources
