@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F704FFB51FE40F650027F6C5 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F7A8290520976BA7007554FE /* my_assistant in Resources */ = {isa = PBXBuildFile; fileRef = F7A8290420976BA7007554FE /* my_assistant */; };
+		F7A8290520976BA7007554FE /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = F7A8290420976BA7007554FE /* assistant */; };
 		F7BB4FE21FBF2F56005243F0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */; };
 		F7CF587A1FBD9FDA00027852 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58791FBD9FDA00027852 /* AppDelegate.swift */; };
 		F7CF587C1FBD9FDA00027852 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF587B1FBD9FDA00027852 /* ViewController.swift */; };
@@ -31,7 +31,7 @@
 
 /* Begin PBXFileReference section */
 		F704FFB41FE40F600027F6C5 /* SnipsPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SnipsPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7A8290420976BA7007554FE /* my_assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = my_assistant; sourceTree = "<group>"; };
+		F7A8290420976BA7007554FE /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
 		F7BB4FE11FBF2F40005243F0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		F7CF58761FBD9FDA00027852 /* SnipsPlatformDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnipsPlatformDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7CF58791FBD9FDA00027852 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,7 +83,7 @@
 			children = (
 				F7CF58791FBD9FDA00027852 /* AppDelegate.swift */,
 				F7CF587B1FBD9FDA00027852 /* ViewController.swift */,
-				F7A8290420976BA7007554FE /* my_assistant */,
+				F7A8290420976BA7007554FE /* assistant */,
 				F7CF58801FBD9FDA00027852 /* Assets.xcassets */,
 				F7CF58851FBD9FDA00027852 /* Info.plist */,
 			);
@@ -156,7 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F7CF58811FBD9FDA00027852 /* Assets.xcassets in Resources */,
-				F7A8290520976BA7007554FE /* my_assistant in Resources */,
+				F7A8290520976BA7007554FE /* assistant in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
