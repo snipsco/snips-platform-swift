@@ -426,6 +426,7 @@ public class SnipsPlatform {
         }
     }
     
+    /// Used internaly to create Snips user folder
     private func megazordEnableInjection(enable: Bool, userURL: URL?) throws {
         guard enable else { return }
         
@@ -434,6 +435,11 @@ public class SnipsPlatform {
         let snipsInjectionURLPath: String?
         
         if let userURL = userURL {
+            var isDirectory = ObjCBool(true)
+            let exists = FileManager.default.fileExists(atPath: userURL.path, isDirectory: &isDirectory)
+            guard (exists && isDirectory.boolValue) == true else {
+                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(userURL.path)")
+            }
             snipsUserDataURL = userURL
         } else {
             snipsUserDataURL = userDocumentURL.appendingPathComponent("snips")

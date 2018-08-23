@@ -82,7 +82,7 @@ extension CInjectionRequestOperation {
         retainedArray.initialize(to: cMapStringToStringArray)
         self.init()
         self.values = UnsafePointer(retainedArray)
-        self.kind = kind.toUnsafeCSnipsInjectionKind()
+        self.kind = kind.toCSnipsInjectionKind()
     }
     
     func destroy() {

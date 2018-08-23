@@ -574,7 +574,7 @@ public enum SnipsInjectionKind {
         }
     }
     
-    func toUnsafeCSnipsInjectionKind() -> SNIPS_INJECTION_KIND {
+    func toCSnipsInjectionKind() -> SNIPS_INJECTION_KIND {
         switch self {
         case .add: return SNIPS_INJECTION_KIND_ADD
         }
