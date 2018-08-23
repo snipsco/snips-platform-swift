@@ -13,6 +13,7 @@
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		0091DCE521021E6A008201D9 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAD1FBF519A00595F07 /* libc++.tbd */; };
+		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F746A2BB1FCC1951005E09E9 /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
 		F76DFB8B2032ECB10021D6F9 /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */; };
@@ -53,6 +54,7 @@
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
+		00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in wonderland.m4a"; sourceTree = "<group>"; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F76DFB8C203319230021D6F9 /* COntology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COntology.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 		F7CF58A21FBDA00200027852 /* SnipsPlatformTests */ = {
 			isa = PBXGroup;
 			children = (
+				00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */,
 				0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */,
 				006E012520F7B7CD00923180 /* hey snips.m4a */,
 				006E012F20F8A8DA00923180 /* assistant */,
@@ -253,6 +256,7 @@
 				006E012620F7B7CE00923180 /* hey snips.m4a in Resources */,
 				001B5E0B212D6C540049CA4D /* snips-g2p-resources in Resources */,
 				0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */,
+				00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

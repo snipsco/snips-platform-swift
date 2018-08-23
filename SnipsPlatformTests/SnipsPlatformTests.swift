@@ -11,7 +11,7 @@ import AVFoundation
 
 // To add your own audio, simply record with QuicktimeTime Player > File > New Audio Recording.
 // Once recorded goto File > Export as > Audio only, it will save a .m4a file.
-// Drag & drop into the project, enjoy!
+// Drag & drop into the project, call it with the playAudio() method.
 
 class SnipsPlatformTests: XCTestCase {
     var snips: SnipsPlatform?
@@ -34,6 +34,7 @@ class SnipsPlatformTests: XCTestCase {
     
     let hotwordAudioFile = "hey snips"
     let weatherAudioFile = "What will be the weather in Madagascar in two days"
+    let wonderlandAudioFile = "What will be the weather in wonderland"
     
     override func setUp() {
         super.setUp()
@@ -41,6 +42,13 @@ class SnipsPlatformTests: XCTestCase {
         try! setupAudioEngine()
     }
     
+    override func tearDown() {
+        currentAudioPlayer?.stop()
+        audioEngine.stop()
+        try! snips?.pause()
+        super.tearDown()
+    }
+
     func test_hotword() {
         let hotwordDetectedExpectation = expectation(description: "Hotword detected")
         let sessionEndedExpectation = expectation(description: "Session ended")
@@ -272,19 +280,83 @@ class SnipsPlatformTests: XCTestCase {
         waitForExpectations(timeout: 10)
     }
     
-    override func tearDown() {
-        currentAudioPlayer?.stop()
-        audioEngine.stop()
+    func test_injection() {
+        enum TestPhaseKind {
+            case entityNotInjectedShouldNotBeDetected
+            case injectingEntities
+            case entityInjectedShouldBeDetected
+        }
+        
+        let entityNotInjectedShouldNotBeDetectedExpectation = expectation(description: "Entity not injected was not detected")
+        let injectingEntitiesExpectation = expectation(description: "Injecting entities done")
+        let entityInjectedShouldBeDetectedExpectation = expectation(description: "Entity injected was detected")
+        let tearDownExpectation = expectation(description: "Tear down of the injection data")
+        
+        var testPhase = TestPhaseKind.entityNotInjectedShouldNotBeDetected
+        
         try! snips?.pause()
-        super.tearDown()
+        try! setupSnipsPlatform(enableInjection: true, userURL: nil)
+        
+        let injectionBlock = { [weak self] in
+            var newEntities: [String: [String]] = [:]
+            newEntities["locality"] = ["wonderland"]
+            let operation = InjectionRequestOperation(entities: newEntities, kind: .add)
+            do {
+                try self?.snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
+            } catch let error {
+                XCTFail("Injection failed, reason: \(error.localizedDescription)")
+            }
+        }
+        
+        let testInjectionBlock = { [weak self] in
+            try! self?.snips?.startSession()
+            try! self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
+        }
+        
+        let deleteInjectionDataBlock = { [weak self] in
+            try! self?.removeSnipsUserDataIfNecessary()
+            try! self?.snips?.pause()
+            try! self?.setupSnipsPlatform(enableInjection: true, userURL: nil)
+        }
+        
+        onIntentDetected = { [weak self] intentMessage in
+            let slotLocalityWonderland = intentMessage.slots.filter { $0.entity == "locality" && $0.rawValue == "wonderland" }
+            switch testPhase {
+            case .entityNotInjectedShouldNotBeDetected:
+                XCTAssert(slotLocalityWonderland.isEmpty)
+                entityNotInjectedShouldNotBeDetectedExpectation.fulfill()
+                try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
+                testPhase = .injectingEntities
+                injectionBlock()
+                DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 5) {
+                    injectingEntitiesExpectation.fulfill()
+                    testPhase = .entityInjectedShouldBeDetected
+                    testInjectionBlock()
+                }
+            case .entityInjectedShouldBeDetected:
+                XCTAssert(slotLocalityWonderland.count == 1)
+                entityInjectedShouldBeDetectedExpectation.fulfill()
+                try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
+                deleteInjectionDataBlock()
+                tearDownExpectation.fulfill()
+            case .injectingEntities: XCTFail("For test purposes, intents shouldn't be detected while injecting")
+            }
+        }
+        
+        try! snips?.startSession()
+        try! playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
+        
+        wait(for: [entityNotInjectedShouldNotBeDetectedExpectation, injectingEntitiesExpectation, entityInjectedShouldBeDetectedExpectation, tearDownExpectation],
+             timeout: 20,
+             enforceOrder: true)
     }
 }
 
 extension SnipsPlatformTests {
     
-    func setupSnipsPlatform() throws {
+    func setupSnipsPlatform(hotwordSensitivity: Float = 0.5, enableInjection: Bool = false, userURL: URL? = nil) throws {
         let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        snips = try! SnipsPlatform(assistantURL: url, enableLogs: true)
+        snips = try SnipsPlatform(assistantURL: url, hotwordSensitivity: hotwordSensitivity, enableHtml: false, enableLogs: true, enableInjection: enableInjection, userURL: userURL)
         
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)
@@ -341,6 +413,15 @@ extension SnipsPlatformTests {
                 self?.audioEngine.detach(currentAudioPlayer)
                 self?.currentAudioPlayer = audioFilePlayer
             }
+        }
+    }
+    
+    func removeSnipsUserDataIfNecessary() throws {
+        let snipsUserDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("snips")
+        var isDirectory = ObjCBool(true)
+        let exists = FileManager.default.fileExists(atPath: snipsUserDocumentURL.path, isDirectory: &isDirectory)
+        if exists && isDirectory.boolValue {
+            try FileManager.default.removeItem(at: snipsUserDocumentURL)
         }
     }
 }
