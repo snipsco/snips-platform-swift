@@ -295,8 +295,8 @@ class SnipsPlatformTests: XCTestCase {
         var testPhase = TestPhaseKind.entityNotInjectedShouldNotBeDetected
         
         try! snips?.pause()
-        let injectionResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
-        try! setupSnipsPlatform(enableInjection: true, userURL: nil, injectionResources: injectionResources)
+        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
+        try! setupSnipsPlatform(enableInjection: true, userURL: nil, g2pResources: g2pResources)
         
         let injectionBlock = { [weak self] in
             var newEntities: [String: [String]] = [:]
@@ -355,9 +355,9 @@ class SnipsPlatformTests: XCTestCase {
 
 extension SnipsPlatformTests {
     
-    func setupSnipsPlatform(hotwordSensitivity: Float = 0.5, enableInjection: Bool = false, userURL: URL? = nil, injectionResources: URL? = nil) throws {
+    func setupSnipsPlatform(hotwordSensitivity: Float = 0.5, enableInjection: Bool = false, userURL: URL? = nil, g2pResources: URL? = nil) throws {
         let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        snips = try SnipsPlatform(assistantURL: url, hotwordSensitivity: hotwordSensitivity, enableHtml: false, enableLogs: true, enableInjection: enableInjection, userURL: userURL, injectionResources: injectionResources)
+        snips = try SnipsPlatform(assistantURL: url, hotwordSensitivity: hotwordSensitivity, enableHtml: false, enableLogs: true, enableInjection: enableInjection, userURL: userURL, g2pResources: g2pResources)
         
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)

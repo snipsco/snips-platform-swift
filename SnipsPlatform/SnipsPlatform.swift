@@ -65,6 +65,7 @@ public class SnipsPlatform {
     ///   - enableLogs: Print Snips internal logs. This should be used only in Debug configuration. `false` by default.
     ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
     ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
+    ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
@@ -72,7 +73,7 @@ public class SnipsPlatform {
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
                 userURL: URL? = nil,
-                injectionResources: URL? = nil) throws {
+                g2pResources: URL? = nil) throws {
         var client: UnsafePointer<MegazordClient>? = nil
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -81,7 +82,7 @@ public class SnipsPlatform {
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         self.hotwordSensitivity = hotwordSensitivity
-        try megazordEnableInjection(enable: enableInjection, userURL: userURL, injectionResources: injectionResources)
+        try megazordEnableInjection(enable: enableInjection, userURL: userURL, g2pResources: g2pResources)
     }
 
     deinit {
@@ -428,7 +429,7 @@ public class SnipsPlatform {
     }
     
     /// Used internaly to create Snips user folder
-    private func megazordEnableInjection(enable: Bool, userURL: URL?, injectionResources: URL? = nil) throws {
+    private func megazordEnableInjection(enable: Bool, userURL: URL?, g2pResources: URL? = nil) throws {
         guard enable else { return }
         
         let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -436,11 +437,6 @@ public class SnipsPlatform {
         let snipsInjectionURLPath: String?
         
         if let userURL = userURL {
-            var isDirectory = ObjCBool(true)
-            let exists = FileManager.default.fileExists(atPath: userURL.path, isDirectory: &isDirectory)
-            guard (exists && isDirectory.boolValue) == true else {
-                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(userURL.path)")
-            }
             snipsUserDataURL = userURL
         } else {
             snipsUserDataURL = userDocumentURL.appendingPathComponent("snips")
@@ -451,13 +447,13 @@ public class SnipsPlatform {
             }
         }
         
-        if let injectionResources = injectionResources {
+        if let g2pResources = g2pResources {
             var isDirectory = ObjCBool(true)
-            let exists = FileManager.default.fileExists(atPath: injectionResources.path, isDirectory: &isDirectory)
+            let exists = FileManager.default.fileExists(atPath: g2pResources.path, isDirectory: &isDirectory)
             guard (exists && isDirectory.boolValue) == true else {
-                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(injectionResources.path)")
+                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(g2pResources.path)")
             }
-            snipsInjectionURLPath = injectionResources.path
+            snipsInjectionURLPath = g2pResources.path
         } else {
             snipsInjectionURLPath = nil
         }
