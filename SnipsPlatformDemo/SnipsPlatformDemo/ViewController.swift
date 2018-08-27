@@ -49,7 +49,7 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(textView)
         stackView.addArrangedSubview(recordButton)
         view.addSubview(stackView)
-        
+
         NSLayoutConstraint.activate([
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -78,7 +78,7 @@ class ViewController: UIViewController {
     
     @objc
     private func startDialogueTapped() {
-        try! snips?.startSession(text: nil, intentFilter: [], canBeEnqueued: true, customData: nil)
+        try! snips?.startSession()
     }
     
     @objc
@@ -116,7 +116,7 @@ extension ViewController {
             self?.snips = try! SnipsPlatform(assistantURL: url, enableHtml: true, enableLogs: true)
             self?.snips?.onIntentDetected = { intent in
                 print("intent detected: \(intent)")
-                try! self?.snips?.endSession(sessionId: intent.sessionId, text: nil)
+                try! self?.snips?.endSession(sessionId: intent.sessionId)
             }
             self?.snips?.onHotwordDetected = {
                 print("hotword detected")
@@ -174,8 +174,7 @@ private extension ViewController {
     
     func startRecording() throws {
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(AVAudioSessionCategoryRecord)
-        try audioSession.setMode(AVAudioSessionModeMeasurement)
+        try audioSession.setCategory(AVAudioSessionCategoryRecord, mode: AVAudioSessionModeMeasurement, options: [])
         try audioSession.setPreferredSampleRate(16_000)
         try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
         

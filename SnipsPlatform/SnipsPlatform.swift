@@ -63,11 +63,17 @@ public class SnipsPlatform {
     ///   - hotwordSensitivity: Sensitivity of the hotword. Should be between 0.0 and 1.0. `0.5` by default.
     ///   - enableHtml: This will add html tags to `snipsWatchHandler`. `false` by default.
     ///   - enableLogs: Print Snips internal logs. This should be used only in Debug configuration. `false` by default.
+    ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
+    ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
+    ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
                 enableHtml: Bool = false,
-                enableLogs: Bool = false) throws {
+                enableLogs: Bool = false,
+                enableInjection: Bool = false,
+                userURL: URL? = nil,
+                g2pResources: URL? = nil) throws {
         var client: UnsafePointer<MegazordClient>? = nil
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -75,8 +81,8 @@ public class SnipsPlatform {
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
-
         self.hotwordSensitivity = hotwordSensitivity
+        try megazordEnableInjection(enable: enableInjection, userURL: userURL, g2pResources: g2pResources)
     }
 
     deinit {
@@ -394,5 +400,66 @@ public class SnipsPlatform {
     public func appendBuffer(_ buffer: AVAudioPCMBuffer) {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
         megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
+    }
+    
+    /// Request an injection of new entities values in the ASR model.
+    ///
+    /// - Parameters:
+    ///   - message: InjectionRequestMessage containing the new entities values. Usage:
+    ///     ```
+    ///     var newEntities: [String: [String]] = [:]
+    ///     newEntities["locality"] = ["wonderland"]
+    ///
+    ///     let operation = InjectionRequestOperation(entities: newEntities, kind: .add)
+    ///     do {
+    ///         try snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
+    ///     } catch let error {
+    ///         print(error)
+    ///     }
+    ///     ```
+    ///
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    ///
+    public func requestInjection(with message: InjectionRequestMessage) throws {
+        try message.toUnsafeCInjectionRequestMessage { cMessage in
+            guard megazord_request_injection(ptr, cMessage) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
+    
+    /// Used internaly to create Snips user folder
+    private func megazordEnableInjection(enable: Bool, userURL: URL?, g2pResources: URL? = nil) throws {
+        guard enable else { return }
+        
+        let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let snipsUserDataURL: URL
+        let snipsInjectionURLPath: String?
+        
+        if let userURL = userURL {
+            snipsUserDataURL = userURL
+        } else {
+            snipsUserDataURL = userDocumentURL.appendingPathComponent("snips")
+            var isDirectory = ObjCBool(true)
+            let exists = FileManager.default.fileExists(atPath: snipsUserDataURL.path, isDirectory: &isDirectory)
+            if (exists && isDirectory.boolValue) == false {
+                try FileManager.default.createDirectory(atPath: snipsUserDataURL.path, withIntermediateDirectories: true, attributes: nil)
+            }
+        }
+        
+        if let g2pResources = g2pResources {
+            var isDirectory = ObjCBool(true)
+            let exists = FileManager.default.fileExists(atPath: g2pResources.path, isDirectory: &isDirectory)
+            guard (exists && isDirectory.boolValue) == true else {
+                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(g2pResources.path)")
+            }
+            snipsInjectionURLPath = g2pResources.path
+        } else {
+            snipsInjectionURLPath = nil
+        }
+        
+        guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
+            throw SnipsPlatformError.getLast
+        }
     }
 }
