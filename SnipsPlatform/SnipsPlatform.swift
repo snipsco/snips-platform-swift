@@ -71,7 +71,8 @@ public class SnipsPlatform {
                 enableHtml: Bool = false,
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
-                userURL: URL? = nil) throws {
+                userURL: URL? = nil,
+                injectionResources: URL? = nil) throws {
         var client: UnsafePointer<MegazordClient>? = nil
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -80,7 +81,7 @@ public class SnipsPlatform {
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         self.hotwordSensitivity = hotwordSensitivity
-        try megazordEnableInjection(enable: enableInjection, userURL: userURL)
+        try megazordEnableInjection(enable: enableInjection, userURL: userURL, injectionResources: injectionResources)
     }
 
     deinit {
@@ -427,7 +428,7 @@ public class SnipsPlatform {
     }
     
     /// Used internaly to create Snips user folder
-    private func megazordEnableInjection(enable: Bool, userURL: URL?) throws {
+    private func megazordEnableInjection(enable: Bool, userURL: URL?, injectionResources: URL? = nil) throws {
         guard enable else { return }
         
         let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -450,11 +451,15 @@ public class SnipsPlatform {
             }
         }
         
-        if let g2pBundleURL = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil) {
-            snipsInjectionURLPath = g2pBundleURL.path
+        if let injectionResources = injectionResources {
+            var isDirectory = ObjCBool(true)
+            let exists = FileManager.default.fileExists(atPath: injectionResources.path, isDirectory: &isDirectory)
+            guard (exists && isDirectory.boolValue) == true else {
+                throw SnipsPlatformError(message: "Folder doesn't exists at path: \(injectionResources.path)")
+            }
+            snipsInjectionURLPath = injectionResources.path
         } else {
             snipsInjectionURLPath = nil
-            assertionFailure("Snips g2p resources are missing from the framework")
         }
         
         guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {

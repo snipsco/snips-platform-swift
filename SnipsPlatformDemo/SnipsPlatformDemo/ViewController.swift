@@ -113,7 +113,7 @@ extension ViewController {
         
         // Start snips
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            self?.snips = try! SnipsPlatform(assistantURL: url, enableHtml: true, enableLogs: true)
+            self?.snips = try! SnipsPlatform(assistantURL: url, enableHtml: true, enableLogs: true, enableInjection: true)
             self?.snips?.onIntentDetected = { intent in
                 print("intent detected: \(intent)")
                 try! self?.snips?.endSession(sessionId: intent.sessionId)

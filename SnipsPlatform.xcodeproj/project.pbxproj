@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		001B5E0A212D6C540049CA4D /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001B5E09212D6C540049CA4D /* snips-g2p-resources */; };
-		001B5E0B212D6C540049CA4D /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001B5E09212D6C540049CA4D /* snips-g2p-resources */; };
+		001CDFCD213419AB0090C176 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */; };
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
@@ -50,7 +49,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		001B5E09212D6C540049CA4D /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
+		001CDFCC213419AB0090C176 /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
@@ -128,7 +127,6 @@
 				F746A2BA1FCC1951005E09E9 /* Ontology.swift */,
 				F76DFB8C203319230021D6F9 /* COntology.swift */,
 				F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */,
-				001B5E09212D6C540049CA4D /* snips-g2p-resources */,
 				F7CF58991FBDA00200027852 /* Info.plist */,
 			);
 			path = SnipsPlatform;
@@ -140,6 +138,7 @@
 				00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */,
 				0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */,
 				006E012520F7B7CD00923180 /* hey snips.m4a */,
+				001CDFCC213419AB0090C176 /* snips-g2p-resources */,
 				006E012F20F8A8DA00923180 /* assistant */,
 				F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */,
 				F7CF58A51FBDA00200027852 /* Info.plist */,
@@ -185,6 +184,7 @@
 			buildConfigurationList = F7CF58AC1FBDA00200027852 /* Build configuration list for PBXNativeTarget "SnipsPlatformTests" */;
 			buildPhases = (
 				0091DCE421021A40008201D9 /* Download weather assistant */,
+				001CDFCA2133FD4E0090C176 /* Download injection resources */,
 				F7CF589A1FBDA00200027852 /* Sources */,
 				F7CF589B1FBDA00200027852 /* Frameworks */,
 				F7CF589C1FBDA00200027852 /* Resources */,
@@ -244,7 +244,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				001B5E0A212D6C540049CA4D /* snips-g2p-resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,9 +251,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				001CDFCD213419AB0090C176 /* snips-g2p-resources in Resources */,
 				006E013020F8A8DA00923180 /* assistant in Resources */,
 				006E012620F7B7CE00923180 /* hey snips.m4a in Resources */,
-				001B5E0B212D6C540049CA4D /* snips-g2p-resources in Resources */,
 				0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */,
 				00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */,
 			);
@@ -263,6 +262,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		001CDFCA2133FD4E0090C176 /* Download injection resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Download injection resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_g2p_resources.sh $PROJECT_DIR/SnipsPlatformTests/";
+		};
 		0091DCE421021A40008201D9 /* Download weather assistant */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
