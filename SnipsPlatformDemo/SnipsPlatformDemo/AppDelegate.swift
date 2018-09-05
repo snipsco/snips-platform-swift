@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .black
         window?.makeKeyAndVisible()
-        
+
         mainViewController = ViewController()
         let navigationController = UINavigationController()
         navigationController.viewControllers = [mainViewController!]
@@ -24,8 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any] = [:]) -> Bool {
         mainViewController?.startSnips(assistantURL: url)
         return true
     }

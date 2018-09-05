@@ -299,7 +299,7 @@ public enum SessionInitType {
     case action(text: String?, intentFilter: [String]?, canBeEnqueued: Bool, sendIntentNotRecognized: Bool)
     case notification(text: String)
 
-    func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> ()) rethrows {
+    func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> Void) rethrows {
         switch self {
         case .action(let text, let intentFilter, let canBeEnqueued, let sendIntentNotRecognized):
             var arrayString: CStringArray?
@@ -311,10 +311,11 @@ public enum SessionInitType {
                 arrayString = nil
                 unsafeArrayString = nil
             }
-            var actionInit = CActionSessionInit(text: text?.unsafeMutablePointerRetained(),
-                                                intent_filter: unsafeArrayString,
-                                                can_be_enqueued: canBeEnqueued ? 1 : 0,
-                                                send_intent_not_recognized: sendIntentNotRecognized ? 1 : 0)
+            var actionInit = CActionSessionInit(
+                text: text?.unsafeMutablePointerRetained(),
+                intent_filter: unsafeArrayString,
+                can_be_enqueued: canBeEnqueued ? 1 : 0,
+                send_intent_not_recognized: sendIntentNotRecognized ? 1 : 0)
             let unsafeActionInit = withUnsafePointer(to: &actionInit) { $0 }
             var sessionInit = CSessionInit(init_type: SNIPS_SESSION_INIT_TYPE_ACTION, value: unsafeActionInit)
             try body(withUnsafePointer(to: &sessionInit) { $0 })
@@ -336,14 +337,14 @@ public struct StartSessionMessage {
     public let customData: String?
     /// Site where the user started the interaction.
     public let siteId: String?
-    
+
     public init(initType: SessionInitType, customData: String? = nil, siteId: String? = nil) {
         self.initType = initType
         self.customData = customData
         self.siteId = siteId
     }
 
-    func toUnsafeCMessage(body: (UnsafePointer<CStartSessionMessage>) throws -> ()) rethrows {
+    func toUnsafeCMessage(body: (UnsafePointer<CStartSessionMessage>) throws -> Void) rethrows {
         try self.initType.toUnsafeCMessage {
             var cMessage = CStartSessionMessage(
                 init: $0.pointee,
@@ -378,7 +379,7 @@ public struct ContinueSessionMessage {
         self.sendIntentNotRecognized = sendIntentNotRecognized
     }
 
-    func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> ()) rethrows {
+    func toUnsafeCMessage(body: (UnsafePointer<CContinueSessionMessage>) throws -> Void) rethrows {
         var arrayString: CStringArray?
         let unsafeMutableArrayString: UnsafeMutablePointer<CStringArray>?
         if let intentFilter = intentFilter {
@@ -414,7 +415,7 @@ public struct EndSessionMessage {
         self.text = text
     }
 
-    func toUnsafeCMessage(body: (UnsafePointer<CEndSessionMessage>) throws -> ()) rethrows {
+    func toUnsafeCMessage(body: (UnsafePointer<CEndSessionMessage>) throws -> Void) rethrows {
         var cMessage = CEndSessionMessage(session_id: sessionId.unsafeMutablePointerRetained(), text: text?.unsafeMutablePointerRetained())
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
@@ -434,7 +435,7 @@ public struct SessionStartedMessage {
     /// This is for example provided when the user continues talking to the platform without saying
     /// the hotword again after a session was ended.
     public let reactivatedFromSessionId: String?
-    
+
     init(cSessionStartedMessage: CSessionStartedMessage) {
         self.sessionId = String(cString: cSessionStartedMessage.session_id)
         self.customData = String.fromCStringPtr(cString: cSessionStartedMessage.custom_data)
@@ -451,7 +452,7 @@ public struct SessionQueuedMessage {
     public let customData: String?
     /// The site on which this session was started.
     public let siteId: String
-    
+
     init(cSessionsQueuedMessage: CSessionQueuedMessage) {
         self.sessionId = String(cString: cSessionsQueuedMessage.session_id)
         self.customData = String.fromCStringPtr(cString: cSessionsQueuedMessage.custom_data)
@@ -469,7 +470,7 @@ public struct SessionEndedMessage {
     public let siteId: String
     /// How the session was ended.
     public let sessionTermination: SessionTermination
-    
+
     init(cSessionEndedMessage: CSessionEndedMessage) throws {
         self.sessionId = String(cString: cSessionEndedMessage.session_id)
         self.customData = String.fromCStringPtr(cString: cSessionEndedMessage.custom_data)
@@ -484,7 +485,7 @@ public struct SessionTermination {
     public let terminationType: SessionTerminationType
     /// In case of an error, there can be data provided for more details.
     public let data: String?
-    
+
     init(cSessionTermination: CSessionTermination) throws {
         self.data = String.fromCStringPtr(cString: cSessionTermination.data)
         self.terminationType = try SessionTerminationType(cValue: cSessionTermination.termination_type)
@@ -506,7 +507,7 @@ public enum SessionTerminationType {
     case intentNotRecognized
     case timeout
     case error
-    
+
     init(cValue: SNIPS_SESSION_TERMINATION_TYPE) throws {
         switch cValue {
         case SNIPS_SESSION_TERMINATION_TYPE_NOMINAL: self = .nominal
@@ -568,14 +569,14 @@ public struct SayFinishedMessage {
 /// - add: Add new entities
 public enum SnipsInjectionKind {
     case add
-    
+
     init(cValue: SNIPS_INJECTION_KIND) throws {
         switch cValue {
         case SNIPS_INJECTION_KIND_ADD: self = .add
         default: throw SnipsPlatformError(message: "Internal error: SnipsInjectionKind")
         }
     }
-    
+
     func toCSnipsInjectionKind() -> SNIPS_INJECTION_KIND {
         switch self {
         case .add: return SNIPS_INJECTION_KIND_ADD
@@ -596,7 +597,7 @@ public enum SnipsInjectionKind {
 public struct InjectionRequestOperation {
     public let entities: [String: [String]]
     public let kind: SnipsInjectionKind
-    
+
     public init(entities: [String: [String]], kind: SnipsInjectionKind) {
         self.entities = entities
         self.kind = kind
@@ -610,13 +611,13 @@ public struct InjectionRequestOperation {
 public struct InjectionRequestMessage {
     public let operations: [InjectionRequestOperation]
     public let lexicon: [String: [String]]
-    
+
     public init(operations: [InjectionRequestOperation], lexicon: [String: [String]] = [:]) {
         self.operations = operations
         self.lexicon = lexicon
     }
-    
-    func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> ()) throws {
+
+    func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> Void) throws {
         var cMapLexicon = try CMapStringToStringArray(array: lexicon)
         let cUnsafeLexicon = withUnsafePointer(to: &cMapLexicon) { $0 }
         var cOperations = try CInjectionRequestOperations(operations: operations)

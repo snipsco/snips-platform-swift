@@ -42,7 +42,7 @@ extension CMapStringToStringArrayEntry {
         self.key = UnsafePointer(key.unsafeMutablePointerRetained())
         self.value = UnsafePointer(retainedArray)
     }
-    
+
     func destroy() {
         key?.freeUnsafeMemory()
         value?.pointee.destroy()
@@ -63,7 +63,7 @@ extension CMapStringToStringArray {
         self.entries = UnsafePointer(entries)
         self.count = Int32(array.count)
     }
-    
+
     func destroy() {
         for idx in 0..<count {
             if let subPointee = entries.pointee?.advanced(by: Int(idx)) {
@@ -84,7 +84,7 @@ extension CInjectionRequestOperation {
         self.values = UnsafePointer(retainedArray)
         self.kind = kind.toCSnipsInjectionKind()
     }
-    
+
     func destroy() {
         values?.pointee.destroy()
         UnsafeMutablePointer(mutating: values)?.deinitialize(count: 1)
@@ -105,7 +105,7 @@ extension CInjectionRequestOperations {
         self.operations = UnsafePointer(entries)
         self.count = Int32(operations.count)
     }
-    
+
     func destroy() {
         for idx in 0..<count {
             if let subPointee = operations.pointee?.advanced(by: Int(idx)) {

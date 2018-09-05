@@ -43,18 +43,18 @@ public struct SnipsPlatformError: Error {
     public var localizedDescription: String { return self.message }
 }
 
-private var _onIntentDetected: IntentHandler? = nil
-private var _speechHandler: SpeechHandler? = nil
-private var _snipsWatchHandler: SnipsWatchHandler? = nil
-private var _onHotwordDetected: HotwordHandler? = nil
-private var _onListeningStateChanged: ListeningStateChangedHandler? = nil
-private var _onSessionStarted: SessionStartedHandler? = nil
-private var _onSessionQueued: SessionQueuedHandler? = nil
-private var _onSessionEnded: SessionEndedHandler? = nil
+private var _onIntentDetected: IntentHandler?
+private var _speechHandler: SpeechHandler?
+private var _snipsWatchHandler: SnipsWatchHandler?
+private var _onHotwordDetected: HotwordHandler?
+private var _onListeningStateChanged: ListeningStateChangedHandler?
+private var _onSessionStarted: SessionStartedHandler?
+private var _onSessionQueued: SessionQueuedHandler?
+private var _onSessionEnded: SessionEndedHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
-    private var ptr: UnsafeMutablePointer<MegazordClient>? = nil
+    private var ptr: UnsafeMutablePointer<MegazordClient>?
 
     /// Creates an instance of an assistant.
     ///
@@ -74,7 +74,7 @@ public class SnipsPlatform {
                 enableInjection: Bool = false,
                 userURL: URL? = nil,
                 g2pResources: URL? = nil) throws {
-        var client: UnsafePointer<MegazordClient>? = nil
+        var client: UnsafePointer<MegazordClient>?
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
         guard megazord_enable_streaming(ptr, 1) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
@@ -158,7 +158,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// A closure executed when the listening state has changed.
     public var onListeningStateChanged: ListeningStateChangedHandler? {
         get {
@@ -175,7 +175,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// A closure executed when the session has started.
     public var onSessionStartedHandler: SessionStartedHandler? {
         get {
@@ -194,7 +194,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// A closure executed when the session is queued.
     public var onSessionQueuedHandler: SessionQueuedHandler? {
         get {
@@ -213,7 +213,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// A closure executed when the session has ended
     public var onSessionEndedHandler: SessionEndedHandler? {
         get {
@@ -232,7 +232,7 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// A closure executed to delegate text-to-speech operations.
     public var speechHandler: SpeechHandler? {
         get {
@@ -401,7 +401,7 @@ public class SnipsPlatform {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
         megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
     }
-    
+
     /// Request an injection of new entities values in the ASR model.
     ///
     /// - Parameters:
@@ -427,15 +427,15 @@ public class SnipsPlatform {
             }
         }
     }
-    
+
     /// Used internaly to create Snips user folder
     private func megazordEnableInjection(enable: Bool, userURL: URL?, g2pResources: URL? = nil) throws {
         guard enable else { return }
-        
+
         let userDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         let snipsUserDataURL: URL
         let snipsInjectionURLPath: String?
-        
+
         if let userURL = userURL {
             snipsUserDataURL = userURL
         } else {
@@ -446,7 +446,7 @@ public class SnipsPlatform {
                 try FileManager.default.createDirectory(atPath: snipsUserDataURL.path, withIntermediateDirectories: true, attributes: nil)
             }
         }
-        
+
         if let g2pResources = g2pResources {
             var isDirectory = ObjCBool(true)
             let exists = FileManager.default.fileExists(atPath: g2pResources.path, isDirectory: &isDirectory)
@@ -457,7 +457,7 @@ public class SnipsPlatform {
         } else {
             snipsInjectionURLPath = nil
         }
-        
+
         guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
             throw SnipsPlatformError.getLast
         }
