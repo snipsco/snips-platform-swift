@@ -11,19 +11,19 @@ import MobileCoreServices
 import SnipsPlatform
 
 class ViewController: UIViewController {
-    private var snips: SnipsPlatform? = nil
+    private var snips: SnipsPlatform?
     private let audioEngine = AVAudioEngine()
-    
+
     var textView: UITextView!
     var startButton: UIButton!
     var recordButton: UIButton!
-    
+
     // MARK: - View lifecycle
-    
+
     override func loadView() {
         let view = UIView()
         view.backgroundColor = .white
-        
+
         let startButton = UIButton(type: .system)
         startButton.setTitle("Start dialogue", for: .normal)
         startButton.addTarget(self, action: #selector(startDialogueTapped), for: .touchUpInside)
@@ -35,13 +35,13 @@ class ViewController: UIViewController {
         textView.backgroundColor = .lightGray
         textView.font = .systemFont(ofSize: 20)
         self.textView = textView
-        
+
         let recordButton = UIButton(type: .system)
         recordButton.setTitle("Start", for: .normal)
         recordButton.addTarget(self, action: #selector(recordButtonTapped), for: .touchUpInside)
         recordButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         self.recordButton = recordButton
-        
+
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,16 +54,16 @@ class ViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             ])
-        
+
         self.view = view
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Snips Voice Platform"
-        
+
         // Disable the record buttons until authorization has been granted.
         recordButton.isEnabled = false
         startButton.isEnabled = false
@@ -75,19 +75,19 @@ class ViewController: UIViewController {
     }
 
     // MARK: UI actions
-    
+
     @objc
     private func startDialogueTapped() {
         try! snips?.startSession()
     }
-    
+
     @objc
     private func recordButtonTapped() {
         if audioEngine.isRunning {
             audioEngine.stop()
-            
+
             snips = nil
-            
+
             startButton.isEnabled = false
             recordButton.setTitle("Start", for: .normal)
         } else {
@@ -110,7 +110,7 @@ extension ViewController {
     func startSnips(assistantURL url: URL) {
         // Start microphone
         try! startRecording()
-        
+
         // Start snips
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             self?.snips = try! SnipsPlatform(assistantURL: url, enableHtml: true, enableLogs: true)
@@ -123,15 +123,15 @@ extension ViewController {
             }
             self?.snips?.snipsWatchHandler = { log in
                 guard let htmlAttributedString = "\(log)<br />".htmlAttributedString else { return }
-                
+
                 DispatchQueue.main.async {
                     guard let actualHtmlAttributedString = self?.textView.attributedText else { return }
-                    
+
                     let newAttributedString = NSMutableAttributedString(attributedString: actualHtmlAttributedString)
                     newAttributedString.append(htmlAttributedString)
                     self?.textView.attributedText = newAttributedString
-                    
-                    self?.textView.scrollRangeToVisible(NSMakeRange(newAttributedString.length, 0)) // scroll to bottom
+
+                    self?.textView.scrollRangeToVisible(Range(newAttributedString.length, 0)) // scroll to bottom
                 }
             }
             try! self?.snips?.start()
@@ -159,39 +159,39 @@ private extension ViewController {
                     self.startButton.isEnabled = false
                     self.recordButton.isEnabled = false
                     self.recordButton.setTitle("Record not yet authorized", for: .disabled)
-                    
+
                 case .denied:
                     self.startButton.isEnabled = false
                     self.recordButton.isEnabled = false
                     self.recordButton.setTitle("User denied access to recording", for: .disabled)
-                
+
                 case .granted:
                     self.recordButton.isEnabled = true
                 }
             }
         }
     }
-    
+
     func startRecording() throws {
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(AVAudioSessionCategoryRecord, mode: AVAudioSessionModeMeasurement, options: [])
         try audioSession.setPreferredSampleRate(16_000)
         try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-        
+
         let inputNode = audioEngine.inputNode
         let recordingFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
                                             sampleRate: 16_000,
                                             channels: 1,
                                             interleaved: true)
-        
+
         let downMixer = AVAudioMixerNode()
         audioEngine.attach(downMixer)
         audioEngine.connect(inputNode, to: downMixer, format: nil)
-        
+
         downMixer.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
             self?.snips?.appendBuffer(buffer)
         }
-        
+
         audioEngine.prepare()
         try audioEngine.start()
     }
