@@ -18,14 +18,14 @@ private typealias CSessionEndedHandler = @convention(c) (UnsafePointer<CSessionE
 private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSessionQueuedMessage>) -> Void
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
 
-public typealias IntentHandler = (IntentMessage) -> ()
-public typealias SpeechHandler = (SayMessage) -> ()
-public typealias SnipsWatchHandler = (String) -> ()
-public typealias HotwordHandler = () -> ()
-public typealias ListeningStateChangedHandler = (Bool) -> ()
-public typealias SessionStartedHandler = (SessionStartedMessage) -> ()
-public typealias SessionQueuedHandler = (SessionQueuedMessage) -> ()
-public typealias SessionEndedHandler = (SessionEndedMessage) -> ()
+public typealias IntentHandler = (IntentMessage) -> Void
+public typealias SpeechHandler = (SayMessage) -> Void
+public typealias SnipsWatchHandler = (String) -> Void
+public typealias HotwordHandler = () -> Void
+public typealias ListeningStateChangedHandler = (Bool) -> Void
+public typealias SessionStartedHandler = (SessionStartedMessage) -> Void
+public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
+public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -168,7 +168,7 @@ public class SnipsPlatform {
             if newValue != nil {
                 _onListeningStateChanged = newValue
                 megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged in
-                    _onListeningStateChanged?(cListeningStateChanged)
+                    _onListeningStateChanged?(cListeningStateChanged != 0)
                 }
             } else {
                 megazord_set_listening_state_changed_handler(ptr, nil)

@@ -74,7 +74,7 @@ public enum SlotValue {
     case amountOfMoney(AmountOfMoneyValue)
     case temperature(TemperatureValue)
     case duration(DurationValue)
-    case percentage(Double)
+    case percentage(PercentageValue)
 
     init(cSlotValue: CSlotValue) throws {
         switch cSlotValue.value_type {
@@ -122,6 +122,8 @@ public enum SlotValue {
 public typealias NumberValue = Double
 
 public typealias OrdinalValue = Int
+
+public typealias PercentageValue = Double
 
 /// A date.
 public struct InstantTimeValue {
@@ -203,14 +205,14 @@ public struct DurationValue {
     public let precision: Precision
 
     init(cValue: CDurationValue) throws {
-        self.years = cValue.years
-        self.quarters = cValue.quarters
-        self.months = cValue.months
-        self.weeks = cValue.weeks
-        self.days = cValue.days
-        self.hours = cValue.hours
-        self.minutes = cValue.minutes
-        self.seconds = cValue.seconds
+        self.years = Int(cValue.years)
+        self.quarters = Int(cValue.quarters)
+        self.months = Int(cValue.months)
+        self.weeks = Int(cValue.weeks)
+        self.days = Int(cValue.days)
+        self.hours = Int(cValue.hours)
+        self.minutes = Int(cValue.minutes)
+        self.seconds = Int(cValue.seconds)
         self.precision = try Precision(cValue: cValue.precision)
     }
 }
@@ -344,7 +346,7 @@ public struct StartSessionMessage {
     func toUnsafeCMessage(body: (UnsafePointer<CStartSessionMessage>) throws -> ()) rethrows {
         try self.initType.toUnsafeCMessage {
             var cMessage = CStartSessionMessage(
-                session_init: $0.pointee,
+                init: $0.pointee,
                 custom_data: customData?.unsafeMutablePointerRetained(),
                 site_id: siteId?.unsafeMutablePointerRetained())
             try body(withUnsafePointer(to: &cMessage) { $0 })
@@ -508,9 +510,9 @@ public enum SessionTerminationType {
     init(cValue: SNIPS_SESSION_TERMINATION_TYPE) throws {
         switch cValue {
         case SNIPS_SESSION_TERMINATION_TYPE_NOMINAL: self = .nominal
-        case SNIPS_SESSION_TERMINATION_TYPE_SITEUNAVAILABLE: self = .siteUnavailable
-        case SNIPS_SESSION_TERMINATION_TYPE_ABORTEDBYUSER: self = .abortedByUser
-        case SNIPS_SESSION_TERMINATION_TYPE_INTENTNOTRECOGNIZED: self = .intentNotRecognized
+        case SNIPS_SESSION_TERMINATION_TYPE_SITE_UNAVAILABLE: self = .siteUnavailable
+        case SNIPS_SESSION_TERMINATION_TYPE_ABORTED_BY_USER: self = .abortedByUser
+        case SNIPS_SESSION_TERMINATION_TYPE_INTENT_NOT_RECOGNIZED: self = .intentNotRecognized
         case SNIPS_SESSION_TERMINATION_TYPE_TIMEOUT: self = .timeout
         case SNIPS_SESSION_TERMINATION_TYPE_ERROR: self = .error
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
@@ -534,7 +536,7 @@ public struct SayMessage {
     public init(cMessage: CSayMessage) {
         self.text = String(cString: cMessage.text)
         self.lang = String.fromCStringPtr(cString: cMessage.lang)
-        self.messageId = String.fromCStringPtr(cString: cMessage.message_id)
+        self.messageId = String.fromCStringPtr(cString: cMessage.id)
         self.siteId = String(cString: cMessage.site_id)
         self.sessionId = String.fromCStringPtr(cString: cMessage.session_id)
     }
@@ -553,10 +555,10 @@ public struct SayFinishedMessage {
         self.sessionId = sessionId
     }
 
-    func toUnsafeCMessage(body: (UnsafePointer<CSayFinishedMessage>) throws -> ()) rethrows {
-        var cMessage = CSayFinishedMessage(message_id: messageId?.unsafeMutablePointerRetained(), session_id: sessionId?.unsafeMutablePointerRetained())
+    func toUnsafeCMessage(body: (UnsafePointer<CSayFinishedMessage>) throws -> Void) rethrows {
+        var cMessage = CSayFinishedMessage(id: messageId?.unsafeMutablePointerRetained(), session_id: sessionId?.unsafeMutablePointerRetained())
         try body(withUnsafePointer(to: &cMessage) { $0 })
-        cMessage.message_id?.freeUnsafeMemory()
+        cMessage.id?.freeUnsafeMemory()
         cMessage.session_id?.freeUnsafeMemory()
     }
 }
