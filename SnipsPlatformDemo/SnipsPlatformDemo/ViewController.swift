@@ -131,7 +131,7 @@ extension ViewController {
                     newAttributedString.append(htmlAttributedString)
                     self?.textView.attributedText = newAttributedString
 
-                    self?.textView.scrollRangeToVisible(Range(newAttributedString.length, 0)) // scroll to bottom
+                    self?.textView.scrollRangeToVisible(NSRange(location: newAttributedString.length, length: 0)) // scroll to bottom
                 }
             }
             try! self?.snips?.start()
