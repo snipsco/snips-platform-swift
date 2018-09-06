@@ -42,6 +42,17 @@ pod 'SnipsPlatform'
  1. Drag and drop `SnipsPlatform.xcodeproj` into your application’s Xcode project or workspace.
  1. On the “General” tab of your application target’s settings, add `SnipsPlatform.framework` to the “Embedded Binaries” section.
 
+#### Build for Xamarin
+• Add `@objc(SnipsPlatform)` on top of the SnipsPlatform class
+• Inherit `SnipsPlatform: NSObject`
+• Change SnipsPlatform Run to Release.
+• Menu Product > Build for > Running
+• Navigate to product
+• Copy Release-iphoneos/NAME.framework to NAME.framework
+• Create the FAT library using:
+• lipo -create Release-iphonesimulator/NAME.framework/NAME Release-iphoneos/NAME.framework/NAME -output NAME.framework/NAME
+• Copy the files in Release-iphonesimulator/NAME.framework/Modules/NAME.swiftmodule to NAME.framework/Modules/NAME.swiftmodule (until now it only contained files from the iphoneos)
+
 ## License
 
 Licensed under either of

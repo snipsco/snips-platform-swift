@@ -538,7 +538,7 @@ public struct SayMessage {
     /// The id of the session.
     public let sessionId: String?
 
-    public init(cMessage: CSayMessage) {
+    init(cMessage: CSayMessage) {
         self.text = String(cString: cMessage.text)
         self.lang = String.fromCStringPtr(cString: cMessage.lang)
         self.messageId = String.fromCStringPtr(cString: cMessage.id)

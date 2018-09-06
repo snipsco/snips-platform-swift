@@ -68,7 +68,12 @@
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
+		009D09F1213D827B006DA1A4 /* Ontology+ObjC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Ontology+ObjC.swift"; sourceTree = "<group>"; };
 		00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in wonderland.m4a"; sourceTree = "<group>"; };
+		00EE266B213FF8B600287BE6 /* SNPSnipsPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNPSnipsPlatform.swift; sourceTree = "<group>"; };
+		00EE26722140310800287BE6 /* SnipsPlatformObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SnipsPlatformObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		00EE26742140310900287BE6 /* SnipsPlatformObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SnipsPlatformObjC.h; sourceTree = "<group>"; };
+		00EE26752140310900287BE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F76DFB8C203319230021D6F9 /* COntology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COntology.swift; sourceTree = "<group>"; };
@@ -91,7 +96,19 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+<<<<<<< HEAD
 		F7BB4F9C215A382E00FEEA43 /* Frameworks */ = {
+=======
+		00EE266E2140310800287BE6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00EE267A2140310F00287BE6 /* SnipsPlatform.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7CF58911FBDA00200027852 /* Frameworks */ = {
+>>>>>>> Objective-c wrappers
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -129,6 +146,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		00EE26732140310900287BE6 /* SnipsPlatformObjC */ = {
+			isa = PBXGroup;
+			children = (
+				00EE266B213FF8B600287BE6 /* SNPSnipsPlatform.swift */,
+				009D09F1213D827B006DA1A4 /* Ontology+ObjC.swift */,
+				00EE26742140310900287BE6 /* SnipsPlatformObjC.h */,
+				00EE26752140310900287BE6 /* Info.plist */,
+			);
+			path = SnipsPlatformObjC;
+			sourceTree = "<group>";
+		};
 		F704946B1FBDCC3800FFD0B8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +175,7 @@
 			children = (
 				F7CF58971FBDA00200027852 /* SnipsPlatform */,
 				F7CF58A21FBDA00200027852 /* SnipsPlatformTests */,
+				00EE26732140310900287BE6 /* SnipsPlatformObjC */,
 				F7CF58961FBDA00200027852 /* Products */,
 				F704946B1FBDCC3800FFD0B8 /* Frameworks */,
 				F79B6F5820120DA700394C57 /* Dependencies */,
@@ -156,10 +185,16 @@
 		F7CF58961FBDA00200027852 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+<<<<<<< HEAD
 				F7CF589E1FBDA00200027852 /* AllTests-iOS.xctest */,
 				F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */,
 				F7BB4FA7215A382E00FEEA43 /* AllTests-macOS.xctest */,
 				F7BB4FBB215A39C700FEEA43 /* SnipsPlatform.framework */,
+=======
+				F7CF58951FBDA00200027852 /* SnipsPlatform.framework */,
+				F7CF589E1FBDA00200027852 /* SnipsPlatformTests.xctest */,
+				00EE26722140310800287BE6 /* SnipsPlatformObjC.framework */,
+>>>>>>> Objective-c wrappers
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -194,6 +229,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+<<<<<<< HEAD
 		F7BB4F9A215A382E00FEEA43 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -203,6 +239,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F7BB4FB6215A39C700FEEA43 /* Headers */ = {
+=======
+		00EE266F2140310800287BE6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00EE26762140310900287BE6 /* SnipsPlatformObjC.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F7CF58921FBDA00200027852 /* Headers */ = {
+>>>>>>> Objective-c wrappers
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
