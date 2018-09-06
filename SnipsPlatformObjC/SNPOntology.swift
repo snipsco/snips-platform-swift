@@ -1,5 +1,5 @@
 //
-//  Ontology+ObjC.swift
+//  SNPOntology.swift
 //  SnipsPlatform
 //
 //  Copyright © 2018 Snips. All rights reserved.
@@ -306,7 +306,7 @@ import SnipsPlatform
     /// Site where the user started the interaction.
     public let siteId: String?
     
-    public init(initType: SNPSessionInitType, customData: String? = nil, siteId: String? = nil) {
+    @objc public init(initType: SNPSessionInitType, customData: String? = nil, siteId: String? = nil) {
         self.initType = initType
         self.customData = customData
         self.siteId = siteId
@@ -327,7 +327,7 @@ import SnipsPlatform
     /// An optional boolean to indicate whether the dialogue manager should handle non recognized intents by itself or sent them as an `IntentNotRecognizedMessage` for the client to handle. This setting applies only to the next conversation turn. The default value is false (and the dialogue manager will handle non recognized intents by itself)
     public let sendIntentNotRecognized: Bool
     
-    public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, sendIntentNotRecognized: Bool = false) {
+    @objc public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, sendIntentNotRecognized: Bool = false) {
         self.sessionId = sessionId
         self.text = text
         self.intentFilter = intentFilter
@@ -343,7 +343,7 @@ import SnipsPlatform
     /// The text the TTS should say to end the session.
     public let text: String?
     
-    public init(sessionId: String, text: String? = nil) {
+    @objc public init(sessionId: String, text: String? = nil) {
         self.sessionId = sessionId
         self.text = text
     }
@@ -467,7 +467,7 @@ import SnipsPlatform
         self.sessionId = message.sessionId
     }
     
-    public init(text: String, lang: String?, messageId: String?, siteId: String, sessionId: String?) {
+    @objc public init(text: String, lang: String?, messageId: String?, siteId: String, sessionId: String?) {
         self.text = text
         self.lang = lang
         self.messageId = messageId
@@ -489,7 +489,7 @@ import SnipsPlatform
         sessionId = message.sessionId
     }
     
-    public init(messageId: String?, sessionId: String?) {
+    @objc public init(messageId: String?, sessionId: String?) {
         self.messageId = messageId
         self.sessionId = sessionId
     }

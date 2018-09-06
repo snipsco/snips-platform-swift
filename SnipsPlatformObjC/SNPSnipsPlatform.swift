@@ -46,7 +46,7 @@ import SnipsPlatform
     private var snipsPlatform: SnipsPlatform
     public var delegate: SNPSnipsPlatformDelegate? = nil
 
-    public init(assistantURL: URL,
+    @objc public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
                 enableHtml: Bool = false,
                 enableLogs: Bool = false,
