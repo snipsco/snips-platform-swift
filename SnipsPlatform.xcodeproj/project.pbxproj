@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		001CDFCD213419AB0090C176 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
+		003573BA214FE0D00012FB2C /* SnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */; };
+		003573BB214FE0D00012FB2C /* Ontology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F746A2BA1FCC1951005E09E9 /* Ontology.swift */; };
+		003573BC214FE0D00012FB2C /* COntology.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8C203319230021D6F9 /* COntology.swift */; };
+		003573BD214FE0D00012FB2C /* String+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */; };
+		003573BE214FE0ED0012FB2C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAD1FBF519A00595F07 /* libc++.tbd */; };
+		003573BF214FE0F90012FB2C /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
 		0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */; };
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
@@ -39,7 +45,6 @@
 		F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FF0215A978800FEEA43 /* libsnips_kaldi.dylib */; };
 =======
 		00EE26762140310900287BE6 /* SnipsPlatformObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 00EE26742140310900287BE6 /* SnipsPlatformObjC.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		00EE267A2140310F00287BE6 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; };
 		00EE267B2140312200287BE6 /* SNPSnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00EE266B213FF8B600287BE6 /* SNPSnipsPlatform.swift */; };
 		00EE267C2140312600287BE6 /* SNPOntology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009D09F1213D827B006DA1A4 /* SNPOntology.swift */; };
 		F71181E61FDECDB200512C79 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7CF58951FBDA00200027852 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -115,7 +120,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00EE267A2140310F00287BE6 /* SnipsPlatform.framework in Frameworks */,
+				003573BF214FE0F90012FB2C /* Accelerate.framework in Frameworks */,
+				003573BE214FE0ED0012FB2C /* libc++.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,11 +282,19 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7BB4FB0215A382E00FEEA43 /* Build configuration list for PBXNativeTarget "SnipsPlatform-macOS" */;
 			buildPhases = (
+<<<<<<< HEAD
 				F7BB4FD6215A5C6E00FEEA43 /* Download Core */,
 				F7BB4F9A215A382E00FEEA43 /* Headers */,
 				F7BB4F9B215A382E00FEEA43 /* Sources */,
 				F7BB4F9C215A382E00FEEA43 /* Frameworks */,
 				F7BB4F9D215A382E00FEEA43 /* Resources */,
+=======
+				003573C0214FE1270012FB2C /* Download core */,
+				00EE266D2140310800287BE6 /* Sources */,
+				00EE266E2140310800287BE6 /* Frameworks */,
+				00EE266F2140310800287BE6 /* Headers */,
+				00EE26702140310800287BE6 /* Resources */,
+>>>>>>> Add the whole project to the objc podspec
 			);
 			buildRules = (
 			);
@@ -450,6 +464,20 @@
 			shellPath = /bin/sh;
 			shellScript = "$PROJECT_DIR/scripts/download_g2p_resources.sh $PROJECT_DIR/SnipsPlatformTests/\n";
 		};
+		003573C0214FE1270012FB2C /* Download core */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Download core";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_core.sh ios";
+		};
 		0091DCE421021A40008201D9 /* Download weather assistant */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -518,12 +546,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-<<<<<<< HEAD
 				F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */,
-=======
 				00EE267C2140312600287BE6 /* SNPOntology.swift in Sources */,
 				00EE267B2140312200287BE6 /* SNPSnipsPlatform.swift in Sources */,
->>>>>>> Add podspec
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -663,6 +688,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 			};
 			name = Debug;
 		};
@@ -686,6 +712,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = arm64;
 			};
 			name = Release;
 		};

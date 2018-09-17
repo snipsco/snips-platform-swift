@@ -41,9 +41,4 @@ Pod::Spec.new do |s|
   s.frameworks = 'Accelerate'
   s.libraries = 'c++'
 
-  # s.subspec 'SnipsPlatformObjC' do |sub|
-  #   sub.name = 'SnipsPlatformObjC'
-  #   sub.source_files = 'SnipsPlatformObjC/*.{swift,h}', 'SnipsPlatform/*.{swift,h}'
-  # end
-
 end

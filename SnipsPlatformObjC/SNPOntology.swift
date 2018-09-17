@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SnipsPlatform
 
 /// A detected intent.
 @objc public class SNPIntent: NSObject {

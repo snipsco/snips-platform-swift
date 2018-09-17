@@ -7,7 +7,6 @@
 
 import Foundation
 import AVFoundation
-import SnipsPlatform
 
 /// `SNPSnipsPlatformError` is the error type returned by SNPSnipsPlatform.
 @objc public class SNPSnipsPlatformError: NSError {
@@ -44,7 +43,7 @@ import SnipsPlatform
 /// SnipsPlatform is an assistant
 @objc public class SNPSnipsPlatform: NSObject {
     private var snipsPlatform: SnipsPlatform
-    public var delegate: SNPSnipsPlatformDelegate? = nil
+    @objc public var delegate: SNPSnipsPlatformDelegate? = nil
 
     @objc public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
