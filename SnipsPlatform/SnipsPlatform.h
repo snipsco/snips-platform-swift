@@ -5,7 +5,7 @@
 //  Copyright © 2017 Snips. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for SnipsPlatform.
 FOUNDATION_EXPORT double SnipsPlatformVersionNumber;
