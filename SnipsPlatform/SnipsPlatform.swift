@@ -66,6 +66,7 @@ public class SnipsPlatform {
     ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
     ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
     ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
+    ///   - asrModelParameters: Override default ASR model parameters
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
@@ -73,7 +74,8 @@ public class SnipsPlatform {
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
                 userURL: URL? = nil,
-                g2pResources: URL? = nil) throws {
+                g2pResources: URL? = nil,
+                asrModelParameters: AsrModelParameters? = nil) throws {
         var client: UnsafePointer<MegazordClient>?
         guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -81,7 +83,15 @@ public class SnipsPlatform {
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+
         self.hotwordSensitivity = hotwordSensitivity
+        
+        if let asrModelParameters = asrModelParameters {
+            try asrModelParameters.toUnsafeCModelParameters { cParams in
+                guard megazord_set_asr_model_parameters(ptr, cParams) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+            }
+        }
+
         try megazordEnableInjection(enable: enableInjection, userURL: userURL, g2pResources: g2pResources)
     }
 

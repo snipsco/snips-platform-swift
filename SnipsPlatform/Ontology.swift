@@ -651,3 +651,39 @@ public struct InjectionRequestMessage {
         cMessage.id?.freeUnsafeMemory()
     }
 }
+
+/// ASR model parameters
+public struct AsrModelParameters {
+    public let beamSize: Float?
+    public let latticeBeamSize: Float?
+    public let acousticScale: Float?
+    public let maxActive: UInt?
+    public let minActive: UInt?
+    public let endpointing: String?
+    public let useFinalProbs: Bool?
+
+    init(cParameters: CModelParameters) throws {
+        self.beamSize = cParameters.beam_size >= 0 ? cParameters.beam_size : nil
+        self.latticeBeamSize = cParameters.lattice_beam_size >= 0 ? cParameters.lattice_beam_size : nil
+        self.acousticScale = cParameters.acoustic_scale >= 0 ? cParameters.acoustic_scale : nil
+        self.maxActive = cParameters.max_active >= 0 ? UInt(cParameters.max_active) : nil
+        self.minActive = cParameters.min_active >= 0 ? UInt(cParameters.min_active) : nil
+        self.endpointing = String.fromCStringPtr(cString: cParameters.endpointing)
+        self.useFinalProbs = cParameters.use_final_probs < UINT8_MAX ? (cParameters.use_final_probs != 0) : nil
+    }
+    
+    func toUnsafeCModelParameters(body: (UnsafePointer<CModelParameters>) throws -> Void) throws {
+        var cParameters = CModelParameters(
+            beam_size: beamSize ?? -1.0,
+            lattice_beam_size: latticeBeamSize ?? -1.0,
+            acoustic_scale: acousticScale ?? -1.0,
+            max_active: maxActive.map(Int32.init) ?? -1,
+            min_active: minActive.map(Int32.init) ?? -1,
+            endpointing: endpointing?.unsafeMutablePointerRetained(),
+            use_final_probs: useFinalProbs.map({ $0 ? 1 : 0 }) ?? UInt8(UINT8_MAX)
+        )
+        
+        try body(withUnsafePointer(to: &cParameters) { $0 })
+        cParameters.endpointing?.freeUnsafeMemory()
+    }
+}
