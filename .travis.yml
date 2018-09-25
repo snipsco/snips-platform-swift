@@ -23,16 +23,16 @@ script:
   - xcodebuild -version
   - xcodebuild -showsdks
 
-  - if [ $RUN_TESTS == "YES" ]; then
+  - if [ "$RUN_TESTS" == "YES" ]; then
       travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
     else
       travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
     fi
 
-  - if [ $BUILD_EXAMPLE == "YES"]; then
+  - if [ "$BUILD_EXAMPLE" == "YES"]; then
       xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build | xcpretty;
     fi
 
-  - if [ $POD_LINT == "YES" ]; then
+  - if [ "$POD_LINT" == "YES" ]; then
       sed -i.bk "s:\${SRCROOT}/SnipsPlatform:$(pwd):g" SnipsPlatform.podspec && pod lib lint --verbose;
     fi
