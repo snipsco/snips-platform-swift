@@ -12,17 +12,17 @@ LIBRARY_NAME_H=${LIBRARY_NAME}.h
 OUT_DIR=${PROJECT_DIR}/Dependencies/${SYSTEM}
 
 if [ -z "$TARGET_BUILD_TYPE" ]; then
-TARGET_BUILD_TYPE=$(echo ${CONFIGURATION} | tr '[:upper:]' '[:lower:]')
-fi
-
-if [ "${SYSTEM}" != "ios" ]; then
-    echo "Only ios is supported."
-    exit 1
+TARGET_BUILD_TYPE=release #$(echo ${CONFIGURATION} | tr '[:upper:]' '[:lower:]')
 fi
 
 mkdir -p ${OUT_DIR}
 
 install_remote_core () {
+    if [ "${SYSTEM}" != "ios" ]; then
+        echo "Only ios is supported."
+        exit 1
+    fi
+
     local filename=snips-platform-${SYSTEM}.${VERSION}.tgz
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
@@ -42,8 +42,6 @@ install_local_core () {
         return 1
     fi
 
-    make -C ${root_dir} package-megazord-dependencies-ios
-
     rm -f ${OUT_DIR}/*
 
     if [ ${SYSTEM} == ios ]; then
@@ -62,7 +60,20 @@ install_local_core () {
         done
 
         lipo -create `find ${OUT_DIR}/${LIBRARY_NAME}-*.a` -output ${OUT_DIR}/${LIBRARY_NAME_A}
-        cp ${target_dir}/ios-universal/megazord/* ${OUT_DIR}
+        cp ${root_dir}/snips-megazord/platforms/c/${LIBRARY_NAME}.h ${OUT_DIR}
+        cp ${root_dir}/snips-megazord/platforms/c/module.modulemap ${OUT_DIR}
+
+    elif [ ${SYSTEM} == macos ]; then
+        echo "Using macOS local build"
+
+        local library_path="${target_dir}/${TARGET_BUILD_TYPE}/${LIBRARY_NAME}.dylib"
+        if [ ! -e ${library_path} ]; then
+            return 1
+        fi
+        cp ${library_path} ${OUT_DIR}
+        cp ${root_dir}/snips-megazord/platforms/c/${LIBRARY_NAME}.h ${OUT_DIR}
+        cp ${root_dir}/snips-megazord/platforms/c/module.modulemap ${OUT_DIR}
+        cp `find ${target_dir}/${TARGET_BUILD_TYPE} -name "libsnips_kaldi.dylib" | head -n1` ${OUT_DIR}
 
     else
         echo "${SYSTEM} isn't supported"
