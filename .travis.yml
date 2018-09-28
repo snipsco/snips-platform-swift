@@ -24,13 +24,13 @@ script:
   - xcodebuild -showsdks
 
   - if [ "$RUN_TESTS" == "YES" ]; then
-      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test;
     else
-      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build;
     fi
 
   - if [ "$BUILD_EXAMPLE" == "YES" ]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build | xcpretty;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build;
     fi
 
   - if [ "$POD_LINT" == "YES" ]; then
