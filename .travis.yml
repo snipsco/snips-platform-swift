@@ -29,7 +29,7 @@ script:
       travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
     fi
 
-  - if [ "$BUILD_EXAMPLE" == "YES"]; then
+  - if [ "$BUILD_EXAMPLE" == "YES" ]; then
       xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build | xcpretty;
     fi
 
