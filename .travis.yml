@@ -12,8 +12,8 @@ env:
   - IOS_FRAMEWORK_SCHEME=SnipsPlatform-iOS
   - EXAMPLE_SCHEME=SnipsPlatformDemo
   matrix:
-    - DESTINATION="OS=11.4,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="YES"  BUILD_EXAMPLE="YES"  POD_LINT="YES"
-    - DESTINATION="generic/platform=iOS"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TEST="NO"   BUILD_EXAMPLE="YES"  POD_LINT="NO"
+    - DESTINATION="OS=11.4,name=iPhone X" SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="NO"  BUILD_EXAMPLE="YES"  POD_LINT="YES"
+    - DESTINATION="generic/platform=iOS"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="NO"  BUILD_EXAMPLE="YES"  POD_LINT="NO"
 
 before_install:
   - gem install cocoapods --pre --no-rdoc --no-ri --no-document --quiet
@@ -23,16 +23,16 @@ script:
   - xcodebuild -version
   - xcodebuild -showsdks
 
-  - if [ $RUN_TESTS == "YES" ]; then
-      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
+  - if [ "$RUN_TESTS" == "YES" ]; then
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test;
     else
-      travis_retry xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build;
     fi
 
-  - if [ $BUILD_EXAMPLE == "YES"]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build | xcpretty;
+  - if [ "$BUILD_EXAMPLE" == "YES" ]; then
+      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build CODE_SIGNING_ALLOWED=NO;
     fi
 
-  - if [ $POD_LINT == "YES" ]; then
+  - if [ "$POD_LINT" == "YES" ]; then
       sed -i.bk "s:\${SRCROOT}/SnipsPlatform:$(pwd):g" SnipsPlatform.podspec && pod lib lint --verbose;
     fi
