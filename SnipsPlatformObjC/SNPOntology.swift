@@ -10,17 +10,17 @@ import Foundation
 /// A detected intent.
 @objc public class SNPIntent: NSObject {
     /// ID of the session.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// Custom data provided by the developer at the beginning of the session.
-    public var customData: String?
+    @objc public var customData: String?
     /// Site ID where the intent was detected.
-    public var siteId: String
+    @objc public var siteId: String
     /// The user input.
-    public var input: String
+    @objc public var input: String
     /// The intent classification result. If `nil`, the `input` wasn't recognized.
-    public var intent: SNPIntentClassifierResult?
+    @objc public var intent: SNPIntentClassifierResult?
     /// Lists of parsed slots.
-    public var slots: [SNPSlot]
+    @objc public var slots: [SNPSlot]
     
     init(_ intentMessage: IntentMessage) {
         sessionId = intentMessage.sessionId
@@ -35,9 +35,9 @@ import Foundation
 /// An intent description.
 @objc public class SNPIntentClassifierResult: NSObject {
     /// The name of the intent.
-    public let intentName: String
+    @objc public let intentName: String
     /// The probability between 0.0 and 1.0 of the intent.
-    public let probability: Float
+    @objc public let probability: Float
     
     init?(_ intentClassifierResult: IntentClassifierResult?) {
         guard let intentClassifierResult = intentClassifierResult else { return nil }
@@ -47,28 +47,28 @@ import Foundation
 }
 
 @objc public class SNPSlot: NSObject {
-    public let rawValue: String
+    @objc public let rawValue: String
     /// The value of the slot.
-    public let value: SNPSlotValue
+    @objc public let value: SNPSlotValue
     /// The range of the matching string in the given sentence.
-    public let range: Range<Int>
+    @objc public let range: [Int]
     /// The entity name.
-    public let entity: String
+    @objc public let entity: String
     /// The name of the slot.
-    public let slotName: String
+    @objc public let slotName: String
     
     init(_ slot: Slot) {
         rawValue = slot.rawValue
         value = SNPSlotValue(slot.value)
-        range = slot.range
+        range = Array(slot.range.lowerBound...slot.range.upperBound)
         entity = slot.entity
         slotName = slot.slotName
     }
 }
 
 @objc public class SNPSlotValue: NSObject {
-    public let slotCase: SNPSlotCase
-    public let slotValue: Any
+    @objc public let slotCase: SNPSlotCase
+    @objc public let slotValue: Any
     
     init(_ slotValue: SlotValue) {
         switch slotValue {
@@ -118,11 +118,11 @@ import Foundation
 /// A date
 @objc final class SNPInstantTimeValue: NSObject {
     /// The date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
-    public let value: String
+    @objc public let value: String
     /// Granularity of the date e.g. for "tomorrow" the granularity would be `Grain.day`.
-    public let grain: SNPGrain
+    @objc public let grain: SNPGrain
     /// Precision of the date.
-    public let precision: SNPPrecision
+    @objc public let precision: SNPPrecision
     
     init(_ instantTimeValue: InstantTimeValue) {
         value = instantTimeValue.value
@@ -134,9 +134,9 @@ import Foundation
 /// A date range.
 @objc public class SNPTimeIntervalValue: NSObject {
     /// Start date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
-    public let from: String?
+    @objc public let from: String?
     /// End date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
-    public let to: String?
+    @objc public let to: String?
     
     init(_ timeIntervalValue: TimeIntervalValue) {
         from = timeIntervalValue.from
@@ -147,11 +147,11 @@ import Foundation
 /// A quantity of money.
 @objc public class SNPAmountOfMoneyValue: NSObject {
     /// The amount.
-    public let value: Float
+    @objc public let value: Float
     /// The precision of this amount.
-    public let precision: SNPPrecision
+    @objc public let precision: SNPPrecision
     /// Currency of this amount e.g. "EUR", "USD", "$".
-    public let unit: String?
+    @objc public let unit: String?
     
     init(_ amountOfMoneyValue: AmountOfMoneyValue) {
         value = amountOfMoneyValue.value
@@ -163,9 +163,9 @@ import Foundation
 /// A temperature.
 @objc public class SNPTemperatureValue: NSObject {
     /// The value of the temperature.
-    public let value: Float
+    @objc public let value: Float
     /// The unit of this temperature e.g. "degree", "celcius", "fahrenheit".
-    public let unit: String?
+    @objc public let unit: String?
     
     init(_ temperatureValue: TemperatureValue) {
         self.value = temperatureValue.value
@@ -176,23 +176,23 @@ import Foundation
 /// A duration.
 @objc public class SNPDurationValue: NSObject {
     /// Numbers of years.
-    public let years: Int
+    @objc public let years: Int
     /// Numbers of quarters.
-    public let quarters: Int
+    @objc public let quarters: Int
     /// Numbers of months.
-    public let months: Int
+    @objc public let months: Int
     /// Numbers of weeks.
-    public let weeks: Int
+    @objc public let weeks: Int
     /// Numbers of days.
-    public let days: Int
+    @objc public let days: Int
     /// Numbers of hours.
-    public let hours: Int
+    @objc public let hours: Int
     /// Numbers of minutes.
-    public let minutes: Int
+    @objc public let minutes: Int
     /// Numbers of seconds.
-    public let seconds: Int
+    @objc public let seconds: Int
     /// Precision of the duration.
-    public let precision: SNPPrecision
+    @objc public let precision: SNPPrecision
     
     init(_ durationValue: DurationValue) {
         years = durationValue.years
@@ -263,10 +263,10 @@ import Foundation
 }
 
 @objc public class SNPSessionInitTypeAction: NSObject {
-    public let text: String?
-    public let intentFilter: [String]?
-    public let canBeEnqueued: Bool
-    public let sendIntentNotRecognized: Bool
+    @objc public let text: String?
+    @objc public let intentFilter: [String]?
+    @objc public let canBeEnqueued: Bool
+    @objc public let sendIntentNotRecognized: Bool
     
     init(text: String?, intentFilter: [String]?, canBeEnqueued: Bool, sendIntentNotRecognized: Bool) {
         self.text = text
@@ -281,8 +281,8 @@ import Foundation
 /// - action: When an intent is expected to be parsed.
 /// - notification: Notify the user about something via the tts.
 @objc public class SNPSessionInitType: NSObject {
-    public let slotCase: SNPSessionInitTypeCase
-    public let slotValue: Any
+    @objc public let slotCase: SNPSessionInitTypeCase
+    @objc public let slotValue: Any
     
     init(_ sessionInitType: SessionInitType) {
         switch sessionInitType {
@@ -299,11 +299,11 @@ import Foundation
 /// A message to start a session.
 @objc public class SNPStartSessionMessage: NSObject {
     /// The type of the session.
-    public let initType: SNPSessionInitType
+    @objc public let initType: SNPSessionInitType
     /// An optional piece of data that will be given back in `IntentMessage`, `IntentNotRecognizedMessage`, `SessionQueuedMessage`, `SessionStartedMessage` and `SessionEndedMessage` that are related to this session
-    public let customData: String?
+    @objc public let customData: String?
     /// Site where the user started the interaction.
-    public let siteId: String?
+    @objc public let siteId: String?
     
     @objc public init(initType: SNPSessionInitType, customData: String? = nil, siteId: String? = nil) {
         self.initType = initType
@@ -315,16 +315,16 @@ import Foundation
 /// Message to send to continue a session.
 @objc public class SNPContinueSessionMessage: NSObject {
     /// Session identifier to continue.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// The text the TTS should say to start this additional request of the session.
-    public let text: String
+    @objc public let text: String
     /// A list of intents names to restrict the NLU resolution on the answer of this query. Filter is inclusive.
     /// Passing nil will not filter. Passing an empty array will filter everything. Passing the name of the intent will let only this intent pass.
-    public let intentFilter: [String]?
+    @objc public let intentFilter: [String]?
     /// An optional piece of data that will be given back in `IntentMessage` and `IntentNotRecognizedMessage` and `SessionEndedMessage` that are related to this session. If set it will replace any existing custom data previously set on this session
-    public let customData: String?
+    @objc public let customData: String?
     /// An optional boolean to indicate whether the dialogue manager should handle non recognized intents by itself or sent them as an `IntentNotRecognizedMessage` for the client to handle. This setting applies only to the next conversation turn. The default value is false (and the dialogue manager will handle non recognized intents by itself)
-    public let sendIntentNotRecognized: Bool
+    @objc public let sendIntentNotRecognized: Bool
     
     @objc public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, sendIntentNotRecognized: Bool = false) {
         self.sessionId = sessionId
@@ -338,9 +338,9 @@ import Foundation
 /// Message to send to end a session.
 @objc public class SNPEndSessionMessage: NSObject {
     /// Session identifier to end.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// The text the TTS should say to end the session.
-    public let text: String?
+    @objc public let text: String?
     
     @objc public init(sessionId: String, text: String? = nil) {
         self.sessionId = sessionId
@@ -351,15 +351,15 @@ import Foundation
 /// Message sent when a session starts.
 @objc public class SNPSessionStartedMessage: NSObject {
     /// The id of the session that was started.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// The custom data that was given at the session creation.
-    public let customData: String?
+    @objc public let customData: String?
     /// The site on which this session was started.
-    public let siteId: String
+    @objc public let siteId: String
     /// This optional field indicates this session is a reactivation of a previously ended session.
     /// This is for example provided when the user continues talking to the platform without saying
     /// the hotword again after a session was ended.
-    public let reactivatedFromSessionId: String?
+    @objc public let reactivatedFromSessionId: String?
     
     init(_ sessionStartedMessage: SessionStartedMessage) {
         self.sessionId = sessionStartedMessage.sessionId
@@ -372,11 +372,11 @@ import Foundation
 /// Message sent when a session continues.
 @objc public class SNPSessionQueuedMessage: NSObject {
     /// The id of the session that was started.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// The custom data that was given at the session creation.
-    public let customData: String?
+    @objc public let customData: String?
     /// The site on which this session was started.
-    public let siteId: String
+    @objc public let siteId: String
     
     init(_ sessionsQueuedMessage: SessionQueuedMessage) {
         self.sessionId = sessionsQueuedMessage.sessionId
@@ -388,13 +388,13 @@ import Foundation
 /// Message sent when a session has ended.
 @objc public class SNPSessionEndedMessage: NSObject {
     /// The id of the session that was started.
-    public let sessionId: String
+    @objc public let sessionId: String
     /// The custom data that was given at the session creation.
-    public let customData: String?
+    @objc public let customData: String?
     /// The site on which this session was started.
-    public let siteId: String
+    @objc public let siteId: String
     /// How the session was ended.
-    public let sessionTermination: SNPSessionTermination
+    @objc public let sessionTermination: SNPSessionTermination
     
     init(_ sessionEndedMessage: SessionEndedMessage) {
         self.sessionId = sessionEndedMessage.sessionId
@@ -407,9 +407,9 @@ import Foundation
 /// Session termination sent when a session has ended containing the type of termination.
 @objc public class SNPSessionTermination: NSObject {
     /// The type of termination.
-    public let terminationType: SNPSessionTerminationType
+    @objc public let terminationType: SNPSessionTerminationType
     /// In case of an error, there can be data provided for more details.
-    public let data: String?
+    @objc public let data: String?
     
     init(_ sessionTermination: SessionTermination) {
         self.data = sessionTermination.data
@@ -448,15 +448,15 @@ import Foundation
 /// A message to say to the user.
 @objc public class SNPSayMessage: NSObject {
     /// The text to say.
-    public let text: String
+    @objc public let text: String
     /// The lang of the message to say.
-    public let lang: String?
+    @objc public let lang: String?
     /// A unique id of the message to say.
-    public let messageId: String?
+    @objc public let messageId: String?
     /// The site id where the message to say comes from.
-    public let siteId: String
+    @objc public let siteId: String
     /// The id of the session.
-    public let sessionId: String?
+    @objc public let sessionId: String?
     
     init(_ message: SayMessage) {
         self.text = message.text
@@ -479,9 +479,9 @@ import Foundation
 /// (typically when a text-to-speech finished to say its message)
 @objc public class SNPSayFinishedMessage: NSObject {
     /// The unique id of message that what was said.
-    public let messageId: String?
+    @objc public let messageId: String?
     /// The id of the session.
-    public let sessionId: String?
+    @objc public let sessionId: String?
     
     init(_ message: SayFinishedMessage) {
         messageId = message.messageId
@@ -491,5 +491,93 @@ import Foundation
     @objc public init(messageId: String?, sessionId: String?) {
         self.messageId = messageId
         self.sessionId = sessionId
+    }
+}
+
+/// The kind of ASR injection
+///
+/// - add: Add new entities on top of the latest injected assistant.
+/// - addFromVanilla: Add new entities on top of the vanilla assistant (the assistant without any injection).
+@objc public enum SNPSnipsInjectionKind: Int {
+    case add
+    case addFromVanilla
+    
+    init(_ snipsInjectionKind: SnipsInjectionKind) {
+        switch snipsInjectionKind {
+        case .add: self = .add
+        case .addFromVanilla: self = .addFromVanilla
+        }
+    }
+    
+    var snipsInjectionKind: SnipsInjectionKind {
+        switch self {
+        case .add: return .add
+        case .addFromVanilla: return .addFromVanilla
+        }
+    }
+}
+
+/// The injection request operation
+///
+/// - entities: String dictionary containing the new entities. The key of the dictionary must correspond with the slots in your app or else the injection will fail. For instance, the Snips' weather app has a locality slot. Usage:
+///     ```
+///     var newEntities: [String: [String]] = [:]
+///     newEntites["locality"] = ["wonderland"]
+///     let injectionRequestOperation = InjectionRequestOperation(entities: newEntities, kind: .add)
+///     ```
+///
+/// - kind: Injection kind case
+@objc public class SNPInjectionRequestOperation: NSObject {
+    @objc public let entities: [String: [String]]
+    @objc public let kind: SNPSnipsInjectionKind
+    
+    @objc public init(entities: [String: [String]], kind: SNPSnipsInjectionKind) {
+        self.entities = entities
+        self.kind = kind
+    }
+}
+
+/// Injection request message
+///
+/// - operations: Array of `InjectionRequestOperation`.
+/// - lexicon: String dictionary containing the pronunciation of each new entity. It will replace the g2p resources provided by Snips. This lexicon is generated by Snips.
+/// - crossLanguage: If set, this will be generate pronunciations into the given language in addition of the assistant language e.g. french words into the english phonology.
+/// - requestId: The id of the injection request.
+@objc public class SNPInjectionRequestMessage: NSObject {
+    @objc public let operations: [SNPInjectionRequestOperation]
+    @objc public let lexicon: [String: [String]]
+    @objc public let crossLanguage: String?
+    @objc public let requestId: String?
+    
+    @objc public init(operations: [SNPInjectionRequestOperation], lexicon: [String: [String]] = [:], crossLanguage: String? = nil, requestId: String? = nil) {
+        self.operations = operations
+        self.lexicon = lexicon
+        self.crossLanguage = crossLanguage
+        self.requestId = requestId
+    }
+}
+
+/// ASR model parameters
+@objc public class SNPAsrModelParameters: NSObject {
+    @objc public var beamSize: Float
+    @objc public var latticeBeamSize: Float
+    @objc public var acousticScale: Float
+    @objc public var maxActive: UInt
+    @objc public var minActive: UInt
+    @objc public var endpointing: String
+    @objc public var useFinalProbs: Bool
+    
+    @objc public init(beamSize: Float, latticeBeamSize: Float, acousticScale: Float, maxActive: UInt, minActive: UInt, endpointing: String, useFinalProbs: Bool) {
+        self.beamSize = beamSize
+        self.latticeBeamSize = latticeBeamSize
+        self.acousticScale = acousticScale
+        self.maxActive = maxActive
+        self.minActive = minActive
+        self.endpointing = endpointing
+        self.useFinalProbs = useFinalProbs
+    }
+    
+    var asrModelParameters: AsrModelParameters {
+        return AsrModelParameters(beamSize: beamSize, latticeBeamSize: latticeBeamSize, acousticScale: acousticScale, maxActive: maxActive, minActive: minActive, endpointing: endpointing, useFinalProbs: useFinalProbs)
     }
 }

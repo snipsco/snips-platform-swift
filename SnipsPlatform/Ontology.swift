@@ -672,6 +672,17 @@ public struct AsrModelParameters {
         self.useFinalProbs = cParameters.use_final_probs < UINT8_MAX ? (cParameters.use_final_probs != 0) : nil
     }
     
+    //For Objective-C wrapper
+    init(beamSize: Float?, latticeBeamSize: Float?, acousticScale: Float?, maxActive: UInt?, minActive: UInt?, endpointing: String?, useFinalProbs: Bool?) {
+        self.beamSize = beamSize
+        self.latticeBeamSize = latticeBeamSize
+        self.acousticScale = acousticScale
+        self.maxActive = maxActive
+        self.minActive = minActive
+        self.endpointing = endpointing
+        self.useFinalProbs = useFinalProbs
+    }
+    
     func toUnsafeCModelParameters(body: (UnsafePointer<CModelParameters>) throws -> Void) throws {
         var cParameters = CModelParameters(
             beam_size: beamSize ?? -1.0,

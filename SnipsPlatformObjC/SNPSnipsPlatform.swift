@@ -51,10 +51,11 @@ import AVFoundation
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
                 userURL: URL? = nil,
-                g2pResources: URL? = nil) throws {
+                g2pResources: URL? = nil,
+                asrModelParameters: SNPAsrModelParameters?) throws {
         
         do {
-            snipsPlatform = try SnipsPlatform(assistantURL: assistantURL, hotwordSensitivity: hotwordSensitivity, enableHtml: enableHtml, enableLogs: enableLogs, enableInjection: enableInjection, userURL: userURL, g2pResources: g2pResources)
+            snipsPlatform = try SnipsPlatform(assistantURL: assistantURL, hotwordSensitivity: hotwordSensitivity, enableHtml: enableHtml, enableLogs: enableLogs, enableInjection: enableInjection, userURL: userURL, g2pResources: g2pResources, asrModelParameters: asrModelParameters?.asrModelParameters)
         } catch let error as SnipsPlatformError {
             throw SNPSnipsPlatformError(error)
         } catch let error {
@@ -263,11 +264,14 @@ import AVFoundation
     ///
     /// - Throws: A `SnipsPlatformError` if something went wrong.
     ///
-//    @objc public func requestInjection(with message: InjectionRequestMessage) throws {
-//        try message.toUnsafeCInjectionRequestMessage { cMessage in
-//            guard megazord_request_injection(ptr, cMessage) == SNIPS_RESULT_OK else {
-//                throw SnipsPlatformError.getLast
-//            }
-//        }
-//    }
+    @objc public func requestInjection(with message: SNPInjectionRequestMessage) throws {
+        do {
+            let operations = message.operations.compactMap { InjectionRequestOperation(entities: $0.entities, kind: $0.kind.snipsInjectionKind) }
+            try snipsPlatform.requestInjection(with: InjectionRequestMessage(operations: operations))
+        } catch let error as SnipsPlatformError {
+            throw SNPSnipsPlatformError(error)
+        } catch let error {
+            throw error
+        }
+    }
 }
