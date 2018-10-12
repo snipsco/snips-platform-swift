@@ -21,6 +21,7 @@
 		007732BA2164AFD500F817E6 /* SNPSnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007732B72164AFD500F817E6 /* SNPSnipsPlatform.swift */; };
 		007732BB2164AFD500F817E6 /* SnipsPlatformObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 007732B82164AFD500F817E6 /* SnipsPlatformObjC.h */; };
 		007732BC2164AFD500F817E6 /* SNPOntology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007732B92164AFD500F817E6 /* SNPOntology.swift */; };
+		007BDC20216657E0008BBBA2 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
@@ -43,13 +44,19 @@
 		F7BB4FEB215A913700FEEA43 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		F7BB4FEC215A913900FEEA43 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
-		F7BB4FEE215A93BB00FEEA43 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F7BB4FF1215A978800FEEA43 /* libsnips_megazord.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FEF215A978800FEEA43 /* libsnips_megazord.dylib */; };
 		F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FF0215A978800FEEA43 /* libsnips_kaldi.dylib */; };
 		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		007BDC1E2166560C008BBBA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F7CF588C1FBDA00200027852 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F7BB4FBA215A39C700FEEA43;
+			remoteInfo = "SnipsPlatform-iOS";
+		};
 		F7BB4FA9215A382E00FEEA43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F7CF588C1FBDA00200027852 /* Project object */;
@@ -58,20 +65,6 @@
 			remoteInfo = "SnipsPlatform-macOS";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		F71181E41FDECD7A00512C79 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				F7BB4FEE215A93BB00FEEA43 /* SnipsPlatform.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		001CDFCC213419AB0090C176 /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
@@ -146,6 +139,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				007BDC20216657E0008BBBA2 /* SnipsPlatform.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,11 +335,11 @@
 				F7CF589A1FBDA00200027852 /* Sources */,
 				F7CF589B1FBDA00200027852 /* Frameworks */,
 				F7CF589C1FBDA00200027852 /* Resources */,
-				F71181E41FDECD7A00512C79 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				007BDC1F2166560C008BBBA2 /* PBXTargetDependency */,
 			);
 			name = "AllTests-iOS";
 			productName = SnipsPlatformTests;
@@ -510,7 +504,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SNIPS_USE_REMOTE=1 $PROJECT_DIR/scripts/download_core.sh ios\n";
+			shellScript = "#SNIPS_USE_REMOTE=1 $PROJECT_DIR/scripts/download_core.sh ios\n";
 		};
 		F7BB4FD6215A5C6E00FEEA43 /* Download Core */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -587,6 +581,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		007BDC1F2166560C008BBBA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F7BB4FBA215A39C700FEEA43 /* SnipsPlatform-iOS */;
+			targetProxy = 007BDC1E2166560C008BBBA2 /* PBXContainerItemProxy */;
+		};
 		F7BB4FAA215A382E00FEEA43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F7BB4F9E215A382E00FEEA43 /* SnipsPlatform-macOS */;
@@ -765,6 +764,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = SnipsPlatform;
 				SDKROOT = iphoneos;
