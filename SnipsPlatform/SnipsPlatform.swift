@@ -77,7 +77,7 @@ public class SnipsPlatform {
                 g2pResources: URL? = nil,
                 asrModelParameters: AsrModelParameters? = nil) throws {
         var client: UnsafePointer<MegazordClient>?
-        guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_create(assistantURL.path, &client, nil) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
         guard megazord_enable_streaming(ptr, 1) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
@@ -118,7 +118,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _snipsWatchHandler = newValue
-                megazord_set_snips_watch_handler(ptr) { buffer in
+                megazord_set_snips_watch_handler(ptr) { buffer, _ in
                     defer {
                         megazord_destroy_string(UnsafeMutablePointer(mutating: buffer))
                     }
@@ -139,7 +139,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onIntentDetected = newValue
-                megazord_set_intent_detected_handler(ptr) { cIntent in
+                megazord_set_intent_detected_handler(ptr) { cIntent, _ in
                     defer {
                         megazord_destroy_intent_message(UnsafeMutablePointer(mutating: cIntent))
                     }
@@ -160,7 +160,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onHotwordDetected = newValue
-                megazord_set_hotword_detected_handler(ptr) {
+                megazord_set_hotword_detected_handler(ptr) { _ in
                     _onHotwordDetected?()
                 }
             } else {
@@ -177,7 +177,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onListeningStateChanged = newValue
-                megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged in
+                megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged, _ in
                     _onListeningStateChanged?(cListeningStateChanged != 0)
                 }
             } else {
@@ -194,7 +194,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionStarted = newValue
-                megazord_set_session_started_handler(ptr) { cSessionStartedMessage in
+                megazord_set_session_started_handler(ptr) { cSessionStartedMessage, _ in
                     defer {
                         megazord_destroy_session_started_message(UnsafeMutablePointer(mutating: cSessionStartedMessage))
                     }
@@ -213,7 +213,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionQueued = newValue
-                megazord_set_session_queued_handler(ptr) { cSessionQueuedMessage in
+                megazord_set_session_queued_handler(ptr) { cSessionQueuedMessage, _ in
                     defer {
                         megazord_destroy_session_queued_message(UnsafeMutablePointer(mutating: cSessionQueuedMessage))
                     }
@@ -232,7 +232,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionEnded = newValue
-                megazord_set_session_ended_handler(ptr) { cSessionEndedMessage in
+                megazord_set_session_ended_handler(ptr) { cSessionEndedMessage, _ in
                     defer {
                         megazord_destroy_session_ended_message(UnsafeMutablePointer(mutating: cSessionEndedMessage))
                     }
@@ -251,7 +251,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _speechHandler = newValue
-                megazord_set_tts_handler(ptr) { message in
+                megazord_set_tts_handler(ptr) { message, _ in
                     defer {
                         megazord_destroy_say_message(UnsafeMutablePointer(mutating: message))
                     }
