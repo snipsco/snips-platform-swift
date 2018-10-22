@@ -48,7 +48,7 @@ class SnipsPlatformTests: XCTestCase {
         try! snips?.pause()
         super.tearDown()
     }
-
+    
     func test_hotword() {
         let hotwordDetectedExpectation = expectation(description: "Hotword detected")
         let sessionEndedExpectation = expectation(description: "Session ended")
@@ -62,7 +62,7 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { sessionEnded in
             sessionEndedExpectation.fulfill()
         }
-        try! playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
+        playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
         wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 10)
     }
     
@@ -72,7 +72,7 @@ class SnipsPlatformTests: XCTestCase {
         let sessionEndedExpectation = expectation(description: "Session ended")
         
         onSessionStartedHandler = { [weak self] _ in
-            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onIntentDetected = { [weak self] intent in
@@ -120,7 +120,7 @@ class SnipsPlatformTests: XCTestCase {
         let intentNotRecognizedExpectation = expectation(description: "Intent not recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onSessionEndedHandler = { sessionEndedMessage in
@@ -136,7 +136,7 @@ class SnipsPlatformTests: XCTestCase {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            try! self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
         }
         
         onIntentDetected = { [weak self] intent in
@@ -268,7 +268,7 @@ class SnipsPlatformTests: XCTestCase {
                 continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: nil)
                 try! self?.snips?.continueSession(message: continueSessionMessage!)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    try! self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
+                    self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
                 }
             }
             else {
@@ -311,7 +311,7 @@ class SnipsPlatformTests: XCTestCase {
         
         let testInjectionBlock = { [weak self] in
             try! self?.snips?.startSession()
-            try! self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
         }
         
         let deleteInjectionDataBlock = { [weak self] in
@@ -345,7 +345,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession()
-        try! playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
+        playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
         
         wait(for: [entityNotInjectedShouldNotBeDetectedExpectation, injectingEntitiesExpectation, entityInjectedShouldBeDetectedExpectation, tearDownExpectation],
              timeout: 20,
@@ -393,10 +393,16 @@ extension SnipsPlatformTests {
         try audioEngine.start()
     }
     
-    func playAudio(forResource: String?, withExtension: String?, completionHandler: (() -> ())? = nil) throws {
-        guard let forResource = forResource else { throw NSError(domain: "Empty resource", code: 101, userInfo: nil) }
+    func playAudio(forResource: String?, withExtension: String?, completionHandler: (() -> ())? = nil) {
+        guard let forResource = forResource else {
+            XCTFail("Couldn't load sound resource")
+            return
+        }
         let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
-        let audioFile = try AVAudioFile(forReading: audioURL)
+        guard let audioFile = try? AVAudioFile(forReading: audioURL) else {
+            XCTFail("Couldn't load sound file at \(audioURL)" )
+            return
+        }
         let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: UInt32(audioFile.length))!
         let audioFilePlayer = AVAudioPlayerNode()
         audioEngine.attach(audioFilePlayer)
