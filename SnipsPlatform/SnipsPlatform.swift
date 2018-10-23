@@ -467,8 +467,7 @@ public class SnipsPlatform {
         } else {
             snipsInjectionURLPath = nil
         }
-
-        guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
+        guard megazord_enable_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
             throw SnipsPlatformError.getLast
         }
     }

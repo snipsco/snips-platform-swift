@@ -63,7 +63,7 @@ class SnipsPlatformTests: XCTestCase {
             sessionEndedExpectation.fulfill()
         }
         playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
-        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 10)
+        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 20)
     }
     
     func test_intent() {
@@ -113,7 +113,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: true)
-        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 15)
+        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 30)
     }
     
     func test_emtpy_intent_filter_intent_not_recognized() {
@@ -129,7 +129,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["nonExistentIntent"], canBeEnqueued: false, sendIntentNotRecognized: false)))
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_intent_filter() {
@@ -145,7 +145,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false, sendIntentNotRecognized: false)))
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_listening_state_changed() {
@@ -185,7 +185,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_notification_nil() {
@@ -199,7 +199,7 @@ class SnipsPlatformTests: XCTestCase {
             notificationSentExpectation.fulfill()
         }
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_action() {
@@ -214,7 +214,7 @@ class SnipsPlatformTests: XCTestCase {
             actionSentExpectation.fulfill()
         }
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_action_nil() {
@@ -229,7 +229,7 @@ class SnipsPlatformTests: XCTestCase {
             actionSentExpectation.fulfill()
         }
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_speech_handler() {
@@ -247,7 +247,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startNotification(text: messageToSpeak)
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: 15)
     }
     
     func test_dialog_scenario() {
@@ -277,7 +277,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: startSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_injection() {
@@ -329,10 +329,12 @@ class SnipsPlatformTests: XCTestCase {
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
                 testPhase = .injectingEntities
                 injectionBlock()
-                DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 5) {
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 20) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
-                    testInjectionBlock()
+                    DispatchQueue.main.sync {
+                        testInjectionBlock()
+                    }
                 }
             case .entityInjectedShouldBeDetected:
                 XCTAssert(slotLocalityWonderland.count == 1)
@@ -348,7 +350,7 @@ class SnipsPlatformTests: XCTestCase {
         playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
         
         wait(for: [entityNotInjectedShouldNotBeDetectedExpectation, injectingEntitiesExpectation, entityInjectedShouldBeDetectedExpectation, tearDownExpectation],
-             timeout: 20,
+             timeout: 100,
              enforceOrder: true)
     }
 }
