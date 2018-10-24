@@ -31,6 +31,7 @@ class SnipsPlatformTests: XCTestCase {
     var onSessionQueuedHandler: ((SessionQueuedMessage) -> ())?
     var onSessionEndedHandler: ((SessionEndedMessage) -> ())?
     var onListeningStateChanged: ((Bool) -> ())?
+    var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
     
     let hotwordAudioFile = "hey snips"
     let weatherAudioFile = "What will be the weather in Madagascar in two days"
@@ -114,6 +115,25 @@ class SnipsPlatformTests: XCTestCase {
         
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 30)
+    }
+    
+    func test_intent_not_recognized() {
+        let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
+            }
+        }
+        
+        onIntentNotRecognizedHandler = { [weak self] message in
+            onIntentNotRecognizedExpectation.fulfill()
+            try! self?.snips?.endSession(sessionId: message.sessionId)
+        }
+        
+        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
+        
+        wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
     }
     
     func test_emtpy_intent_filter_intent_not_recognized() {
@@ -381,6 +401,9 @@ extension SnipsPlatformTests {
         }
         snips?.speechHandler = { [weak self] sayMessage in
             self?.speechHandler?(sayMessage)
+        }
+        snips?.onIntentNotRecognizedHandler = { [weak self] message in
+            self?.onIntentNotRecognizedHandler?(message)
         }
         
         try! snips?.start()

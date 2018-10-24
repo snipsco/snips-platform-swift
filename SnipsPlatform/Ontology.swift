@@ -42,6 +42,24 @@ public struct IntentMessage {
     }
 }
 
+public struct IntentNotRecognizedMessage {
+    /// Site ID where the intent was detected.
+    public var siteId: String
+    /// ID of the session.
+    public let sessionId: String
+    /// The user input.
+    public var input: String?
+    /// Custom data provided by the developer at the beginning of the session.
+    public var customData: String?
+    
+    init(cResult: CIntentNotRecognizedMessage) {
+        self.siteId = String(cString: cResult.site_id)
+        self.sessionId = String(cString: cResult.session_id)
+        self.input = String(cString: cResult.input)
+        self.customData = String.fromCStringPtr(cString: cResult.custom_data)
+    }
+}
+
 /// An intent description.
 public struct IntentClassifierResult {
     /// The name of the intent.

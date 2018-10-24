@@ -17,6 +17,7 @@ private typealias CListeningHandler = @convention(c) (Bool) -> Void
 private typealias CSessionEndedHandler = @convention(c) (UnsafePointer<CSessionEndedMessage>) -> Void
 private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSessionQueuedMessage>) -> Void
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
+private typealias CIntentNotRecognizedHandler = @convention(c) (UnsafePointer<CIntentNotRecognizedMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> Void
 public typealias SpeechHandler = (SayMessage) -> Void
@@ -26,6 +27,7 @@ public typealias ListeningStateChangedHandler = (Bool) -> Void
 public typealias SessionStartedHandler = (SessionStartedMessage) -> Void
 public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
+public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -51,6 +53,7 @@ private var _onListeningStateChanged: ListeningStateChangedHandler?
 private var _onSessionStarted: SessionStartedHandler?
 private var _onSessionQueued: SessionQueuedHandler?
 private var _onSessionEnded: SessionEndedHandler?
+private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -148,6 +151,24 @@ public class SnipsPlatform {
                 }
             } else {
                 megazord_set_intent_detected_handler(ptr, nil)
+            }
+        }
+    }
+    
+    /// A closure exectued when the intent was not recognized. For this closure to be run, you need to start a session with the `sendIntentNotRecognized` parameter set to `true`
+    public var onIntentNotRecognizedHandler: IntentNotRecognizedHandler? {
+        get {
+            return _onIntentNotRecognizedHandler
+        }
+        set {
+            if newValue != nil {
+                _onIntentNotRecognizedHandler = newValue
+                megazord_set_intent_not_recognized_handler(ptr) { cIntent, _ in
+                    guard let cIntent = cIntent?.pointee else { return }
+                    _onIntentNotRecognizedHandler?(IntentNotRecognizedMessage(cResult: cIntent))
+                }
+            } else {
+                megazord_set_intent_not_recognized_handler(ptr, nil)
             }
         }
     }
@@ -263,7 +284,7 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
     /// Start the platform. This operation could be heavy as this start all sub-services.
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
