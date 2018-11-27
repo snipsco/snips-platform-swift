@@ -22,6 +22,7 @@ private typealias CSessionEndedHandler = @convention(c) (UnsafePointer<CSessionE
 private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSessionQueuedMessage>) -> Void
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
 private typealias CIntentNotRecognizedHandler = @convention(c) (UnsafePointer<CIntentNotRecognizedMessage>) -> Void
+private typealias CTextCapturedHandler = @convention(c) (UnsafePointer<CTextCapturedMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> Void
 public typealias SpeechHandler = (SayMessage) -> Void
@@ -32,6 +33,7 @@ public typealias SessionStartedHandler = (SessionStartedMessage) -> Void
 public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
 public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
+public typealias TextCapturedHandler = (TextCapturedMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -58,6 +60,7 @@ private var _onSessionStarted: SessionStartedHandler?
 private var _onSessionQueued: SessionQueuedHandler?
 private var _onSessionEnded: SessionEndedHandler?
 private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
+private var _onTextCapturedHandler: TextCapturedHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -285,6 +288,26 @@ public class SnipsPlatform {
                 }
             } else {
                 megazord_set_tts_handler(ptr, nil)
+            }
+        }
+    }
+    
+    public var onTextCapturedHandler: TextCapturedHandler? {
+        get {
+            return _onTextCapturedHandler
+        }
+        set {
+            if newValue != nil {
+                _onTextCapturedHandler = newValue
+                megazord_set_asr_text_captured_handler(ptr) { message, _ in
+                    defer {
+                        megazord_destroy_text_captured_message(UnsafeMutablePointer(mutating: message))
+                    }
+                    guard let message = message?.pointee else { return }
+                    _onTextCapturedHandler?(TextCapturedMessage(cTextCapturedMessage: message))
+                }
+            } else {
+                megazord_set_asr_text_captured_handler(ptr, nil)
             }
         }
     }

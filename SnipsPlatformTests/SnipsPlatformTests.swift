@@ -26,6 +26,7 @@ class SnipsPlatformTests: XCTestCase {
     var onSessionEndedHandler: ((SessionEndedMessage) -> ())?
     var onListeningStateChanged: ((Bool) -> ())?
     var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
+    var onTextCapturedHandler: ((TextCapturedMessage) -> ())?
     
     let soundQueue = DispatchQueue(label: "ai.snips.SnipsPlatformTests.sound", qos: .userInteractive)
     var firstTimePlayedAudio: Bool = true
@@ -352,6 +353,28 @@ class SnipsPlatformTests: XCTestCase {
             timeout: 100,
             enforceOrder: true
         )
+    }
+    
+    func test_asr_text_captured_handler() {
+        let onTextCaptured = expectation(description: "ASR Text was captured")
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            }
+        }
+        
+        onTextCapturedHandler = { [weak self] message in
+            if message.text == self?.weatherAudioFile.lowercased() {
+                onTextCaptured.fulfill()
+            } else {
+                XCTFail("Text captured wasn't equal to the text sent")
+            }
+        }
+        
+        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
+        
+        wait(for: [onTextCaptured], timeout: 20)
     }
 }
 

@@ -729,3 +729,22 @@ public struct AsrModelParameters {
         cParameters.endpointing?.freeUnsafeMemory()
     }
 }
+
+/// TextCapturedMessage
+public struct TextCapturedMessage {
+    public let text: String
+    public let tokens: CAsrTokenArray?
+    public let likelihood: Float
+    public let seconds: Float
+    public let siteId: String
+    public let sessionId: String?
+    
+    init(cTextCapturedMessage: CTextCapturedMessage) {
+        self.text = String(cString: cTextCapturedMessage.text)
+        self.tokens = nil
+        self.likelihood = cTextCapturedMessage.likelihood
+        self.seconds = cTextCapturedMessage.seconds
+        self.siteId = String(cString: cTextCapturedMessage.site_id)
+        self.sessionId = String.fromCStringPtr(cString: cTextCapturedMessage.session_id)
+    }
+}
