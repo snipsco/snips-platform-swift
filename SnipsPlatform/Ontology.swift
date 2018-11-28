@@ -55,7 +55,7 @@ public struct IntentNotRecognizedMessage {
     init(cResult: CIntentNotRecognizedMessage) {
         self.siteId = String(cString: cResult.site_id)
         self.sessionId = String(cString: cResult.session_id)
-        self.input = String(cString: cResult.input)
+        self.input = String.fromCStringPtr(cString: cResult.input)
         self.customData = String.fromCStringPtr(cString: cResult.custom_data)
     }
 }
