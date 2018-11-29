@@ -38,7 +38,6 @@ pod 'SnipsPlatform'
 #### Git submodule
 
  1. Add the snips-platform-swift repository as a [submodule][] of your application’s repository.
- 1. Run `git submodule update --init --recursive` from within the snips-platform-swift folder.
  1. Drag and drop `SnipsPlatform.xcodeproj` into your application’s Xcode project or workspace.
  1. On the “General” tab of your application target’s settings, add `SnipsPlatform.framework` to the “Embedded Binaries” section.
 
