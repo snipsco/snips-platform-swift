@@ -27,10 +27,8 @@ install_remote_core () {
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
     rm -f ${OUT_DIR}/*
-    if ! core_is_present || ! core_is_up_to_date; then
-        echo "Will download '${filename}'"
-        $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
-    fi
+    echo "Will download '${filename}'"
+    $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
 }
 
 install_local_core () {

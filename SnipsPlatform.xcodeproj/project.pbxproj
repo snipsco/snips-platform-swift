@@ -421,7 +421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SNIPS_USE_REMOTE=1 $PROJECT_DIR/scripts/download_core.sh ios\n";
+			shellScript = "$PROJECT_DIR/scripts/download_core.sh ios\n";
 		};
 		F7BB4FD6215A5C6E00FEEA43 /* Download Core */ = {
 			isa = PBXShellScriptBuildPhase;
