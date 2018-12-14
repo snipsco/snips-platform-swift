@@ -152,7 +152,7 @@ private extension ViewController {
         audioSession.requestRecordPermission { _ in
             // The callback may not be called on the main thread. Add an
             // operation to the main queue to update the record button's state.
-            let recordPermission = audioSession.recordPermission()
+            let recordPermission = audioSession.recordPermission
             OperationQueue.main.addOperation {
                 switch recordPermission {
                 case .undetermined:
@@ -174,9 +174,9 @@ private extension ViewController {
 
     func startRecording() throws {
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(AVAudioSessionCategoryRecord, mode: AVAudioSessionModeMeasurement, options: [])
+        try audioSession.setCategory(.record, mode: .measurement, options: [])
         try audioSession.setPreferredSampleRate(16_000)
-        try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 
         let inputNode = audioEngine.inputNode
         let recordingFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
