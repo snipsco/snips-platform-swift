@@ -12,6 +12,7 @@
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
+		00C911A821CA837300F4221F /* SnipsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C911A721CA837300F4221F /* SnipsService.swift */; };
 		00EEFC81217DD34100C4FDF8 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
@@ -69,6 +70,7 @@
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
 		00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in wonderland.m4a"; sourceTree = "<group>"; };
+		00C911A721CA837300F4221F /* SnipsService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnipsService.swift; sourceTree = "<group>"; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F76DFB8C203319230021D6F9 /* COntology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COntology.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 			children = (
 				F7CF58981FBDA00200027852 /* SnipsPlatform.h */,
 				F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */,
+				00C911A721CA837300F4221F /* SnipsService.swift */,
 				F746A2BA1FCC1951005E09E9 /* Ontology.swift */,
 				F76DFB8C203319230021D6F9 /* COntology.swift */,
 				F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */,
@@ -472,6 +475,7 @@
 				F7BB4FDC215A5CFA00FEEA43 /* COntology.swift in Sources */,
 				F7BB4FDB215A5CFA00FEEA43 /* Ontology.swift in Sources */,
 				F7BB4FDA215A5CFA00FEEA43 /* SnipsPlatform.swift in Sources */,
+				00C911A821CA837300F4221F /* SnipsService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
