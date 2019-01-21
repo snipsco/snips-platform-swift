@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'SnipsPlatformObjC'
-  s.version = '0.59.0'
+  s.version = '0.60.10'
   s.summary = 'The Objective-C framework for the Snips Platform'
   s.description = <<-DESC
     The Snips Voice Platform allows anyone to integrate AI powered voice interaction in their devices with ease.
