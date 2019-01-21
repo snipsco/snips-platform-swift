@@ -99,6 +99,15 @@ import Foundation
         case .percentage(let double):
             slotCase = .percentage
             self.slotValue = double
+        case .musicAlbum(let album):
+            slotCase = .musicAlbum
+            self.slotValue = album
+        case .musicTrack(let track):
+            slotCase = .musicTrack
+            self.slotValue = track
+        case .musicArtist(let artist):
+            slotCase = .musicArtist
+            self.slotValue = artist
         }
     }
 }
@@ -113,6 +122,9 @@ import Foundation
     case temperature
     case duration
     case percentage
+    case musicAlbum
+    case musicArtist
+    case musicTrack
 }
 
 /// A date

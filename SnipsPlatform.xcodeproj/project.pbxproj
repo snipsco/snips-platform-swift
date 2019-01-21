@@ -19,11 +19,9 @@
 		007732AB2164ADBC00F817E6 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE4215A838400FEEA43 /* libc++.tbd */; };
 		007732AC2164ADBC00F817E6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
 		007732BA2164AFD500F817E6 /* SNPSnipsPlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007732B72164AFD500F817E6 /* SNPSnipsPlatform.swift */; };
-		007732BB2164AFD500F817E6 /* SnipsPlatformObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 007732B82164AFD500F817E6 /* SnipsPlatformObjC.h */; };
 		007732BC2164AFD500F817E6 /* SNPOntology.swift in Sources */ = {isa = PBXBuildFile; fileRef = 007732B92164AFD500F817E6 /* SNPOntology.swift */; };
 		007BDC20216657E0008BBBA2 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
-		00EEFC81217DD34100C4FDF8 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
 		F7BB4FD4215A5BD200FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
@@ -67,20 +65,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		F71181E41FDECD7A00512C79 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				00EEFC81217DD34100C4FDF8 /* SnipsPlatform.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		001CDFCC213419AB0090C176 /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
 		0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in Madagascar in two days.m4a"; sourceTree = "<group>"; };
@@ -88,7 +72,6 @@
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
 		007732B12164ADBC00F817E6 /* SnipsPlatformObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SnipsPlatformObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		007732B72164AFD500F817E6 /* SNPSnipsPlatform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SNPSnipsPlatform.swift; sourceTree = "<group>"; };
-		007732B82164AFD500F817E6 /* SnipsPlatformObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnipsPlatformObjC.h; sourceTree = "<group>"; };
 		007732B92164AFD500F817E6 /* SNPOntology.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SNPOntology.swift; sourceTree = "<group>"; };
 		00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in wonderland.m4a"; sourceTree = "<group>"; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
@@ -164,7 +147,6 @@
 		007732B62164AFB700F817E6 /* SnipsPlatformObjC */ = {
 			isa = PBXGroup;
 			children = (
-				007732B82164AFD500F817E6 /* SnipsPlatformObjC.h */,
 				007732B92164AFD500F817E6 /* SNPOntology.swift */,
 				007732B72164AFD500F817E6 /* SNPSnipsPlatform.swift */,
 			);
@@ -243,7 +225,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				007732A42164ADBC00F817E6 /* SnipsPlatform.h in Headers */,
-				007732BB2164AFD500F817E6 /* SnipsPlatformObjC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,6 +352,9 @@
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Snips;
 				TargetAttributes = {
+					007732A12164ADBC00F817E6 = {
+						LastSwiftMigration = 1010;
+					};
 					F7BB4F9E215A382E00FEEA43 = {
 						CreatedOnToolsVersion = 10.0;
 					};
@@ -630,6 +614,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -653,6 +638,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
