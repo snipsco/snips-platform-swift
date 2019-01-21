@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/snipsco/snips-platform-swift.svg?branch=master)](https://travis-ci.org/snipsco/snips-platform-swift)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage)
-![Swift 4.1.x](https://img.shields.io/badge/Swift-4.1.x-orange.svg)
+![Swift 4.2.x](https://img.shields.io/badge/Swift-4.2.x-orange.svg)
 ![platforms](https://img.shields.io/badge/platforms-iOS%20-lightgrey.svg)
 
 The Swift framework for the Snips Platform
@@ -38,7 +38,6 @@ pod 'SnipsPlatform'
 #### Git submodule
 
  1. Add the snips-platform-swift repository as a [submodule][] of your application’s repository.
- 1. Run `git submodule update --init --recursive` from within the snips-platform-swift folder.
  1. Drag and drop `SnipsPlatform.xcodeproj` into your application’s Xcode project or workspace.
  1. On the “General” tab of your application target’s settings, add `SnipsPlatform.framework` to the “Embedded Binaries” section.
 

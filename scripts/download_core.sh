@@ -4,7 +4,7 @@
 
 set -e
 
-VERSION="0.59.0"
+VERSION="0.60.10"
 SYSTEM=$(echo $1 | tr '[:upper:]' '[:lower:]')
 LIBRARY_NAME=libsnips_megazord
 LIBRARY_NAME_A=${LIBRARY_NAME}.a
@@ -27,10 +27,8 @@ install_remote_core () {
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
     rm -f ${OUT_DIR}/*
-    if ! core_is_present || ! core_is_up_to_date; then
-        echo "Will download '${filename}'"
-        $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
-    fi
+    echo "Will download '${filename}'"
+    $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
 }
 
 install_local_core () {

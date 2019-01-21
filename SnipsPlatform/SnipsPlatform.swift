@@ -17,6 +17,7 @@ private typealias CListeningHandler = @convention(c) (Bool) -> Void
 private typealias CSessionEndedHandler = @convention(c) (UnsafePointer<CSessionEndedMessage>) -> Void
 private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSessionQueuedMessage>) -> Void
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
+private typealias CIntentNotRecognizedHandler = @convention(c) (UnsafePointer<CIntentNotRecognizedMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> Void
 public typealias SpeechHandler = (SayMessage) -> Void
@@ -26,6 +27,7 @@ public typealias ListeningStateChangedHandler = (Bool) -> Void
 public typealias SessionStartedHandler = (SessionStartedMessage) -> Void
 public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
+public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -51,6 +53,7 @@ private var _onListeningStateChanged: ListeningStateChangedHandler?
 private var _onSessionStarted: SessionStartedHandler?
 private var _onSessionQueued: SessionQueuedHandler?
 private var _onSessionEnded: SessionEndedHandler?
+private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -77,7 +80,7 @@ public class SnipsPlatform {
                 g2pResources: URL? = nil,
                 asrModelParameters: AsrModelParameters? = nil) throws {
         var client: UnsafePointer<MegazordClient>?
-        guard megazord_create(assistantURL.path, &client) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_create(assistantURL.path, &client, nil) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
         guard megazord_enable_streaming(ptr, 1) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
@@ -118,7 +121,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _snipsWatchHandler = newValue
-                megazord_set_snips_watch_handler(ptr) { buffer in
+                megazord_set_snips_watch_handler(ptr) { buffer, _ in
                     defer {
                         megazord_destroy_string(UnsafeMutablePointer(mutating: buffer))
                     }
@@ -139,7 +142,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onIntentDetected = newValue
-                megazord_set_intent_detected_handler(ptr) { cIntent in
+                megazord_set_intent_detected_handler(ptr) { cIntent, _ in
                     defer {
                         megazord_destroy_intent_message(UnsafeMutablePointer(mutating: cIntent))
                     }
@@ -148,6 +151,24 @@ public class SnipsPlatform {
                 }
             } else {
                 megazord_set_intent_detected_handler(ptr, nil)
+            }
+        }
+    }
+    
+    /// A closure exectued when the intent was not recognized. For this closure to be run, you need to start a session with the `sendIntentNotRecognized` parameter set to `true`
+    public var onIntentNotRecognizedHandler: IntentNotRecognizedHandler? {
+        get {
+            return _onIntentNotRecognizedHandler
+        }
+        set {
+            if newValue != nil {
+                _onIntentNotRecognizedHandler = newValue
+                megazord_set_intent_not_recognized_handler(ptr) { cIntent, _ in
+                    guard let cIntent = cIntent?.pointee else { return }
+                    _onIntentNotRecognizedHandler?(IntentNotRecognizedMessage(cResult: cIntent))
+                }
+            } else {
+                megazord_set_intent_not_recognized_handler(ptr, nil)
             }
         }
     }
@@ -160,7 +181,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onHotwordDetected = newValue
-                megazord_set_hotword_detected_handler(ptr) {
+                megazord_set_hotword_detected_handler(ptr) { _ in
                     _onHotwordDetected?()
                 }
             } else {
@@ -177,7 +198,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onListeningStateChanged = newValue
-                megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged in
+                megazord_set_listening_state_changed_handler(ptr) { cListeningStateChanged, _ in
                     _onListeningStateChanged?(cListeningStateChanged != 0)
                 }
             } else {
@@ -194,7 +215,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionStarted = newValue
-                megazord_set_session_started_handler(ptr) { cSessionStartedMessage in
+                megazord_set_session_started_handler(ptr) { cSessionStartedMessage, _ in
                     defer {
                         megazord_destroy_session_started_message(UnsafeMutablePointer(mutating: cSessionStartedMessage))
                     }
@@ -213,7 +234,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionQueued = newValue
-                megazord_set_session_queued_handler(ptr) { cSessionQueuedMessage in
+                megazord_set_session_queued_handler(ptr) { cSessionQueuedMessage, _ in
                     defer {
                         megazord_destroy_session_queued_message(UnsafeMutablePointer(mutating: cSessionQueuedMessage))
                     }
@@ -232,7 +253,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _onSessionEnded = newValue
-                megazord_set_session_ended_handler(ptr) { cSessionEndedMessage in
+                megazord_set_session_ended_handler(ptr) { cSessionEndedMessage, _ in
                     defer {
                         megazord_destroy_session_ended_message(UnsafeMutablePointer(mutating: cSessionEndedMessage))
                     }
@@ -251,7 +272,7 @@ public class SnipsPlatform {
         set {
             if newValue != nil {
                 _speechHandler = newValue
-                megazord_set_tts_handler(ptr) { message in
+                megazord_set_tts_handler(ptr) { message, _ in
                     defer {
                         megazord_destroy_say_message(UnsafeMutablePointer(mutating: message))
                     }
@@ -263,7 +284,7 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
     /// Start the platform. This operation could be heavy as this start all sub-services.
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
@@ -467,8 +488,7 @@ public class SnipsPlatform {
         } else {
             snipsInjectionURLPath = nil
         }
-
-        guard megazord_enable_asr_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
+        guard megazord_enable_injection(ptr, snipsUserDataURL.path, snipsInjectionURLPath) == SNIPS_RESULT_OK else {
             throw SnipsPlatformError.getLast
         }
     }

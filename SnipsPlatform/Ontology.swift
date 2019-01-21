@@ -42,6 +42,24 @@ public struct IntentMessage {
     }
 }
 
+public struct IntentNotRecognizedMessage {
+    /// Site ID where the intent was detected.
+    public var siteId: String
+    /// ID of the session.
+    public let sessionId: String
+    /// The user input.
+    public var input: String?
+    /// Custom data provided by the developer at the beginning of the session.
+    public var customData: String?
+    
+    init(cResult: CIntentNotRecognizedMessage) {
+        self.siteId = String(cString: cResult.site_id)
+        self.sessionId = String(cString: cResult.session_id)
+        self.input = String.fromCStringPtr(cString: cResult.input)
+        self.customData = String.fromCStringPtr(cString: cResult.custom_data)
+    }
+}
+
 /// An intent description.
 public struct IntentClassifierResult {
     /// The name of the intent.
@@ -76,6 +94,9 @@ public enum SlotValue {
     case temperature(TemperatureValue)
     case duration(DurationValue)
     case percentage(PercentageValue)
+    case musicAlbum(String)
+    case musicArtist(String)
+    case musicTrack(String)
 
     init(cSlotValue: CSlotValue) throws {
         switch cSlotValue.value_type {
@@ -114,6 +135,18 @@ public enum SlotValue {
         case SNIPS_SLOT_VALUE_TYPE_PERCENTAGE:
             let x = cSlotValue.value.assumingMemoryBound(to: CDouble.self)
             self = .percentage(x.pointee)
+
+        case SNIPS_SLOT_VALUE_TYPE_MUSICALBUM:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .musicAlbum(String(cString: x))
+
+        case SNIPS_SLOT_VALUE_TYPE_MUSICARTIST:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .musicArtist(String(cString: x))
+
+        case SNIPS_SLOT_VALUE_TYPE_MUSICTRACK:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .musicTrack(String(cString: x))
 
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }

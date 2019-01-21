@@ -31,6 +31,7 @@ class SnipsPlatformTests: XCTestCase {
     var onSessionQueuedHandler: ((SessionQueuedMessage) -> ())?
     var onSessionEndedHandler: ((SessionEndedMessage) -> ())?
     var onListeningStateChanged: ((Bool) -> ())?
+    var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
     
     let hotwordAudioFile = "hey snips"
     let weatherAudioFile = "What will be the weather in Madagascar in two days"
@@ -48,7 +49,7 @@ class SnipsPlatformTests: XCTestCase {
         try! snips?.pause()
         super.tearDown()
     }
-
+    
     func test_hotword() {
         let hotwordDetectedExpectation = expectation(description: "Hotword detected")
         let sessionEndedExpectation = expectation(description: "Session ended")
@@ -63,7 +64,7 @@ class SnipsPlatformTests: XCTestCase {
             sessionEndedExpectation.fulfill()
         }
         playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
-        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 10)
+        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 20)
     }
     
     func test_intent() {
@@ -113,7 +114,26 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: true)
-        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 15)
+        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 30)
+    }
+    
+    func test_intent_not_recognized() {
+        let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
+            }
+        }
+        
+        onIntentNotRecognizedHandler = { [weak self] message in
+            onIntentNotRecognizedExpectation.fulfill()
+            try! self?.snips?.endSession(sessionId: message.sessionId)
+        }
+        
+        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
+        
+        wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
     }
     
     func test_emtpy_intent_filter_intent_not_recognized() {
@@ -129,7 +149,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["nonExistentIntent"], canBeEnqueued: false, sendIntentNotRecognized: false)))
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_intent_filter() {
@@ -145,7 +165,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false, sendIntentNotRecognized: false)))
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_listening_state_changed() {
@@ -185,7 +205,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_notification_nil() {
@@ -199,7 +219,7 @@ class SnipsPlatformTests: XCTestCase {
             notificationSentExpectation.fulfill()
         }
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_action() {
@@ -214,7 +234,7 @@ class SnipsPlatformTests: XCTestCase {
             actionSentExpectation.fulfill()
         }
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_session_action_nil() {
@@ -229,7 +249,7 @@ class SnipsPlatformTests: XCTestCase {
             actionSentExpectation.fulfill()
         }
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_speech_handler() {
@@ -247,7 +267,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startNotification(text: messageToSpeak)
-        waitForExpectations(timeout: 5)
+        waitForExpectations(timeout: 15)
     }
     
     func test_dialog_scenario() {
@@ -277,7 +297,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(message: startSessionMessage)
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: 20)
     }
     
     func test_injection() {
@@ -310,11 +330,8 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         let testInjectionBlock = { [weak self] in
-//            try! self?.snips?.startSession()
-            self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
-            }
+            try! self?.snips?.startSession()
+            self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
         }
         
         let deleteInjectionDataBlock = { [weak self] in
@@ -332,10 +349,12 @@ class SnipsPlatformTests: XCTestCase {
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
                 testPhase = .injectingEntities
                 injectionBlock()
-                DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 5) {
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 20) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
-                    testInjectionBlock()
+                    DispatchQueue.main.sync {
+                        testInjectionBlock()
+                    }
                 }
             case .entityInjectedShouldBeDetected:
                 XCTAssert(slotLocalityWonderland.count == 1)
@@ -351,7 +370,7 @@ class SnipsPlatformTests: XCTestCase {
         playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
         
         wait(for: [entityNotInjectedShouldNotBeDetectedExpectation, injectingEntitiesExpectation, entityInjectedShouldBeDetectedExpectation, tearDownExpectation],
-             timeout: 20,
+             timeout: 100,
              enforceOrder: true)
     }
 }
@@ -383,6 +402,9 @@ extension SnipsPlatformTests {
         snips?.speechHandler = { [weak self] sayMessage in
             self?.speechHandler?(sayMessage)
         }
+        snips?.onIntentNotRecognizedHandler = { [weak self] message in
+            self?.onIntentNotRecognizedHandler?(message)
+        }
         
         try! snips?.start()
     }
@@ -397,13 +419,15 @@ extension SnipsPlatformTests {
     }
     
     func playAudio(forResource: String?, withExtension: String?, completionHandler: (() -> ())? = nil) {
-        let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
-        guard let forResource = forResource, let audioFile = try? AVAudioFile(forReading: audioURL) else {
-//            throw NSError(domain: "Empty resource", code: 101, userInfo: nil)
+        guard let forResource = forResource else {
+            XCTFail("Couldn't load sound resource")
             return
         }
-//        let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
-//        let audioFile = try? AVAudioFile(forReading: audioURL)
+        let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
+        guard let audioFile = try? AVAudioFile(forReading: audioURL) else {
+            XCTFail("Couldn't load sound file at \(audioURL)" )
+            return
+        }
         let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: UInt32(audioFile.length))!
         let audioFilePlayer = AVAudioPlayerNode()
         audioEngine.attach(audioFilePlayer)
