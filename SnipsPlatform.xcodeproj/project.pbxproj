@@ -12,7 +12,6 @@
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
-		00EEFC81217DD34100C4FDF8 /* SnipsPlatform.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
 		F7BB4FD4215A5BD200FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
@@ -48,20 +47,6 @@
 			remoteInfo = "SnipsPlatform-macOS";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		F71181E41FDECD7A00512C79 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				00EEFC81217DD34100C4FDF8 /* SnipsPlatform.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		001CDFCC213419AB0090C176 /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
@@ -278,7 +263,6 @@
 				F7CF589A1FBDA00200027852 /* Sources */,
 				F7CF589B1FBDA00200027852 /* Frameworks */,
 				F7CF589C1FBDA00200027852 /* Resources */,
-				F71181E41FDECD7A00512C79 /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -312,6 +296,7 @@
 					};
 					F7CF589D1FBDA00200027852 = {
 						CreatedOnToolsVersion = 9.1;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -757,6 +742,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ai.snips.AllTests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -770,6 +756,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ai.snips.AllTests-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
