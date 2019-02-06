@@ -65,11 +65,11 @@ public struct IntentClassifierResult {
     /// The name of the intent.
     public let intentName: String
     /// The probability between 0.0 and 1.0 of the intent.
-    public let probability: Float
+    public let confidenceScore: Float
 
-    init(cResult: CIntentClassifierResult) {
+    init(cResult: CNluIntentClassifierResult) {
         self.intentName = String(cString: cResult.intent_name)
-        self.probability = cResult.probability
+        self.confidenceScore = cResult.confidence_score
     }
 }
 
@@ -316,7 +316,7 @@ public struct Slot {
     /// The name of the slot.
     public let slotName: String
     /// The confidence of the slot.
-    public let confidence: Float?
+    public let confidenceScore: Float?
 
     init(cSlot: CNluSlot) throws {
         self.rawValue = String(cString: cSlot.nlu_slot.pointee.raw_value)
@@ -324,7 +324,7 @@ public struct Slot {
         self.range = Range(uncheckedBounds: (Int(cSlot.nlu_slot.pointee.range_start), Int(cSlot.nlu_slot.pointee.range_end)))
         self.entity = String(cString: cSlot.nlu_slot.pointee.entity)
         self.slotName = String(cString: cSlot.nlu_slot.pointee.slot_name)
-        self.confidence = (cSlot.confidence < 0) ? cSlot.confidence : nil
+        self.confidenceScore = (cSlot.nlu_slot.pointee.confidence_score < 0) ? cSlot.nlu_slot.pointee.confidence_score : nil
     }
 }
 
