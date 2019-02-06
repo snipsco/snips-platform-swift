@@ -1,10 +1,10 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 
  : ${PROJECT_DIR:?"${0##*/} must be invoked as part of an Xcode script phase"}
 
 set -e
 
-VERSION="0.60.12"
+VERSION="0.61.0-SNAPSHOT"
 SYSTEM=$(echo $1 | tr '[:upper:]' '[:lower:]')
 LIBRARY_NAME=libsnips_megazord
 LIBRARY_NAME_A=${LIBRARY_NAME}.a
@@ -12,12 +12,12 @@ LIBRARY_NAME_H=${LIBRARY_NAME}.h
 OUT_DIR=${PROJECT_DIR}/Dependencies/${SYSTEM}
 
 if [ -z "$TARGET_BUILD_TYPE" ]; then
-TARGET_BUILD_TYPE=release #$(echo ${CONFIGURATION} | tr '[:upper:]' '[:lower:]')
+TARGET_BUILD_TYPE=$(echo ${CONFIGURATION} | tr '[:upper:]' '[:lower:]')
 fi
 
-mkdir -p ${OUT_DIR}
-
 install_remote_core () {
+    echo "Trying remote installation"
+
     if [ "${SYSTEM}" != "ios" ]; then
         echo "Only ios is supported."
         exit 1
@@ -26,23 +26,25 @@ install_remote_core () {
     local filename=snips-platform-${SYSTEM}.${VERSION}.tgz
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename}
 
-    rm -f ${OUT_DIR}/*
-    echo "Will download '${filename}'"
-    $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
+    echo "Will download '${filename}' in '${OUT_DIR}'"
+    if curl --output /dev/null --silent --head --fail "$url"; then
+        $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
+    else
+        echo "Version ${VERSION} doesn't seem to have been released yet"
+        echo "Could not find any file at '${url}'"
+        echo "Please file issue on 'https://github.com/snipsco/snips-issues' if you believe this is an issue"
+        return 1
+    fi
 }
 
 install_local_core () {
+    echo "Trying local installation"
+
     # TODO: Find a better way to retrieve root_dir
     local root_dir=${PROJECT_DIR}/../../../
     local target_dir=${root_dir}/target/
 
-    if [ ! -e ${root_dir}/Makefile ]; then
-        return 1
-    fi
-
-    rm -f ${OUT_DIR}/*
-
-    if [ ${SYSTEM} == ios ]; then
+    if [ "${SYSTEM}" == "ios" ]; then
         echo "Using iOS local build"
         local archs_array=( ${ARCHS} )
 
@@ -52,6 +54,8 @@ install_local_core () {
             fi
             local library_path=${target_dir}/${arch}-apple-ios/${TARGET_BUILD_TYPE}/${LIBRARY_NAME_A}
             if [ ! -e ${library_path} ]; then
+                echo "Can't find library for arch ${arch}"
+                echo "Missing file '${library_path}'"
                 return 1
             fi
             cp ${library_path} ${OUT_DIR}/${LIBRARY_NAME}-${arch}.a
@@ -61,11 +65,12 @@ install_local_core () {
         cp ${root_dir}/snips-megazord/platforms/c/${LIBRARY_NAME}.h ${OUT_DIR}
         cp ${root_dir}/snips-megazord/platforms/c/module.modulemap ${OUT_DIR}
 
-    elif [ ${SYSTEM} == macos ]; then
+    elif [ "${SYSTEM}" == "macos" ]; then
         echo "Using macOS local build"
 
         local library_path="${target_dir}/${TARGET_BUILD_TYPE}/${LIBRARY_NAME}.dylib"
         if [ ! -e ${library_path} ]; then
+            echo "Missing file '${library_path}'"
             return 1
         fi
         cp ${library_path} ${OUT_DIR}
@@ -82,36 +87,67 @@ install_local_core () {
 }
 
 core_is_present () {
-    if [ -e ${OUT_DIR}/module.modulemap ] &&
-       [ -e ${OUT_DIR}/${LIBRARY_NAME_A} ] &&
-       [ -e ${OUT_DIR}/${LIBRARY_NAME_H} ]; then
-        return 0
-    fi
+    echo "Checking if core is present (and complete)"
+    local files=(
+        ${OUT_DIR}/module.modulemap
+        ${OUT_DIR}/${LIBRARY_NAME_A}
+        ${OUT_DIR}/${LIBRARY_NAME_H}
+    )
 
-    return 1
+    for file in "${files[@]}"; do
+        if [ ! -e $file ]; then
+            echo "Core isn't complete"
+            echo "Missing file '$file'"
+            return 1
+        fi
+    done
+
+    echo "Core is present"
+    return 0
 }
 
 core_is_up_to_date () {
+    echo "Checking if core is up-to-date"
+
     local header_path=${OUT_DIR}/${LIBRARY_NAME_H}
     local core_version=$(grep "SNIPS_VERSION" $header_path | cut -d'"' -f2)
 
     if [ "$core_version" = ${VERSION} ]; then
+        echo "Core is up-to-date"
         return 0
     fi
 
+    echo "Core isn't up-to-date"
+    echo "Found version ${core_version}, expected version ${VERSION}"
     return 1
 }
 
-if [ "${SNIPS_USE_LOCAL}" == 1 ]; then
-    install_local_core && exit 0
-elif [ "${SNIPS_USE_REMOTE}" == 1 ]; then
-    install_remote_core && exit 0
+if [ -n "${SNIPS_FORCE_REINSTALL}" ]; then
+    echo "SNIPS_FORCE_REINSTALL is set. Skipping core verifications"
 else
+    echo "Verifying if core is present and up-to-date"
     if core_is_present && core_is_up_to_date; then
+        echo "Core seems present and up-to-date !"
         exit 0
     fi
+fi
 
+mkdir -p ${OUT_DIR}
+echo "Cleaning '${OUT_DIR}' content"
+rm -f ${OUT_DIR}/*
+
+if [ -n "${SNIPS_USE_LOCAL}" ]; then
+    echo "SNIPS_USE_LOCAL is set. Will try local installation only"
+    install_local_core && exit 0
+elif [ -n "${SNIPS_USE_REMOTE}" ]; then
+    echo "SNIPS_USE_REMOTE is set. Will try remote installation only"
+    install_remote_core && exit 0
+else
     if ! install_local_core; then
-        install_remote_core && exit 0
+        echo "Local installation failed"
+        if ! install_remote_core; then
+            echo "Remote install failed"
+            exit 1
+        fi
     fi
 fi
