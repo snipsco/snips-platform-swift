@@ -82,26 +82,26 @@ class SnipsPlatformTests: XCTestCase {
                 return
             }
             
-            XCTAssert(intent.input == "what will be the weather in madagascar in two days")
-            XCTAssert(intentClassifierResult.intentName == "searchWeatherForecast")
-            XCTAssert(intent.slots.count == 2)
+            XCTAssertEqual(intent.input, "what will be the weather in madagascar in two days")
+            XCTAssertEqual(intentClassifierResult.intentName, "searchWeatherForecast")
+            XCTAssertEqual(intent.slots.count, 2)
             
             intent.slots.forEach { slot in
                 if slot.slotName.contains("forecast_country") {
                     if case .custom(let country) = slot.value {
-                        XCTAssert(country == "Madagascar")
+                        XCTAssertEqual(country, "Madagascar")
                         countrySlotExpectation.fulfill()
                     }
                 }
                 else if slot.slotName.contains("forecast_start_datetime") {
                     if case .instantTime(let instantTime) = slot.value {
-                        XCTAssert(instantTime.precision == .exact)
-                        XCTAssert(instantTime.grain == .day)
+                        XCTAssertEqual(instantTime.precision, .exact)
+                        XCTAssertEqual(instantTime.grain, .day)
                         let dateInTwoDays = Calendar.current.date(byAdding: .day, value: 2, to: Calendar.current.startOfDay(for: Date()))
                         let formatter = ISO8601DateFormatter()
                         formatter.formatOptions = [.withInternetDateTime, .withTimeZone, .withDashSeparatorInDate, .withSpaceBetweenDateAndTime]
                         let instantTimeDate = formatter.date(from: instantTime.value)
-                        XCTAssert(Calendar.current.compare(dateInTwoDays!, to: instantTimeDate!, toGranularity: .day) == .orderedSame)
+                        XCTAssertEqual(Calendar.current.compare(dateInTwoDays!, to: instantTimeDate!, toGranularity: .day), .orderedSame)
                         timeSlotExpectation.fulfill()
                     }
                 }
@@ -144,7 +144,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         onSessionEndedHandler = { sessionEndedMessage in
-            XCTAssert(sessionEndedMessage.sessionTermination.terminationType == .intentNotRecognized)
+            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .intentNotRecognized)
             intentNotRecognizedExpectation.fulfill()
         }
         
@@ -195,8 +195,8 @@ class SnipsPlatformTests: XCTestCase {
         let notificationStartMessage = StartSessionMessage(initType: .notification(text: "Notification text"), customData: "Notification custom data", siteId: "iOS notification")
         
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssert(sessionStartedMessage.siteId == notificationStartMessage.siteId)
-            XCTAssert(sessionStartedMessage.customData == notificationStartMessage.customData)
+            XCTAssertEqual(sessionStartedMessage.siteId, notificationStartMessage.siteId)
+            XCTAssertEqual(sessionStartedMessage.customData, notificationStartMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         
@@ -226,8 +226,8 @@ class SnipsPlatformTests: XCTestCase {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: "Action Custom data", siteId: "iOS action")
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
-            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
+            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
+            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         onSessionEndedHandler = { _ in
@@ -241,8 +241,8 @@ class SnipsPlatformTests: XCTestCase {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: nil, siteId: nil)
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
-            XCTAssert(sessionStartedMessage.customData == actionStartSessionMessage.customData)
+            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
+            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         onSessionEndedHandler = { _ in
@@ -256,7 +256,7 @@ class SnipsPlatformTests: XCTestCase {
         let speechExpectation = expectation(description: "Testing speech")
         let messageToSpeak = "Testing speech"
         speechHandler = { [weak self] sayMessage in
-            XCTAssert(sayMessage.text == messageToSpeak)
+            XCTAssertEqual(sayMessage.text, messageToSpeak)
             guard let sessionId = sayMessage.sessionId else {
                 XCTFail("Message should have a session Id since it was sent from a notification")
                 return
@@ -281,7 +281,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         onSessionEndedHandler = { [weak self] sessionEndedMessage in
-            XCTAssert(sessionEndedMessage.sessionTermination.terminationType == .nominal)
+            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .nominal)
             
             if !hasSentContinueSessionMessage {
                 hasSentContinueSessionMessage = true
@@ -357,7 +357,7 @@ class SnipsPlatformTests: XCTestCase {
                     }
                 }
             case .entityInjectedShouldBeDetected:
-                XCTAssert(slotLocalityWonderland.count == 1)
+                XCTAssertEqual(slotLocalityWonderland.count, 1)
                 entityInjectedShouldBeDetectedExpectation.fulfill()
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
                 deleteInjectionDataBlock()
