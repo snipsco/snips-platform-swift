@@ -12,6 +12,7 @@
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
+		F723C5D0220C9DB60030E45C /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FBB215A39C700FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
 		F7BB4FD4215A5BD200FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FE31FBF2F9C005243F0 /* Accelerate.framework */; };
@@ -108,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F723C5D0220C9DB60030E45C /* SnipsPlatform.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
