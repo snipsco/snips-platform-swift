@@ -126,7 +126,7 @@ class SnipsPlatformTests: XCTestCase {
             try! self?.snips?.endSession(sessionId: message.sessionId)
         }
         
-        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
+        try! snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
         
         wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
     }
@@ -143,7 +143,7 @@ class SnipsPlatformTests: XCTestCase {
             intentNotRecognizedExpectation.fulfill()
         }
         
-        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["nonExistentIntent"], canBeEnqueued: false, sendIntentNotRecognized: false)))
+        try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
         waitForExpectations(timeout: 20)
     }
     
@@ -159,7 +159,7 @@ class SnipsPlatformTests: XCTestCase {
             intentRecognizedExpectation.fulfill()
         }
         
-        try! snips?.startSession(message: StartSessionMessage(initType: .action(text: nil, intentFilter: ["searchWeatherForecast"], canBeEnqueued: false, sendIntentNotRecognized: false)))
+        try! snips?.startSession(intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)
         waitForExpectations(timeout: 20)
     }
     
