@@ -77,13 +77,8 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         onIntentDetected = { [weak self] intent in
-            guard let intentClassifierResult = intent.intent else {
-                XCTFail("Intent doesn't contain an intent classifier result")
-                return
-            }
-            
             XCTAssertEqual(intent.input, "what will be the weather in madagascar in two days")
-            XCTAssertEqual(intentClassifierResult.intentName, "searchWeatherForecast")
+            XCTAssertEqual(intent.intent.intentName, "searchWeatherForecast")
             XCTAssertEqual(intent.slots.count, 2)
             
             intent.slots.forEach { slot in

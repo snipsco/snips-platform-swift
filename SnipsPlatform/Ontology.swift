@@ -18,8 +18,8 @@ public struct IntentMessage {
     public var siteId: String
     /// The user input.
     public var input: String
-    /// The intent classification result. If `nil`, the `input` wasn't recognized.
-    public var intent: IntentClassifierResult?
+    /// The intent classification result.
+    public var intent: IntentClassifierResult
     /// Lists of parsed slots.
     public var slots: [Slot]
 
@@ -31,7 +31,7 @@ public struct IntentMessage {
         if let cClassifierResult = cResult.intent?.pointee {
             self.intent = IntentClassifierResult(cResult: cClassifierResult)
         } else {
-            self.intent = nil
+            throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
         if let cSlotList = cResult.slots?.pointee {
             self.slots = try UnsafeBufferPointer(start: cSlotList.entries, count: Int(cSlotList.count))
@@ -63,7 +63,7 @@ public struct IntentNotRecognizedMessage {
 /// An intent description.
 public struct IntentClassifierResult {
     /// The name of the intent.
-    public let intentName: String
+    public let intentName: String?
     /// The probability between 0.0 and 1.0 of the intent.
     public let confidenceScore: Float
 
