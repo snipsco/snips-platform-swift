@@ -36,13 +36,14 @@ class SnipsPlatformTests: XCTestCase {
     let hotwordAudioFile = "hey snips"
     let weatherAudioFile = "What will be the weather in Madagascar in two days"
     let wonderlandAudioFile = "What will be the weather in wonderland"
+    let playMJAudioFile = "Hey Snips can you play me some Michael Jackson"
     
     override func setUp() {
         super.setUp()
         try! setupSnipsPlatform()
         try! setupAudioEngine()
     }
-    
+
     override func tearDown() {
         currentAudioPlayer?.stop()
         audioEngine.stop()
@@ -116,9 +117,7 @@ class SnipsPlatformTests: XCTestCase {
         let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
         
         onSessionStartedHandler = { [weak self] message in
-            DispatchQueue.main.sync {
-                self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
-            }
+            self?.playAudio(forResource: self?.playMJAudioFile, withExtension: "m4a")
         }
         
         onIntentNotRecognizedHandler = { [weak self] message in

@@ -12,6 +12,8 @@
 		006E012620F7B7CE00923180 /* hey snips.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 006E012520F7B7CD00923180 /* hey snips.m4a */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */; };
+		00DA8167221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00DA8166221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a */; };
+		00DA8168221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 00DA8166221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a */; };
 		F723C5D0220C9DB60030E45C /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FBB215A39C700FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FA8215A382E00FEEA43 /* SnipsPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4F9F215A382E00FEEA43 /* SnipsPlatform.framework */; };
 		F7BB4FD3215A5BCC00FEEA43 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FD2215A5BCC00FEEA43 /* Accelerate.framework */; };
@@ -55,6 +57,7 @@
 		006E012520F7B7CD00923180 /* hey snips.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "hey snips.m4a"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
 		00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "What will be the weather in wonderland.m4a"; sourceTree = "<group>"; };
+		00DA8166221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Hey Snips can you play me some Michael Jackson.m4a"; sourceTree = "<group>"; };
 		F746A2BA1FCC1951005E09E9 /* Ontology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ontology.swift; sourceTree = "<group>"; };
 		F76DFB8A2032ECB10021D6F9 /* String+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Utils.swift"; sourceTree = "<group>"; };
 		F76DFB8C203319230021D6F9 /* COntology.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COntology.swift; sourceTree = "<group>"; };
@@ -168,6 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				00B4E701212EF3D100E78491 /* What will be the weather in wonderland.m4a */,
+				00DA8166221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a */,
 				0037D52020FF84F80040374E /* What will be the weather in Madagascar in two days.m4a */,
 				006E012520F7B7CD00923180 /* hey snips.m4a */,
 				001CDFCC213419AB0090C176 /* snips-g2p-resources */,
@@ -337,6 +341,7 @@
 			files = (
 				F7BB4FEC215A913900FEEA43 /* assistant in Resources */,
 				F7BB4FE8215A912F00FEEA43 /* What will be the weather in wonderland.m4a in Resources */,
+				00DA8168221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a in Resources */,
 				F7BB4FEA215A913400FEEA43 /* hey snips.m4a in Resources */,
 				F7BB4FEB215A913700FEEA43 /* snips-g2p-resources in Resources */,
 				F7BB4FE9215A913200FEEA43 /* What will be the weather in Madagascar in two days.m4a in Resources */,
@@ -356,6 +361,7 @@
 			files = (
 				001CDFCD213419AB0090C176 /* snips-g2p-resources in Resources */,
 				006E013020F8A8DA00923180 /* assistant in Resources */,
+				00DA8167221331B700D7E8F7 /* Hey Snips can you play me some Michael Jackson.m4a in Resources */,
 				006E012620F7B7CE00923180 /* hey snips.m4a in Resources */,
 				0037D52120FF84F80040374E /* What will be the weather in Madagascar in two days.m4a in Resources */,
 				00B4E702212EF3D200E78491 /* What will be the weather in wonderland.m4a in Resources */,
