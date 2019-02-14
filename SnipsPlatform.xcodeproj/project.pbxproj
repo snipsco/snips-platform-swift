@@ -291,9 +291,11 @@
 				TargetAttributes = {
 					F7BB4F9E215A382E00FEEA43 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1010;
 					};
 					F7BB4FA6215A382E00FEEA43 = {
 						CreatedOnToolsVersion = 10.0;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Automatic;
 					};
 					F7BB4FBA215A39C700FEEA43 = {
@@ -508,6 +510,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -532,6 +535,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -551,6 +555,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ai.snips.AllTests-macOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -569,6 +574,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "ai.snips.AllTests-macOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
