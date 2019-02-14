@@ -51,7 +51,7 @@ public struct IntentNotRecognizedMessage {
     public var input: String?
     /// Custom data provided by the developer at the beginning of the session.
     public var customData: String?
-    
+
     init(cResult: CIntentNotRecognizedMessage) {
         self.siteId = String(cString: cResult.site_id)
         self.sessionId = String(cString: cResult.session_id)
@@ -63,7 +63,7 @@ public struct IntentNotRecognizedMessage {
 /// An intent description.
 public struct IntentClassifierResult {
     /// The name of the intent.
-    public let intentName: String?
+    public let intentName: String
     /// The probability between 0.0 and 1.0 of the intent.
     public let confidenceScore: Float
 
