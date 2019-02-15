@@ -68,7 +68,7 @@ install_local_core () {
     elif [ "${SYSTEM}" == "macos" ]; then
         echo "Using macOS local build"
 
-        local library_path="${target_dir}/${TARGET_BUILD_TYPE}/${LIBRARY_NAME}.dylib"
+        local library_path="${target_dir}/${TARGET_BUILD_TYPE}/${LIBRARY_NAME_A}"
         if [ ! -e ${library_path} ]; then
             echo "Missing file '${library_path}'"
             return 1
@@ -76,7 +76,6 @@ install_local_core () {
         cp ${library_path} ${OUT_DIR}
         cp ${root_dir}/snips-megazord/platforms/c/${LIBRARY_NAME}.h ${OUT_DIR}
         cp ${root_dir}/snips-megazord/platforms/c/module.modulemap ${OUT_DIR}
-        cp `find ${target_dir}/${TARGET_BUILD_TYPE} -name "libsnips_kaldi.dylib" | head -n1` ${OUT_DIR}
 
     else
         echo "${SYSTEM} isn't supported"

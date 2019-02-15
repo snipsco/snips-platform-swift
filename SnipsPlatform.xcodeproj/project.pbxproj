@@ -36,8 +36,6 @@
 		F7BB4FEB215A913700FEEA43 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		F7BB4FEC215A913900FEEA43 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
-		F7BB4FF1215A978800FEEA43 /* libsnips_megazord.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FEF215A978800FEEA43 /* libsnips_megazord.dylib */; };
-		F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FF0215A978800FEEA43 /* libsnips_kaldi.dylib */; };
 		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,8 +91,6 @@
 			files = (
 				F7BB4FD4215A5BD200FEEA43 /* Accelerate.framework in Frameworks */,
 				F7BB4FE6215A838B00FEEA43 /* libc++.tbd in Frameworks */,
-				F7BB4FF1215A978800FEEA43 /* libsnips_megazord.dylib in Frameworks */,
-				F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
