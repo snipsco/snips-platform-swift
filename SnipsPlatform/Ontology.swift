@@ -405,14 +405,17 @@ public struct ContinueSessionMessage {
     public let intentFilter: [String]?
     /// An optional piece of data that will be given back in `IntentMessage` and `IntentNotRecognizedMessage` and `SessionEndedMessage` that are related to this session. If set it will replace any existing custom data previously set on this session
     public let customData: String?
+    /// An optional string, requires `intent_filter` to contain a single value. If set, the dialogue engine will not run the the intent classification on the user response and go straight to slot filling, assuming the intent is the one passed in the `intent_filter`, and searching the value of the given slot
+    public let slot: String?
     /// An optional boolean to indicate whether the dialogue manager should handle non recognized intents by itself or sent them as an `IntentNotRecognizedMessage` for the client to handle. This setting applies only to the next conversation turn. The default value is false (and the dialogue manager will handle non recognized intents by itself)
     public let sendIntentNotRecognized: Bool
 
-    public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, sendIntentNotRecognized: Bool = false) {
+    public init(sessionId: String, text: String, intentFilter: [String]? = nil, customData: String? = nil, slot: String? = nil, sendIntentNotRecognized: Bool = false) {
         self.sessionId = sessionId
         self.text = text
         self.intentFilter = intentFilter
         self.customData = customData
+        self.slot = slot
         self.sendIntentNotRecognized = sendIntentNotRecognized
     }
 
@@ -431,11 +434,13 @@ public struct ContinueSessionMessage {
                                                text: text.unsafeMutablePointerRetained(),
                                                intent_filter: unsafeMutableArrayString,
                                                custom_data: customData?.unsafeMutablePointerRetained(),
+                                               slot: slot?.unsafeMutablePointerRetained(),
                                                send_intent_not_recognized: sendIntentNotRecognized ? 1 : 0)
         try body(withUnsafePointer(to: &cMessage) { $0 })
         cMessage.session_id.freeUnsafeMemory()
         cMessage.text.freeUnsafeMemory()
         cMessage.custom_data?.freeUnsafeMemory()
+        cMessage.slot?.freeUnsafeMemory()
         arrayString?.destroy()
     }
 }
