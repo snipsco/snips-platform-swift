@@ -6,7 +6,11 @@
 //
 
 import Foundation
-import Clibsnips_megazord
+#if os(OSX)
+import Clibsnips_megazord_macos
+#elseif os(iOS)
+import Clibsnips_megazord_ios
+#endif
 
 /// A detected intent.
 public struct IntentMessage {

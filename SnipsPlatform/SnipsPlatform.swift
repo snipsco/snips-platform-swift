@@ -7,7 +7,11 @@
 
 import Foundation
 import AVFoundation
-import Clibsnips_megazord
+#if os(OSX)
+import Clibsnips_megazord_macos
+#elseif os(iOS)
+import Clibsnips_megazord_ios
+#endif
 
 private typealias CIntentHandler = @convention(c) (UnsafePointer<CChar>?) -> Void
 private typealias CSnipsTtsHandler = @convention(c) (UnsafePointer<CSayMessage>?) -> Void
