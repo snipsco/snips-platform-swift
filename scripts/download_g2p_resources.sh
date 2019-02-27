@@ -9,7 +9,7 @@ fi
 
 target_dir=$1
 
-g2p_filename="g2p-0.58.4-97b0010.zip"
+g2p_filename="g2p-0.60.11-28675e9.zip"
 url="https://resources.snips.ai/injection/$g2p_filename"
 
 if [ ! -f $target_dir/snips-g2p-resources/README.md ]; then
