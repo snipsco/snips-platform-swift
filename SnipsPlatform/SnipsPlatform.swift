@@ -435,6 +435,18 @@ public class SnipsPlatform {
             throw SnipsPlatformError.getLast
         }
     }
+    
+    /// Append an audio buffer to be processed. This should be continously executed
+    /// otherwise the platform could crash.
+    ///
+    /// - Parameter buffer: The audio buffer
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    public func appendBuffer(_ buffer: [Int16]) throws {
+        try buffer.withUnsafeBufferPointer { buf in
+            guard megazord_send_audio_buffer(ptr, buf.baseAddress, UInt32(buf.count)) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
     }
 
     /// Request an injection of new entities values in the ASR model.
