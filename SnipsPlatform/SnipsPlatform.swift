@@ -497,7 +497,7 @@ public class SnipsPlatform {
         if let g2pResources = g2pResources {
             var isDirectory = ObjCBool(true)
             let exists = FileManager.default.fileExists(atPath: g2pResources.path, isDirectory: &isDirectory)
-            guard (exists && isDirectory.boolValue) == true else {
+            guard (exists && isDirectory.boolValue) else {
                 throw SnipsPlatformError(message: "Folder doesn't exists at path: \(g2pResources.path)")
             }
             snipsInjectionURLPath = g2pResources.path
