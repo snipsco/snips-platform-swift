@@ -9,20 +9,14 @@ import XCTest
 import AVFoundation
 @testable import SnipsPlatform
 
-// To add your own audio, simply record with QuicktimeTime Player > File > New Audio Recording.
-// Once recorded goto File > Export as > Audio only, it will save a .m4a file.
-// Drag & drop into the project, call it with the playAudio() method.
+let kHotwordAudioFile = "hey_snips"
+let kWeatherAudioFile = "what_will_be_the_weather_in_Madagascar_in_two_days"
+let kWonderlandAudioFile = "what_will_be_the_weather_in_Wonderland"
+let kPlayMJAudioFile = "hey_snips_can_you_play_me_some_Michael_Jackson"
+let kFrameCapacity: AVAudioFrameCount = 256
 
 class SnipsPlatformTests: XCTestCase {
     var snips: SnipsPlatform?
-    
-    let audioEngine = AVAudioEngine()
-    let snipsAudioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
-                                         sampleRate: 16_000,
-                                         channels: 1,
-                                         interleaved: true)
-    let downMixer = AVAudioMixerNode()
-    var currentAudioPlayer: AVAudioPlayerNode?
     
     var onIntentDetected: ((IntentMessage) -> ())?
     var onHotwordDetected: (() -> ())?
@@ -33,38 +27,32 @@ class SnipsPlatformTests: XCTestCase {
     var onListeningStateChanged: ((Bool) -> ())?
     var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
     
-    let hotwordAudioFile = "hey snips"
-    let weatherAudioFile = "What will be the weather in Madagascar in two days"
-    let wonderlandAudioFile = "What will be the weather in wonderland"
-    let playMJAudioFile = "Hey Snips can you play me some Michael Jackson"
+    let soundQueue = DispatchQueue(label: "ai.snips.SnipsPlatformTests.sound", qos: .userInteractive)
+    var firstTimePlayedAudio: Bool = true
+    
+    // MARK: - XCTestCase lifecycle
     
     override func setUp() {
         super.setUp()
         try! setupSnipsPlatform()
-        try! setupAudioEngine()
     }
 
-    override func tearDown() {
-        currentAudioPlayer?.stop()
-        audioEngine.stop()
-        try! snips?.pause()
-        super.tearDown()
-    }
+    // MARK: - Tests
     
     func test_hotword() {
         let hotwordDetectedExpectation = expectation(description: "Hotword detected")
         let sessionEndedExpectation = expectation(description: "Session ended")
         
-        onHotwordDetected = {
-            hotwordDetectedExpectation.fulfill()
-        }
+        onHotwordDetected = hotwordDetectedExpectation.fulfill
         onSessionStartedHandler = { [weak self] sessionStarted in
             try! self?.snips?.endSession(sessionId: sessionStarted.sessionId)
         }
-        onSessionEndedHandler = { sessionEnded in
+        onSessionEndedHandler = { _ in
             sessionEndedExpectation.fulfill()
         }
-        playAudio(forResource: hotwordAudioFile, withExtension: "m4a")
+        
+        playAudio(forResource: kHotwordAudioFile)
+        
         wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 20)
     }
     
@@ -74,14 +62,13 @@ class SnipsPlatformTests: XCTestCase {
         let sessionEndedExpectation = expectation(description: "Session ended")
         
         onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: kWeatherAudioFile)
         }
-        
         onIntentDetected = { [weak self] intent in
             XCTAssertEqual(intent.input, "what will be the weather in madagascar in two days")
             XCTAssertEqual(intent.intent.intentName, "searchWeatherForecast")
             XCTAssertEqual(intent.slots.count, 2)
-            
+
             intent.slots.forEach { slot in
                 if slot.slotName.contains("forecast_country") {
                     if case .custom(let country) = slot.value {
@@ -104,12 +91,14 @@ class SnipsPlatformTests: XCTestCase {
             }
             try! self?.snips?.endSession(sessionId: intent.sessionId)
         }
-        
         onSessionEndedHandler = { _ in
             sessionEndedExpectation.fulfill()
         }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            try! self.snips?.startSession(intentFilter: nil, canBeEnqueued: true)
+        }
         
-        try! snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 30)
     }
     
@@ -117,26 +106,23 @@ class SnipsPlatformTests: XCTestCase {
         let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
         
         onSessionStartedHandler = { [weak self] message in
-            self?.playAudio(forResource: self?.playMJAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: kPlayMJAudioFile)
         }
-        
         onIntentNotRecognizedHandler = { [weak self] message in
             onIntentNotRecognizedExpectation.fulfill()
             try! self?.snips?.endSession(sessionId: message.sessionId)
         }
         
-        try! snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
-        
+        try! self.snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
         wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
     }
     
-    func test_emtpy_intent_filter_intent_not_recognized() {
+    func test_empty_intent_filter_intent_not_recognized() {
         let intentNotRecognizedExpectation = expectation(description: "Intent not recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: kWeatherAudioFile)
         }
-        
         onSessionEndedHandler = { sessionEndedMessage in
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .intentNotRecognized)
             intentNotRecognizedExpectation.fulfill()
@@ -150,9 +136,8 @@ class SnipsPlatformTests: XCTestCase {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
         
         onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: self?.weatherAudioFile, withExtension: "m4a")
+            self?.playAudio(forResource: kWeatherAudioFile)
         }
-        
         onIntentDetected = { [weak self] intent in
             try! self?.snips?.endSession(sessionId: intent.sessionId)
             intentRecognizedExpectation.fulfill()
@@ -173,7 +158,6 @@ class SnipsPlatformTests: XCTestCase {
                 listeningStateChangedOff.fulfill()
             }
         }
-        
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
@@ -193,7 +177,6 @@ class SnipsPlatformTests: XCTestCase {
             XCTAssertEqual(sessionStartedMessage.customData, notificationStartMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
-        
         onSessionEndedHandler = { _ in
             notificationSentExpectation.fulfill()
         }
@@ -212,6 +195,7 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { _ in
             notificationSentExpectation.fulfill()
         }
+        
         try! snips?.startSession(message: notificationStartMessage)
         waitForExpectations(timeout: 20)
     }
@@ -219,14 +203,15 @@ class SnipsPlatformTests: XCTestCase {
     func test_session_action() {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: "Action Custom data", siteId: "iOS action")
+        
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         onSessionEndedHandler = { _ in
             actionSentExpectation.fulfill()
         }
+        
         try! snips?.startSession(message: actionStartSessionMessage)
         waitForExpectations(timeout: 20)
     }
@@ -234,8 +219,8 @@ class SnipsPlatformTests: XCTestCase {
     func test_session_action_nil() {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: nil, siteId: nil)
+        
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
@@ -249,6 +234,7 @@ class SnipsPlatformTests: XCTestCase {
     func test_speech_handler() {
         let speechExpectation = expectation(description: "Testing speech")
         let messageToSpeak = "Testing speech"
+        
         speechHandler = { [weak self] sayMessage in
             XCTAssertEqual(sayMessage.text, messageToSpeak)
             guard let sessionId = sayMessage.sessionId else {
@@ -273,7 +259,6 @@ class SnipsPlatformTests: XCTestCase {
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
-        
         onSessionEndedHandler = { [weak self] sessionEndedMessage in
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .nominal)
             
@@ -282,7 +267,7 @@ class SnipsPlatformTests: XCTestCase {
                 continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: nil)
                 try! self?.snips?.continueSession(message: continueSessionMessage!)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    self?.playAudio(forResource: self?.hotwordAudioFile, withExtension: "m4a")
+                    self?.playAudio(forResource: kHotwordAudioFile)
                 }
             }
             else {
@@ -304,76 +289,82 @@ class SnipsPlatformTests: XCTestCase {
         let entityNotInjectedShouldNotBeDetectedExpectation = expectation(description: "Entity not injected was not detected")
         let injectingEntitiesExpectation = expectation(description: "Injecting entities done")
         let entityInjectedShouldBeDetectedExpectation = expectation(description: "Entity injected was detected")
-        let tearDownExpectation = expectation(description: "Tear down of the injection data")
         
-        var testPhase = TestPhaseKind.entityNotInjectedShouldNotBeDetected
-        
-        try! snips?.pause()
-        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
-        try! setupSnipsPlatform(enableInjection: true, userURL: nil, g2pResources: g2pResources)
+        var testPhase: TestPhaseKind = .entityNotInjectedShouldNotBeDetected
         
         let injectionBlock = { [weak self] in
-            var newEntities: [String: [String]] = [:]
-            newEntities["locality"] = ["wonderland"]
-            let operation = InjectionRequestOperation(entities: newEntities, kind: .add)
+            let operation = InjectionRequestOperation(entities: ["locality": ["wonderland"]], kind: .add)
             do {
                 try self?.snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
             } catch let error {
-                XCTFail("Injection failed, reason: \(error.localizedDescription)")
+                XCTFail("Injection failed, reason: \(error)")
             }
         }
         
         let testInjectionBlock = { [weak self] in
             try! self?.snips?.startSession()
-            self?.playAudio(forResource: self?.wonderlandAudioFile, withExtension: "m4a")
-        }
-        
-        let deleteInjectionDataBlock = { [weak self] in
-            try! self?.removeSnipsUserDataIfNecessary()
-            try! self?.snips?.pause()
-            try! self?.setupSnipsPlatform(enableInjection: true, userURL: nil)
+            self?.playAudio(forResource: kWonderlandAudioFile)
         }
         
         onIntentDetected = { [weak self] intentMessage in
             let slotLocalityWonderland = intentMessage.slots.filter { $0.entity == "locality" && $0.rawValue == "wonderland" }
+            
             switch testPhase {
             case .entityNotInjectedShouldNotBeDetected:
-                XCTAssert(slotLocalityWonderland.isEmpty)
+                XCTAssertEqual(slotLocalityWonderland.count, 0, "should not have found any slot")
                 entityNotInjectedShouldNotBeDetectedExpectation.fulfill()
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
                 testPhase = .injectingEntities
                 injectionBlock()
-                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 20) {
+                
+                // TODO: Hack to wait for the injection to be finished + models fully reloaded.
+                // Remove this when SnipsPlatform.requestInjection() will be blocking.
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 10) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
-                    DispatchQueue.main.sync {
-                        testInjectionBlock()
-                    }
+                    testInjectionBlock()
                 }
+                
             case .entityInjectedShouldBeDetected:
-                XCTAssertEqual(slotLocalityWonderland.count, 1)
+                XCTAssertEqual(slotLocalityWonderland.count, 1, "should have found the slot wonderland")
                 entityInjectedShouldBeDetectedExpectation.fulfill()
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
-                deleteInjectionDataBlock()
-                tearDownExpectation.fulfill()
+                
             case .injectingEntities: XCTFail("For test purposes, intents shouldn't be detected while injecting")
             }
         }
         
-        try! snips?.startSession()
-        playAudio(forResource: wonderlandAudioFile, withExtension: "m4a")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            try! self.snips?.startSession()
+            self.playAudio(forResource: kWonderlandAudioFile)
+        }
         
-        wait(for: [entityNotInjectedShouldNotBeDetectedExpectation, injectingEntitiesExpectation, entityInjectedShouldBeDetectedExpectation, tearDownExpectation],
-             timeout: 100,
-             enforceOrder: true)
+        wait(
+            for: [
+                entityNotInjectedShouldNotBeDetectedExpectation,
+                injectingEntitiesExpectation,
+                entityInjectedShouldBeDetectedExpectation,
+            ],
+            timeout: 100,
+            enforceOrder: true
+        )
     }
 }
 
-extension SnipsPlatformTests {
+private extension SnipsPlatformTests {
     
-    func setupSnipsPlatform(hotwordSensitivity: Float = 0.5, enableInjection: Bool = false, userURL: URL? = nil, g2pResources: URL? = nil) throws {
+    func setupSnipsPlatform(userURL: URL? = nil) throws {
         let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        snips = try SnipsPlatform(assistantURL: url, hotwordSensitivity: hotwordSensitivity, enableHtml: false, enableLogs: true, enableInjection: enableInjection, userURL: userURL, g2pResources: g2pResources)
+        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
+        
+        try removeSnipsUserDataIfNecessary()
+        
+        snips = try SnipsPlatform(assistantURL: url,
+                                  enableHtml: false,
+                                  enableLogs: true,
+                                  enableInjection: true,
+                                  userURL: userURL,
+                                  g2pResources: g2pResources)
         
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)
@@ -400,45 +391,35 @@ extension SnipsPlatformTests {
             self?.onIntentNotRecognizedHandler?(message)
         }
         
-        try! snips?.start()
+        try snips?.start()
     }
     
-    func setupAudioEngine() throws {
-        audioEngine.attach(downMixer)
-        audioEngine.connect(downMixer, to: audioEngine.mainMixerNode, format: snipsAudioFormat)
-        downMixer.installTap(onBus: 0, bufferSize: 1024, format: snipsAudioFormat) { [weak self] (buffer, time) in
-            self?.snips?.appendBuffer(buffer)
-        }
-        try audioEngine.start()
-    }
-    
-    func playAudio(forResource: String?, withExtension: String?, completionHandler: (() -> ())? = nil) {
-        guard let forResource = forResource else {
-            XCTFail("Couldn't load sound resource")
-            return
-        }
-        let audioURL = Bundle(for: type(of: self)).url(forResource: forResource, withExtension: withExtension)!
-        guard let audioFile = try? AVAudioFile(forReading: audioURL) else {
-            XCTFail("Couldn't load sound file at \(audioURL)" )
-            return
-        }
-        let audioFileBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: UInt32(audioFile.length))!
-        let audioFilePlayer = AVAudioPlayerNode()
-        audioEngine.attach(audioFilePlayer)
-        audioEngine.connect(audioFilePlayer, to: downMixer, format: audioFile.processingFormat)
-        
-        audioFilePlayer.play()
-        audioFilePlayer.scheduleFile(audioFile, at: nil, completionHandler: nil)
-        audioFilePlayer.scheduleBuffer(audioFileBuffer) { completionHandler?() }
-        
-        // Cleanup previous AVAudioPlayerNode.
-        // It's done after scheduling the next audio player becauses we need the downMixer to keep streaming to the platform.
-        if let currentAudioPlayer = currentAudioPlayer {
-            DispatchQueue.global().async { [weak self] in
-                currentAudioPlayer.stop()
-                self?.audioEngine.detach(currentAudioPlayer)
-                self?.currentAudioPlayer = audioFilePlayer
+    func playAudio(forResource resource: String?, withExtension ext: String? = "wav", completionHandler: (() -> ())? = nil) {
+        let audioURL = Bundle(for: type(of: self)).url(forResource: resource, withExtension: ext)!
+
+        let closure = { [weak self] in
+            let audioFile = try! AVAudioFile(forReading: audioURL, commonFormat: .pcmFormatInt16, interleaved: true)
+            let soundBuffer = AVAudioPCMBuffer(pcmFormat: audioFile.processingFormat, frameCapacity: kFrameCapacity)!
+            let silenceBuffer = [Int16](repeating: 0, count: Int(kFrameCapacity))
+
+            for _ in 0..<100 {
+                try! self?.snips?.appendBuffer(silenceBuffer)
             }
+            while let _ = try? audioFile.read(into: soundBuffer, frameCount: kFrameCapacity) {
+                try! self?.snips?.appendBuffer(soundBuffer)
+            }
+            for _ in 0..<100 {
+                try! self?.snips?.appendBuffer(silenceBuffer)
+            }
+        }
+        
+        // TODO: Hack to send audio after few seconds to wait for the platform to be loaded properly.
+        // This can be removed when `SnipsPlatform.start()` will be blocking.
+        if firstTimePlayedAudio {
+            firstTimePlayedAudio = false
+            soundQueue.asyncAfter(deadline: .now() + 5, execute: closure)
+        } else {
+            soundQueue.async(execute: closure)
         }
     }
     

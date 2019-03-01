@@ -428,9 +428,25 @@ public class SnipsPlatform {
     /// otherwise the platform could crash.
     ///
     /// - Parameter buffer: The audio buffer
-    public func appendBuffer(_ buffer: AVAudioPCMBuffer) {
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    public func appendBuffer(_ buffer: AVAudioPCMBuffer) throws {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
-        megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
+        guard megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength)) == SNIPS_RESULT_OK else {
+            throw SnipsPlatformError.getLast
+        }
+    }
+    
+    /// Append an audio buffer to be processed. This should be continously executed
+    /// otherwise the platform could crash.
+    ///
+    /// - Parameter buffer: The audio buffer
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    public func appendBuffer(_ buffer: [Int16]) throws {
+        try buffer.withUnsafeBufferPointer { buf in
+            guard megazord_send_audio_buffer(ptr, buf.baseAddress, UInt32(buf.count)) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
     }
 
     /// Request an injection of new entities values in the ASR model.
@@ -481,7 +497,7 @@ public class SnipsPlatform {
         if let g2pResources = g2pResources {
             var isDirectory = ObjCBool(true)
             let exists = FileManager.default.fileExists(atPath: g2pResources.path, isDirectory: &isDirectory)
-            guard (exists && isDirectory.boolValue) == true else {
+            guard (exists && isDirectory.boolValue) else {
                 throw SnipsPlatformError(message: "Folder doesn't exists at path: \(g2pResources.path)")
             }
             snipsInjectionURLPath = g2pResources.path
