@@ -24,13 +24,13 @@ script:
   - xcodebuild -showsdks
 
   - if [ "$RUN_TESTS" == "YES" ]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" test | xcpretty;
     else
-      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$SCHEME" -destination "$DESTINATION" build | xcpretty;
     fi
 
   - if [ "$BUILD_EXAMPLE" == "YES" ]; then
-      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build CODE_SIGNING_ALLOWED=NO;
+      xcodebuild -workspace "$WORKSPACE" -scheme "$EXAMPLE_SCHEME" -destination "$DESTINATION" build CODE_SIGNING_ALLOWED=NO | xcpretty;
     fi
 
   - if [ "$POD_LINT" == "YES" ]; then
