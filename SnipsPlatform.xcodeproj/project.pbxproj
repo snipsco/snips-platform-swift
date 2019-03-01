@@ -242,6 +242,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F7BB4FB3215A382E00FEEA43 /* Build configuration list for PBXNativeTarget "AllTests-macOS" */;
 			buildPhases = (
+				F777267A222555CC0069FA07 /* Download weather assistant */,
+				F7772679222555AB0069FA07 /* Download injection resources */,
 				F7BB4FA3215A382E00FEEA43 /* Sources */,
 				F7BB4FA4215A382E00FEEA43 /* Frameworks */,
 				F7BB4FA5215A382E00FEEA43 /* Resources */,
@@ -411,6 +413,42 @@
 			inputPaths = (
 			);
 			name = "Download weather assistant";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_demo_assistant.sh $PROJECT_DIR/SnipsPlatformTests/\n";
+		};
+		F7772679222555AB0069FA07 /* Download injection resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Download injection resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "$PROJECT_DIR/scripts/download_g2p_resources.sh $PROJECT_DIR/SnipsPlatformTests/\n";
+		};
+		F777267A222555CC0069FA07 /* Download weather assistant */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Download weather assistant";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
