@@ -189,7 +189,7 @@ private extension ViewController {
         audioEngine.connect(inputNode, to: downMixer, format: nil)
 
         downMixer.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
-            self?.snips?.appendBuffer(buffer)
+            try? self?.snips?.appendBuffer(buffer)
         }
 
         audioEngine.prepare()

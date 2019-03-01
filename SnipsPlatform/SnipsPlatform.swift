@@ -428,9 +428,13 @@ public class SnipsPlatform {
     /// otherwise the platform could crash.
     ///
     /// - Parameter buffer: The audio buffer
-    public func appendBuffer(_ buffer: AVAudioPCMBuffer) {
+    /// - Throws: A `SnipsPlatformError` if something went wrong.
+    public func appendBuffer(_ buffer: AVAudioPCMBuffer) throws {
         guard let frame = buffer.int16ChannelData?.pointee else { fatalError("Can't retrieve channel") }
-        megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength))
+        guard megazord_send_audio_buffer(ptr, frame, UInt32(buffer.frameLength)) == SNIPS_RESULT_OK else {
+            throw SnipsPlatformError.getLast
+        }
+    }
     }
 
     /// Request an injection of new entities values in the ASR model.
