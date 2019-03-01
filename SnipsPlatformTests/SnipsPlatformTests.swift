@@ -413,7 +413,7 @@ private extension SnipsPlatformTests {
         }
         
         // TODO: Hack to send audio after few seconds to wait for the ASR to really listen.
-        soundQueue.asyncAfter(deadline: .now() + 3, execute: closure)
+        soundQueue.asyncAfter(deadline: .now() + 5, execute: closure)
     }
     
     func removeSnipsUserDataIfNecessary() throws {
