@@ -319,7 +319,7 @@ class SnipsPlatformTests: XCTestCase {
                 
                 // TODO: Hack to wait for the injection to be finished + models fully reloaded.
                 // Remove this when SnipsPlatform.requestInjection() will be blocking.
-                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 10) {
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 20) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
                     testInjectionBlock()
