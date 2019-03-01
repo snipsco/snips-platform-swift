@@ -288,6 +288,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F777267C222555FC0069FA07 /* PBXTargetDependency */,
 			);
 			name = "AllTests-iOS";
 			productName = SnipsPlatformTests;
@@ -496,6 +497,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		F777267C222555FC0069FA07 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F7BB4FBA215A39C700FEEA43 /* SnipsPlatform-iOS */;
+			targetProxy = F777267B222555FC0069FA07 /* PBXContainerItemProxy */;
+		};
 		F7BB4FAA215A382E00FEEA43 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F7BB4F9E215A382E00FEEA43 /* SnipsPlatform-macOS */;
