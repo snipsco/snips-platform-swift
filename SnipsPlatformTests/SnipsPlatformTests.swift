@@ -95,9 +95,7 @@ class SnipsPlatformTests: XCTestCase {
             sessionEndedExpectation.fulfill()
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            try! self.snips?.startSession(intentFilter: nil, canBeEnqueued: true)
-        }
+        try! self.snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         
         wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 30)
     }
@@ -159,6 +157,7 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            // TODO: Hack to avoid the first onListeningStateChanged returning `false` when starting a session
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
             }
@@ -266,9 +265,7 @@ class SnipsPlatformTests: XCTestCase {
                 hasSentContinueSessionMessage = true
                 continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: nil)
                 try! self?.snips?.continueSession(message: continueSessionMessage!)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    self?.playAudio(forResource: kHotwordAudioFile)
-                }
+                self?.playAudio(forResource: kHotwordAudioFile)
             }
             else {
                 sessionEndedExpectation.fulfill()
@@ -318,8 +315,8 @@ class SnipsPlatformTests: XCTestCase {
                 injectionBlock()
                 
                 // TODO: Hack to wait for the injection to be finished + models fully reloaded.
-                // Remove this when SnipsPlatform.requestInjection() will be blocking.
-                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 20) {
+                // Remove this when the platform will have a callback to notify for injection status.
+                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 15) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
                     testInjectionBlock()
@@ -334,10 +331,8 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-            try! self.snips?.startSession()
-            self.playAudio(forResource: kWonderlandAudioFile)
-        }
+        try! self.snips?.startSession()
+        self.playAudio(forResource: kWonderlandAudioFile)
         
         wait(
             for: [
@@ -392,6 +387,10 @@ private extension SnipsPlatformTests {
         }
         
         try snips?.start()
+        
+        // TODO: Hack to wait for the platform to be fully loaded.
+        // Remove this when SnipsPlatform.start() will be blocking.
+        Thread.sleep(forTimeInterval: 5)
     }
     
     func playAudio(forResource resource: String?, withExtension ext: String? = "wav", completionHandler: (() -> ())? = nil) {
@@ -413,14 +412,8 @@ private extension SnipsPlatformTests {
             }
         }
         
-        // TODO: Hack to send audio after few seconds to wait for the platform to be loaded properly.
-        // This can be removed when `SnipsPlatform.start()` will be blocking.
-        if firstTimePlayedAudio {
-            firstTimePlayedAudio = false
-            soundQueue.asyncAfter(deadline: .now() + 5, execute: closure)
-        } else {
-            soundQueue.async(execute: closure)
-        }
+        // TODO: Hack to send audio after few seconds to wait for the ASR to really listen.
+        soundQueue.asyncAfter(deadline: .now() + 3, execute: closure)
     }
     
     func removeSnipsUserDataIfNecessary() throws {
