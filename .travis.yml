@@ -10,10 +10,12 @@ env:
   - LANG=en_US.UTF-8
   - WORKSPACE=SnipsPlatformDemo.xcworkspace
   - IOS_FRAMEWORK_SCHEME=SnipsPlatform-iOS
+  - MACOS_FRAMEWORK_SCHEME=SnipsPlatform-macOS
   - EXAMPLE_SCHEME=SnipsPlatformDemo
   matrix:
     - DESTINATION="OS=12.1,name=iPhone XR"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
     - DESTINATION="generic/platform=iOS"    SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="NO"  BUILD_EXAMPLE="YES" POD_LINT="NO"
+    - DESTINATION=""                    SCHEME="$MACOS_FRAMEWORK_SCHEME"    RUN_TESTS="YES" BUILD_EXAMPLE="NO"  POD_LINT="NO"
 
 before_install:
   - gem install cocoapods --pre --no-rdoc --no-ri --no-document --quiet
