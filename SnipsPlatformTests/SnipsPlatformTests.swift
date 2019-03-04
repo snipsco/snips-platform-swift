@@ -157,10 +157,7 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            // TODO: Hack to avoid the first onListeningStateChanged returning `false` when starting a session
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
-            }
+            try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
@@ -356,7 +353,7 @@ private extension SnipsPlatformTests {
         
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
-                                  enableLogs: true,
+                                  enableLogs: false,
                                   enableInjection: true,
                                   userURL: userURL,
                                   g2pResources: g2pResources)
@@ -368,7 +365,10 @@ private extension SnipsPlatformTests {
             self?.onHotwordDetected?()
         }
         snips?.onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            self?.onSessionStartedHandler?(sessionStartedMessage)
+            // Dispatch to prevent timeout on slow machines. Probably due to race conditions in megazord.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self?.onSessionStartedHandler?(sessionStartedMessage)
+            }
         }
         snips?.onSessionQueuedHandler = { [weak self] sessionQueuedMessage in
             self?.onSessionQueuedHandler?(sessionQueuedMessage)
@@ -413,7 +413,7 @@ private extension SnipsPlatformTests {
         }
         
         // TODO: Hack to send audio after few seconds to wait for the ASR to really listen.
-        soundQueue.asyncAfter(deadline: .now() + 5, execute: closure)
+        soundQueue.asyncAfter(deadline: .now() + 2, execute: closure)
     }
     
     func removeSnipsUserDataIfNecessary() throws {
