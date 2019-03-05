@@ -13,7 +13,7 @@ OUT_DIR=${PROJECT_DIR}/Dependencies/
 install_remote_core () {
     echo "Trying remote installation"
 
-    local filename=snips-platform-ios.${VERSION}.tgz # TODO: macos-ios
+    local filename=snips-platform-cocoa.${VERSION}.tgz
     local url=https://s3.amazonaws.com/snips/snips-platform-dev/${filename} # TODO: resources.snips.ai or whatever
 
     echo "Will download and decompress '${filename}' into '${OUT_DIR}'"
