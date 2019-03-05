@@ -19,10 +19,6 @@ install_remote_core () {
     echo "Will download and decompress '${filename}' into '${OUT_DIR}'"
     if curl --output /dev/null --silent --head --fail "$url"; then
         $(cd ${OUT_DIR} && curl -s ${url} | tar zxv)
-	cd $OUT_DIR
-	mkdir ios
-	mv libsnips_megazord.a ios
-	mv module.modulemap ios
     else
         echo "Version ${VERSION} doesn't seem to have been released yet" >&2
         echo "Could not find any file at '${url}'" >&2
