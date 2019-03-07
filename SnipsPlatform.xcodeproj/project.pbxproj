@@ -36,8 +36,6 @@
 		F7BB4FEB215A913700FEEA43 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		F7BB4FEC215A913900FEEA43 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
 		F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
-		F7BB4FF1215A978800FEEA43 /* libsnips_megazord.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FEF215A978800FEEA43 /* libsnips_megazord.dylib */; };
-		F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F7BB4FF0215A978800FEEA43 /* libsnips_kaldi.dylib */; };
 		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -93,8 +91,6 @@
 			files = (
 				F7BB4FD4215A5BD200FEEA43 /* Accelerate.framework in Frameworks */,
 				F7BB4FE6215A838B00FEEA43 /* libc++.tbd in Frameworks */,
-				F7BB4FF1215A978800FEEA43 /* libsnips_megazord.dylib in Frameworks */,
-				F7BB4FF2215A978800FEEA43 /* libsnips_kaldi.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -471,7 +467,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$PROJECT_DIR/scripts/download_core.sh ios\n";
+			shellScript = "SNIPS_TARGET_PLATFORM=ios $PROJECT_DIR/scripts/download_core.sh\n";
 		};
 		F7BB4FD6215A5C6E00FEEA43 /* Download Core */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -489,7 +485,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "$PROJECT_DIR/scripts/download_core.sh macos\n";
+			shellScript = "SNIPS_TARGET_PLATFORM=macos $PROJECT_DIR/scripts/download_core.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -562,13 +558,11 @@
 				INFOPLIST_FILE = SnipsPlatform/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = SnipsPlatform;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -587,13 +581,11 @@
 				INFOPLIST_FILE = SnipsPlatform/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = SnipsPlatform;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/macos";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
@@ -649,14 +641,12 @@
 				INFOPLIST_FILE = SnipsPlatform/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = SnipsPlatform;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -674,13 +664,11 @@
 				INFOPLIST_FILE = SnipsPlatform/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.snips.SnipsPlatform;
 				PRODUCT_NAME = SnipsPlatform;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies/ios";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -738,10 +726,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -795,8 +785,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Dependencies";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/Dependencies";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 4.0;
 				VALIDATE_PRODUCT = YES;

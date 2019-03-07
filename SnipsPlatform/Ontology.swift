@@ -2,11 +2,15 @@
 //  Ontology.swift
 //  SnipsPlatform
 //
-//  Copyright © 2017 Snips. All rights reserved.
+//  Copyright © 2019 Snips. All rights reserved.
 //
 
 import Foundation
-import Clibsnips_megazord
+#if os(OSX)
+import Clibsnips_megazord_macos
+#elseif os(iOS)
+import Clibsnips_megazord_ios
+#endif
 
 /// A detected intent.
 public struct IntentMessage {

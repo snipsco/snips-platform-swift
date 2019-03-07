@@ -2,11 +2,15 @@
 //  COntology.swift
 //  SnipsPlatform
 //
-//  Copyright © 2018 Snips. All rights reserved.
+//  Copyright © 2019 Snips. All rights reserved.
 //
 
 import Foundation
-import Clibsnips_megazord
+#if os(OSX)
+import Clibsnips_megazord_macos
+#elseif os(iOS)
+import Clibsnips_megazord_ios
+#endif
 
 extension CStringArray {
     init(array: [String]) {

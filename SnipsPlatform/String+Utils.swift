@@ -2,7 +2,7 @@
 //  String+Utils.swift
 //  SnipsPlatform
 //
-//  Copyright © 2018 Snips. All rights reserved.
+//  Copyright © 2019 Snips. All rights reserved.
 //
 
 import Foundation
