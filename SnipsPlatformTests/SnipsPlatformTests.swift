@@ -61,8 +61,10 @@ class SnipsPlatformTests: XCTestCase {
         let timeSlotExpectation = expectation(description: "Time slot")
         let sessionEndedExpectation = expectation(description: "Session ended")
         
-        onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: kWeatherAudioFile)
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
         }
         onIntentDetected = { [weak self] intent in
             XCTAssertEqual(intent.input, "what will be the weather in madagascar in two days")
@@ -75,8 +77,7 @@ class SnipsPlatformTests: XCTestCase {
                         XCTAssertEqual(country, "Madagascar")
                         countrySlotExpectation.fulfill()
                     }
-                }
-                else if slot.slotName.contains("forecast_start_datetime") {
+                } else if slot.slotName.contains("forecast_start_datetime") {
                     if case .instantTime(let instantTime) = slot.value {
                         XCTAssertEqual(instantTime.precision, .exact)
                         XCTAssertEqual(instantTime.grain, .day)
@@ -103,8 +104,10 @@ class SnipsPlatformTests: XCTestCase {
     func test_intent_not_recognized() {
         let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
         
-        onSessionStartedHandler = { [weak self] message in
-            self?.playAudio(forResource: kPlayMJAudioFile)
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kPlayMJAudioFile)
+            }
         }
         onIntentNotRecognizedHandler = { [weak self] message in
             onIntentNotRecognizedExpectation.fulfill()
@@ -118,8 +121,10 @@ class SnipsPlatformTests: XCTestCase {
     func test_empty_intent_filter_intent_not_recognized() {
         let intentNotRecognizedExpectation = expectation(description: "Intent not recognized")
         
-        onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: kWeatherAudioFile)
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
         }
         onSessionEndedHandler = { sessionEndedMessage in
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .intentNotRecognized)
@@ -133,8 +138,10 @@ class SnipsPlatformTests: XCTestCase {
     func test_intent_filter() {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
         
-        onSessionStartedHandler = { [weak self] _ in
-            self?.playAudio(forResource: kWeatherAudioFile)
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
         }
         onIntentDetected = { [weak self] intent in
             try! self?.snips?.endSession(sessionId: intent.sessionId)
@@ -295,9 +302,15 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         
-        let testInjectionBlock = { [weak self] in
-            try! self?.snips?.startSession()
-            self?.playAudio(forResource: kWonderlandAudioFile)
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                switch testPhase {
+                case .entityNotInjectedShouldNotBeDetected, .entityInjectedShouldBeDetected:
+                    self?.playAudio(forResource: kWonderlandAudioFile)
+                    break
+                case .injectingEntities: XCTFail("For test purposes, shouldn't start listening in this state")
+                }
+            }
         }
         
         onIntentDetected = { [weak self] intentMessage in
@@ -316,7 +329,7 @@ class SnipsPlatformTests: XCTestCase {
                 DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 15) {
                     injectingEntitiesExpectation.fulfill()
                     testPhase = .entityInjectedShouldBeDetected
-                    testInjectionBlock()
+                    try! self?.snips?.startSession()
                 }
                 
             case .entityInjectedShouldBeDetected:
@@ -329,7 +342,6 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! self.snips?.startSession()
-        self.playAudio(forResource: kWonderlandAudioFile)
         
         wait(
             for: [
@@ -365,10 +377,9 @@ private extension SnipsPlatformTests {
             self?.onHotwordDetected?()
         }
         snips?.onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            // Dispatch to prevent timeout on slow machines. Probably due to race conditions in megazord.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self?.onSessionStartedHandler?(sessionStartedMessage)
-            }
+            // Wait a bit to prevent timeout on slow machines. Probably due to race conditions in megazord.
+            Thread.sleep(forTimeInterval: 2)
+            self?.onSessionStartedHandler?(sessionStartedMessage)
         }
         snips?.onSessionQueuedHandler = { [weak self] sessionQueuedMessage in
             self?.onSessionQueuedHandler?(sessionQueuedMessage)
@@ -413,7 +424,7 @@ private extension SnipsPlatformTests {
         }
         
         // TODO: Hack to send audio after few seconds to wait for the ASR to really listen.
-        soundQueue.asyncAfter(deadline: .now() + 2, execute: closure)
+        soundQueue.asyncAfter(deadline: .now() + 1, execute: closure)
     }
     
     func removeSnipsUserDataIfNecessary() throws {
