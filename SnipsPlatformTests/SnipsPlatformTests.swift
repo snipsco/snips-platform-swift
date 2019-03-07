@@ -2,7 +2,7 @@
 //  SnipsPlatformTests.swift
 //  SnipsPlatformTests
 //
-//  Copyright © 2017 Snips. All rights reserved.
+//  Copyright © 2019 Snips. All rights reserved.
 //
 
 import XCTest
