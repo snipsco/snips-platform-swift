@@ -738,7 +738,7 @@ public struct InjectionRequestMessage {
     public let crossLanguage: String?
     public let requestId: String?
 
-    public init(operations: [InjectionRequestOperation], lexicon: [String: [String]] = [:], crossLanguage: String? = nil, requestId: String? = nil) {
+    public init(operations: [InjectionRequestOperation], lexicon: [String: [String]] = [:], crossLanguage: String? = nil, requestId: String? = UUID().uuidString) {
         self.operations = operations
         self.lexicon = lexicon
         self.crossLanguage = crossLanguage
