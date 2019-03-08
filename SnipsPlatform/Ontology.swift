@@ -614,7 +614,7 @@ public struct SayFinishedMessage {
 ///
 /// - add: Add new entities on top of the latest injected assistant.
 /// - addFromVanilla: Add new entities on top of the vanilla assistant (the assistant without any injection).
-public enum SnipsInjectionKind {
+public enum InjectionKind {
     case add
     case addFromVanilla
 
@@ -626,7 +626,7 @@ public enum SnipsInjectionKind {
         }
     }
 
-    func toCSnipsInjectionKind() -> SNIPS_INJECTION_KIND {
+    func toCInjectionKind() -> SNIPS_INJECTION_KIND {
         switch self {
         case .add: return SNIPS_INJECTION_KIND_ADD
         case .addFromVanilla: return SNIPS_INJECTION_KIND_ADD_FROM_VANILLA
@@ -646,9 +646,9 @@ public enum SnipsInjectionKind {
 /// - kind: Injection kind case
 public struct InjectionRequestOperation {
     public let entities: [String: [String]]
-    public let kind: SnipsInjectionKind
+    public let kind: InjectionKind
 
-    public init(entities: [String: [String]], kind: SnipsInjectionKind) {
+    public init(entities: [String: [String]], kind: InjectionKind) {
         self.entities = entities
         self.kind = kind
     }

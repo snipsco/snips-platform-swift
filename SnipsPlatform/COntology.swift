@@ -80,13 +80,13 @@ extension CMapStringToStringArray {
 }
 
 extension CInjectionRequestOperation {
-    init(array: [String: [String]], kind: SnipsInjectionKind) throws {
+    init(array: [String: [String]], kind: InjectionKind) throws {
         let cMapStringToStringArray = try CMapStringToStringArray(array: array)
         let retainedArray = UnsafeMutablePointer<CMapStringToStringArray>.allocate(capacity: 1)
         retainedArray.initialize(to: cMapStringToStringArray)
         self.init()
         self.values = UnsafePointer(retainedArray)
-        self.kind = kind.toCSnipsInjectionKind()
+        self.kind = kind.toCInjectionKind()
     }
 
     func destroy() {
