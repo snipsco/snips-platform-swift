@@ -23,6 +23,7 @@ private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSession
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
 private typealias CIntentNotRecognizedHandler = @convention(c) (UnsafePointer<CIntentNotRecognizedMessage>) -> Void
 private typealias CTextCapturedHandler = @convention(c) (UnsafePointer<CTextCapturedMessage>) -> Void
+private typealias CInjectionCompleteHandler = @convention(c) (UnsafePointer<CInjectionCompleteMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> Void
 public typealias SpeechHandler = (SayMessage) -> Void
@@ -34,6 +35,7 @@ public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
 public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
 public typealias TextCapturedHandler = (TextCapturedMessage) -> Void
+public typealias InjectionCompleteHandler = (InjectionComplete) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -62,6 +64,7 @@ private var _onSessionEnded: SessionEndedHandler?
 private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
 private var _onTextCapturedHandler: TextCapturedHandler?
 private var _onPartialTextCapturedHandler: TextCapturedHandler?
+private var _onInjectionComplete: InjectionCompleteHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -273,6 +276,39 @@ public class SnipsPlatform {
                     }
                     guard let cSessionEndedMessage = cSessionEndedMessage?.pointee else { return }
                     _onSessionEnded?(try! SessionEndedMessage(cSessionEndedMessage: cSessionEndedMessage))
+                }
+            }
+        }
+    }
+    
+    /// A closure executed when an injection completed
+    public var onInjectionComplete: InjectionCompleteHandler? {
+        get {
+            return _onInjectionComplete
+        }
+        set {
+            if newValue != nil {
+                _onInjectionComplete = newValue
+                megazord_set_injection_complete_handler(ptr) { cMessage, _ in
+//                    defer {
+//                        megazord_destry_injection(UnsafeMutablePointer(mutating: cSessionEndedMessage))
+//                    }
+                    guard let cMessage = cMessage?.pointee else { return }
+                    _onInjectionComplete?(InjectionComplete(cMessage: cMessage))
+                }
+            }
+        }
+    }
+    
+    public var onComponentLoaded: ComponentLoadedHandler? {
+        get {
+            return _componentLoaded
+        }
+        set {
+            if newValue != nil {
+                _componentLoaded = newValue
+                megazord_set_component_loaded_handler(ptr) { cComponent, _ in
+                    _componentLoaded?(try! Component(cValue: cComponent))
                 }
             }
         }
@@ -504,7 +540,7 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
     /// Request an injection of new entities values in the ASR model.
     ///
     /// - Parameters:
