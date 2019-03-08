@@ -524,7 +524,12 @@ private extension SnipsPlatformTests {
         snips?.onPartialTextCapturedHandler = { [weak self] text in
             self?.onPartialTextCapturedHandler?(text)
         }
-        
+        snips?.onComponentLoaded = { [weak self] component in
+            print("component loaded: \(component)")
+        }
+        snips?.onInjectionComplete = { [weak self] injectionComplete in
+            print("injection complete: \(injectionComplete)")
+        }
         try snips?.start()
     }
     
