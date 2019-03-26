@@ -18,10 +18,7 @@ extension CStringArray {
         array.enumerated().forEach {
             data.advanced(by: $0).pointee = UnsafePointer($1.unsafeMutablePointerRetained())
         }
-
-        self.init()
-        self.data = UnsafePointer(data)
-        self.size = Int32(array.count)
+        self.init(data: data, size: Int32(array.count))
     }
 
     func destroy() {
@@ -42,9 +39,7 @@ extension CMapStringToStringArrayEntry {
     init(key: String, value: [String]) throws {
         let retainedArray = UnsafeMutablePointer<CStringArray>.allocate(capacity: 1)
         retainedArray.initialize(to: CStringArray(array: value))
-        self.init()
-        self.key = UnsafePointer(key.unsafeMutablePointerRetained())
-        self.value = UnsafePointer(retainedArray)
+        self.init(key: key.unsafeMutablePointerRetained(), value: retainedArray)
     }
 
     func destroy() {
@@ -56,23 +51,22 @@ extension CMapStringToStringArrayEntry {
 }
 
 extension CMapStringToStringArray {
-    init(array: [String: [String]]) throws {
-        let entries = UnsafeMutablePointer<UnsafePointer<CMapStringToStringArrayEntry>?>.allocate(capacity: array.count)
-        try array.enumerated().forEach { (offset, element) in
+    init(dict: [String: [String]]) throws {
+        let entries = UnsafeMutablePointer<UnsafePointer<CMapStringToStringArrayEntry>?>.allocate(capacity: dict.count)
+        try dict.enumerated().forEach { (offset, element) in
             let retainedArray = UnsafeMutablePointer<CMapStringToStringArrayEntry>.allocate(capacity: 1)
             retainedArray.initialize(to: try CMapStringToStringArrayEntry(key: element.key, value: element.value))
             entries.advanced(by: offset).pointee = UnsafePointer(retainedArray)
         }
-        self.init()
-        self.entries = UnsafePointer(entries)
-        self.count = Int32(array.count)
+        self.init(entries: entries, count: Int32(dict.count))
     }
 
     func destroy() {
         for idx in 0..<count {
-            if let subPointee = entries.pointee?.advanced(by: Int(idx)) {
-                subPointee.pointee.destroy()
-                free(UnsafeMutableRawPointer(mutating: subPointee))
+            if let cMapStrToStrEntry = entries.advanced(by: Int(idx)).pointee {
+                cMapStrToStrEntry.pointee.destroy()
+                UnsafeMutablePointer(mutating: cMapStrToStrEntry)?.deinitialize(count: 1)
+                cMapStrToStrEntry.deallocate()
             }
         }
         entries?.deallocate()
@@ -80,13 +74,10 @@ extension CMapStringToStringArray {
 }
 
 extension CInjectionRequestOperation {
-    init(array: [String: [String]], kind: InjectionKind) throws {
-        let cMapStringToStringArray = try CMapStringToStringArray(array: array)
+    init(dict: [String: [String]], kind: InjectionKind) throws {
         let retainedArray = UnsafeMutablePointer<CMapStringToStringArray>.allocate(capacity: 1)
-        retainedArray.initialize(to: cMapStringToStringArray)
-        self.init()
-        self.values = UnsafePointer(retainedArray)
-        self.kind = kind.toCInjectionKind()
+        retainedArray.initialize(to: try CMapStringToStringArray(dict: dict))
+        self.init(values: retainedArray, kind: kind.toCInjectionKind())
     }
 
     func destroy() {
@@ -100,22 +91,19 @@ extension CInjectionRequestOperations {
     init(operations: [InjectionRequestOperation]) throws {
         let entries = UnsafeMutablePointer<UnsafePointer<CInjectionRequestOperation>?>.allocate(capacity: operations.count)
         try operations.enumerated().forEach {
-            let cInjectionRequestOperation = try CInjectionRequestOperation(array: $0.element.entities, kind: $0.element.kind)
             let retainedArray = UnsafeMutablePointer<CInjectionRequestOperation>.allocate(capacity: 1)
-            retainedArray.initialize(to: cInjectionRequestOperation)
+            retainedArray.initialize(to: try CInjectionRequestOperation(dict: $0.element.entities, kind: $0.element.kind))
             entries.advanced(by: $0.offset).pointee = UnsafePointer(retainedArray)
         }
-        self.init()
-        self.operations = UnsafePointer(entries)
-        self.count = Int32(operations.count)
+        self.init(operations: UnsafePointer(entries), count: Int32(operations.count))
     }
 
     func destroy() {
         for idx in 0..<count {
-            if let subPointee = operations.pointee?.advanced(by: Int(idx)) {
-                subPointee.pointee.destroy()
-                UnsafeMutablePointer(mutating: subPointee).deinitialize(count: 1)
-                subPointee.deallocate()
+            if let cInjectionRequestOperation = operations.advanced(by: Int(idx)).pointee {
+                cInjectionRequestOperation.pointee.destroy()
+                UnsafeMutablePointer(mutating: cInjectionRequestOperation).deinitialize(count: 1)
+                cInjectionRequestOperation.deallocate()
             }
         }
         operations?.deallocate()

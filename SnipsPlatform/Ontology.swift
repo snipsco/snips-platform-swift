@@ -674,7 +674,7 @@ public struct InjectionRequestMessage {
     }
 
     func toUnsafeCInjectionRequestMessage(body: (UnsafePointer<CInjectionRequestMessage>) throws -> Void) throws {
-        var cMapLexicon = try CMapStringToStringArray(array: lexicon)
+        var cMapLexicon = try CMapStringToStringArray(dict: lexicon)
         let cUnsafeLexicon = withUnsafePointer(to: &cMapLexicon) { $0 }
         var cOperations = try CInjectionRequestOperations(operations: operations)
         let cUnsafeOperations = withUnsafePointer(to: &cOperations) { $0 }
@@ -687,7 +687,7 @@ public struct InjectionRequestMessage {
         )
         
         try body(withUnsafePointer(to: &cMessage) { $0 })
-        cMapLexicon.destroy()
+        cUnsafeLexicon.pointee.destroy()
         cUnsafeOperations.pointee.destroy()
         cMessage.cross_language?.freeUnsafeMemory()
         cMessage.id?.freeUnsafeMemory()

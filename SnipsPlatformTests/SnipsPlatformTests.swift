@@ -294,7 +294,7 @@ class SnipsPlatformTests: XCTestCase {
         var testPhase: TestPhaseKind = .entityNotInjectedShouldNotBeDetected
         
         let injectionBlock = { [weak self] in
-            let operation = InjectionRequestOperation(entities: ["locality": ["wonderland"]], kind: .add)
+            let operation = InjectionRequestOperation(entities: ["locality": ["wonderland"], "region": ["wonderland"]], kind: .add)
             do {
                 try self?.snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
             } catch let error {
