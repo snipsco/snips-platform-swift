@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/snipsco/snips-platform-swift.svg?branch=master)](https://travis-ci.org/snipsco/snips-platform-swift)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](#carthage)
-![Swift 4.2.x](https://img.shields.io/badge/Swift-4.2.x-orange.svg)
+![Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)
 ![platforms](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20-lightgrey.svg)
 
 The Swift framework for the Snips Platform

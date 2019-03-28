@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode10.1
+osx_image: xcode10.2
 branches:
   only:
     - master
@@ -13,12 +13,12 @@ env:
   - MACOS_FRAMEWORK_SCHEME=SnipsPlatform-macOS
   - EXAMPLE_SCHEME=SnipsPlatformDemo
   matrix:
-    - DESTINATION="OS=12.1,name=iPhone XR"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
+    - DESTINATION="OS=12.2,name=iPhone Xʀ"  SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="YES"
     - DESTINATION="generic/platform=iOS"    SCHEME="$IOS_FRAMEWORK_SCHEME"  RUN_TESTS="NO"  BUILD_EXAMPLE="YES" POD_LINT="NO"
     - DESTINATION="arch=x86_64"             SCHEME="$MACOS_FRAMEWORK_SCHEME"RUN_TESTS="YES" BUILD_EXAMPLE="NO"  POD_LINT="NO"
 
 before_install:
-  - gem install cocoapods --pre --no-rdoc --no-ri --no-document --quiet
+  - gem install cocoapods --pre --no-document --quiet
 
 script:
   - set -o pipefail
