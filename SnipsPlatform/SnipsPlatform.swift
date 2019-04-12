@@ -298,6 +298,7 @@ public class SnipsPlatform {
         }
     }
     
+    /// A closure to get the text captured by the platform.
     public var onTextCapturedHandler: TextCapturedHandler? {
         get {
             return _onTextCapturedHandler
@@ -318,6 +319,7 @@ public class SnipsPlatform {
         }
     }
     
+    /// A closure to get the text captured by the platform in real time.
     public var onPartialTextCapturedHandler: TextCapturedHandler? {
         get {
             return _onPartialTextCapturedHandler
