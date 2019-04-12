@@ -167,6 +167,9 @@ private extension ViewController {
 
                 case .granted:
                     self.recordButton.isEnabled = true
+                
+                @unknown default:
+                    fatalError()
                 }
             }
         }
