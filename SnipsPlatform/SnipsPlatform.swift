@@ -61,6 +61,7 @@ private var _onSessionQueued: SessionQueuedHandler?
 private var _onSessionEnded: SessionEndedHandler?
 private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
 private var _onTextCapturedHandler: TextCapturedHandler?
+private var _onPartialTextCapturedHandler: TextCapturedHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -74,18 +75,22 @@ public class SnipsPlatform {
     ///   - enableHtml: This will add html tags to `snipsWatchHandler`. `false` by default.
     ///   - enableLogs: Print Snips internal logs. This should be used only in Debug configuration. `false` by default.
     ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
+    ///   - enableASRPartialText: Enable ASR partial text capture feature. This is quite resource intensive and will affect the capacity of the platform to run in real time. `false` by default
     ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
     ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
     ///   - asrModelParameters: Override default ASR model parameters
+    ///   - asrPartialTextPeriodMs: ASR partial text capture period in ms. `250ms` by default. You need to have ASR partial text capture enabled.
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
                 enableHtml: Bool = false,
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
+                enableASRPartialText: Bool = false,
                 userURL: URL? = nil,
                 g2pResources: URL? = nil,
-                asrModelParameters: AsrModelParameters? = nil) throws {
+                asrModelParameters: AsrModelParameters? = nil,
+                asrPartialTextPeriodMs: Float = 250) throws {
         var client: UnsafePointer<MegazordClient>?
         guard megazord_create(assistantURL.path, &client, nil) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -93,6 +98,7 @@ public class SnipsPlatform {
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_asr_partial(ptr, enableASRPartialText ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
 
         self.hotwordSensitivity = hotwordSensitivity
         
@@ -312,6 +318,26 @@ public class SnipsPlatform {
         }
     }
     
+    public var onPartialTextCapturedHandler: TextCapturedHandler? {
+        get {
+            return _onPartialTextCapturedHandler
+        }
+        set {
+            if newValue != nil {
+                _onPartialTextCapturedHandler = newValue
+                megazord_set_asr_partial_text_captured_handler(ptr) { message, _ in
+                    defer {
+                        megazord_destroy_text_captured_message(UnsafeMutablePointer(mutating: message))
+                    }
+                    guard let message = message?.pointee else { return }
+                    _onPartialTextCapturedHandler?(TextCapturedMessage(cTextCapturedMessage: message))
+                }
+            } else {
+                megazord_set_asr_partial_text_captured_handler(ptr, nil)
+            }
+        }
+    }
+    
     /// Start the platform. This operation could be heavy as this start all sub-services.
     ///
     /// - Throws: A `SnipsPlatformError` is something went wrong.
@@ -497,6 +523,18 @@ public class SnipsPlatform {
     public func requestInjection(with message: InjectionRequestMessage) throws {
         try message.toUnsafeCInjectionRequestMessage { cMessage in
             guard megazord_request_injection(ptr, cMessage) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
+    
+    /// Enable and disable intents in the dialogue on the fly.
+    ///
+    /// - Parameters:
+    ///   - configuration: DialogueConfigureMessage containing the intents you wish to filter.
+    public func dialogueConfiguration(with configuration: DialogueConfigureMessage) throws {
+        try configuration.toUnsafeCDialogueConfigureMessage { cMessage in
+            guard megazord_dialogue_configure(ptr, cMessage) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }

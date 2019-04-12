@@ -748,3 +748,41 @@ public struct TextCapturedMessage {
         self.sessionId = String.fromCStringPtr(cString: cTextCapturedMessage.session_id)
     }
 }
+
+/// DialogueConfigureMessage
+///
+/// - siteId: Site where the intents will be filtered
+/// - intents: Intents to filter
+public struct DialogueConfigureMessage {
+    public let siteId: String?
+    public let intents: [DialogueConfigureIntent]
+    
+    public init(siteId: String?, intents: [DialogueConfigureIntent]) {
+        self.siteId = siteId
+        self.intents = intents
+    }
+    
+    func toUnsafeCDialogueConfigureMessage(body: (UnsafePointer<CDialogueConfigureMessage>) throws -> Void) throws {
+        var cDialogueIntentArray = CDialogueConfigureIntentArray(intents: intents)
+        let unsafeCDialogueIntentArray = withUnsafePointer(to: &cDialogueIntentArray) { $0 }
+        var cDialogueConfigureMessage = CDialogueConfigureMessage(site_id: siteId?.unsafeMutablePointerRetained(), intents: unsafeCDialogueIntentArray)
+        let unsafeCDialogueConfigureMessage = withUnsafePointer(to: &cDialogueConfigureMessage) { $0 }
+        try body(unsafeCDialogueConfigureMessage)
+        unsafeCDialogueIntentArray.pointee.destroy()
+        unsafeCDialogueConfigureMessage.pointee.site_id?.freeUnsafeMemory()
+    }
+}
+
+/// DialogueConfigureIntent
+///
+/// - intentName: The name of the intent to filter
+/// - enable: Enable or disable this specific intent
+public struct DialogueConfigureIntent {
+    public let intentName: String
+    public let enable: Bool
+    
+    public init(intentName: String, enable: Bool) {
+        self.intentName = intentName
+        self.enable = enable
+    }
+}
