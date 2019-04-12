@@ -1,0 +1,32 @@
+{
+  "parsers_metadata": [
+    {
+      "entity_identifier": "conditionName",
+      "entity_parser": "parser_1"
+    },
+    {
+      "entity_identifier": "country",
+      "entity_parser": "parser_2"
+    },
+    {
+      "entity_identifier": "geographicalPOI",
+      "entity_parser": "parser_3"
+    },
+    {
+      "entity_identifier": "item",
+      "entity_parser": "parser_4"
+    },
+    {
+      "entity_identifier": "locality",
+      "entity_parser": "parser_5"
+    },
+    {
+      "entity_identifier": "region",
+      "entity_parser": "parser_6"
+    },
+    {
+      "entity_identifier": "temperatureName",
+      "entity_parser": "parser_7"
+    }
+  ]
+}

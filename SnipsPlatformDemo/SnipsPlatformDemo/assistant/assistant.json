@@ -1,0 +1,220 @@
+{
+  "id" : "proj_XldDZpQ461",
+  "name" : "SnipsDemoWeatherAssistant",
+  "intents" : [ {
+    "id" : "searchWeatherForecast",
+    "type" : "registry",
+    "version" : "78.0.0",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "forecast_locality",
+      "id" : "slot_S1kdgHrgZMPb",
+      "entityId" : "entity_6komlnVbpZN",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Location (e.g. city, village) whose weather you are interested in"
+    }, {
+      "name" : "forecast_country",
+      "id" : "slot_H1xOgSBxbzwW",
+      "entityId" : "entity_ME2OY9vMv54",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The country whose weather you are interested in"
+    }, {
+      "name" : "forecast_geographical_poi",
+      "id" : "slot_HJGOgrSeWMDb",
+      "entityId" : "entity_14De2yzENYN",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The place whose weather you are interested in"
+    }, {
+      "name" : "forecast_start_datetime",
+      "id" : "slot_HJQdlrHxWfP-",
+      "entityId" : "snips/datetime",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "What time are you asking about?"
+    }, {
+      "name" : "forecast_region",
+      "id" : "S1axOUfXf",
+      "entityId" : "entity_W02m1lbw9xw",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The region whose weather you are interested in"
+    } ],
+    "name" : "searchWeatherForecast",
+    "confirmationRequired" : false,
+    "confirmationQuestion" : "",
+    "enabledByDefault" : true
+  }, {
+    "id" : "searchWeatherForecastCondition",
+    "type" : "registry",
+    "version" : "46.0.0",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "forecast_locality",
+      "id" : "slot_r1kOgVQKzfv-",
+      "entityId" : "entity_Y92n3k5WmaA",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Location (e.g. city, village) whose weather you are interested in"
+    }, {
+      "name" : "forecast_country",
+      "id" : "slot_S1gOxE7FGfvW",
+      "entityId" : "entity_14De2yal2xy",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The country whose weather you are interested in"
+    }, {
+      "name" : "forecast_region",
+      "id" : "slot_Hy-deE7YMzPZ",
+      "entityId" : "entity_g4DrYQxe7ze",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The region whose weather you are interested in"
+    }, {
+      "name" : "forecast_geographical_poi",
+      "id" : "slot_rkM_gV7tfzwW",
+      "entityId" : "entity_OK2vdn7ZKey",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The place whose weather you are interested in"
+    }, {
+      "name" : "forecast_start_datetime",
+      "id" : "slot_Sk7_x4mYMGwZ",
+      "entityId" : "snips/datetime",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "What time are you asking about?"
+    }, {
+      "name" : "forecast_condition_name",
+      "id" : "slot_B1VOl47YMzvb",
+      "entityId" : "entity_g4DrYQx27XQ",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Name of weather condition"
+    } ],
+    "name" : "searchWeatherForecastCondition",
+    "confirmationRequired" : false,
+    "confirmationQuestion" : "",
+    "enabledByDefault" : true
+  }, {
+    "id" : "searchWeatherForecastItem",
+    "type" : "registry",
+    "version" : "24.0.0",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "forecast_region",
+      "id" : "slot_HJtvtQiOb",
+      "entityId" : "entity_pYDveKdwz01",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Region for the weather forecast"
+    }, {
+      "name" : "forecast_locality",
+      "id" : "slot_ryxm97iub",
+      "entityId" : "entity_9zo9vGMe1EV",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Locality for the weather forecast"
+    }, {
+      "name" : "forecast_country",
+      "id" : "slot_SyvV97jOZ",
+      "entityId" : "entity_Qe2QOw8V3n6",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Country for the weather forecast"
+    }, {
+      "name" : "forecast_geographical_poi",
+      "id" : "slot_SJKUqmoO-",
+      "entityId" : "entity_OK2vdxN65ov",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Geographical point of interest for the weather forecast"
+    }, {
+      "name" : "forecast_item",
+      "id" : "slot_Byru5Xs_b",
+      "entityId" : "entity_Kl5dw6KbKAQ",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Item of clothing which could be needed"
+    }, {
+      "name" : "forecast_start_datetime",
+      "id" : "slot_rJyjcQod-",
+      "entityId" : "snips/datetime",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Date and/or time for the weather forecast"
+    } ],
+    "name" : "searchWeatherForecastItem",
+    "confirmationRequired" : false,
+    "confirmationQuestion" : "",
+    "enabledByDefault" : true
+  }, {
+    "id" : "searchWeatherForecastTemperature",
+    "type" : "registry",
+    "version" : "40.0.0",
+    "language" : "en",
+    "slots" : [ {
+      "name" : "forecast_locality",
+      "id" : "slot_ry1ueoF6Mzw-",
+      "entityId" : "entity_8zonEpa43x2",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Location (e.g. city, village) whose weather you are interested in"
+    }, {
+      "name" : "forecast_country",
+      "id" : "slot_Bkl_ljF6MMwW",
+      "entityId" : "entity_Xn20NODOzX8",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The country whose weather you are interested in"
+    }, {
+      "name" : "forecast_region",
+      "id" : "slot_HJ-_eiKpfMvZ",
+      "entityId" : "entity_Y92n3kok39n",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The region whose weather you are interested in"
+    }, {
+      "name" : "forecast_geographical_poi",
+      "id" : "slot_Bkf_xjK6fGD-",
+      "entityId" : "entity_Kl5dwnX65kW",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "The place whose weather you are interested in"
+    }, {
+      "name" : "forecast_start_datetime",
+      "id" : "slot_rk7dgitazzvZ",
+      "entityId" : "snips/datetime",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "What time are you asking about?"
+    }, {
+      "name" : "forecast_temperature_name",
+      "id" : "slot_Bk4OlstTMGvb",
+      "entityId" : "entity_Y92n3ko6AVM",
+      "missingQuestion" : "",
+      "required" : false,
+      "description" : "Description of the temperature in words"
+    } ],
+    "name" : "searchWeatherForecastTemperature",
+    "confirmationRequired" : false,
+    "confirmationQuestion" : "",
+    "enabledByDefault" : true
+  } ],
+  "createdAt" : "2019-03-11T13:27:43.196Z",
+  "language" : "en",
+  "version" : {
+    "nluModel" : "0.19.0"
+  },
+  "platform" : {
+    "type" : "raspberrypi"
+  },
+  "asr" : {
+    "type" : "snips"
+  },
+  "analyticsEnabled" : true,
+  "heartbeatEnabled" : true,
+  "hotword" : "hey_snips"
+}
