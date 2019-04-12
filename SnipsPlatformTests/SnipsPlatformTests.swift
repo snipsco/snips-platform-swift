@@ -117,7 +117,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! self.snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
-        wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
+        wait(for: [onIntentNotRecognizedExpectation], timeout: 40)
     }
     
     func test_empty_intent_filter_intent_not_recognized() {
@@ -134,7 +134,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
     
     func test_intent_filter() {
@@ -151,7 +151,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
     
     func test_listening_state_changed() {
@@ -430,7 +430,7 @@ class SnipsPlatformTests: XCTestCase {
         try! snips?.dialogueConfiguration(with: disableIntent)
         try! snips?.startSession()
         
-        wait(for: [onIntentNotRecognized, onIntentReceived], timeout: 30, enforceOrder: true)
+        wait(for: [onIntentNotRecognized, onIntentReceived], timeout: 40, enforceOrder: true)
     }
 }
 
