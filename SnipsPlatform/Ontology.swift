@@ -757,7 +757,7 @@ public struct DialogueConfigureMessage {
     public let siteId: String?
     public let intents: [DialogueConfigureIntent]
     
-    public init(siteId: String?, intents: [DialogueConfigureIntent]) {
+    public init(siteId: String? = nil, intents: [DialogueConfigureIntent]) {
         self.siteId = siteId
         self.intents = intents
     }

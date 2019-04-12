@@ -402,8 +402,8 @@ class SnipsPlatformTests: XCTestCase {
         let intentName = "searchWeatherForecast"
         let onIntentReceived = expectation(description: "Intent recognized after reenabling it in the dialogue configuration")
         let onIntentNotRecognized = expectation(description: "Intent not recognized because it has been disabled")
-        let enableIntent = DialogueConfigureMessage(siteId: nil, intents: [DialogueConfigureIntent(intentName: intentName, enable: true)])
-        let disableIntent = DialogueConfigureMessage(siteId: nil, intents: [DialogueConfigureIntent(intentName: intentName, enable: false)])
+        let enableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: true)])
+        let disableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: false)])
         
         onSessionStartedHandler = { [weak self] message in
             DispatchQueue.main.sync {
