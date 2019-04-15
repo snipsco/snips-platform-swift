@@ -86,7 +86,7 @@ public class SnipsPlatform {
                 enableHtml: Bool = false,
                 enableLogs: Bool = false,
                 enableInjection: Bool = false,
-                enableASRPartialText: Bool = false,
+                enableAsrPartialText: Bool = false,
                 userURL: URL? = nil,
                 g2pResources: URL? = nil,
                 asrModelParameters: AsrModelParameters? = nil,
@@ -98,7 +98,8 @@ public class SnipsPlatform {
         guard megazord_set_hotword_sensitivity(ptr, hotwordSensitivity) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_snips_watch_html(ptr, enableHtml ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         guard megazord_enable_logs(ptr, enableLogs ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
-        guard megazord_enable_asr_partial(ptr, enableASRPartialText ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_enable_asr_partial(ptr, enableAsrPartialText ? 1 : 0) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+        guard megazord_set_asr_partial_period_ms(ptr, UInt(asrPartialTextPeriodMs)) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
 
         self.hotwordSensitivity = hotwordSensitivity
         
