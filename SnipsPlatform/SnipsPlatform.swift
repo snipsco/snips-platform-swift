@@ -75,7 +75,7 @@ public class SnipsPlatform {
     ///   - enableHtml: This will add html tags to `snipsWatchHandler`. `false` by default.
     ///   - enableLogs: Print Snips internal logs. This should be used only in Debug configuration. `false` by default.
     ///   - enableInjection: Enable ASR injection feature. You can add new entities using the `requestInjection` method. `false` by default.
-    ///   - enableASRPartialText: Enable ASR partial text capture feature. This is quite resource intensive and will affect the capacity of the platform to run in real time. `false` by default
+    ///   - enableAsrPartialText: Enable ASR partial text capture feature. This is quite resource intensive and will affect the capacity of the platform to run in real time. `false` by default
     ///   - userURL: The platform will use this path to store data. For instance when using the ASR injection, new models will be stored in this path. By default it creates a `snips` folder in the user's document folder.
     ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
     ///   - asrModelParameters: Override default ASR model parameters

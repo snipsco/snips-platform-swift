@@ -446,7 +446,7 @@ private extension SnipsPlatformTests {
                                   enableHtml: false,
                                   enableLogs: false,
                                   enableInjection: true,
-                                  enableASRPartialText: true,
+                                  enableAsrPartialText: true,
                                   userURL: userURL,
                                   g2pResources: g2pResources)
         

@@ -26,6 +26,10 @@ public struct IntentMessage {
     public var intent: IntentClassifierResult
     /// Lists of parsed slots.
     public var slots: [Slot]
+    /// ASR tokens: the first array level represents the asr invocation, the second one the tokens
+    public let asrInvocationTokens: [[AsrToken]]?
+    /// ASR confidence score
+    public let asrConfidence: Float?
 
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
@@ -43,6 +47,17 @@ public struct IntentMessage {
         } else {
             self.slots = []
         }
+        if let cAsrTokenDoubleArray = cResult.asr_tokens?.pointee {
+            self.asrInvocationTokens = UnsafeBufferPointer(start: cAsrTokenDoubleArray.entries, count: Int(cAsrTokenDoubleArray.count))
+                .compactMap { $0?.pointee }
+                .map { asrTokens -> [AsrToken] in
+                    return UnsafeBufferPointer(start: asrTokens.entries, count: Int(asrTokens.count))
+                            .map { AsrToken(cAsrToken: $0!.pointee) }
+                }
+        } else {
+            self.asrInvocationTokens = nil
+        }
+        self.asrConfidence = (0 <= cResult.asr_confidence && cResult.asr_confidence <= 1) ? cResult.asr_confidence : nil
     }
 }
 
@@ -730,10 +745,31 @@ public struct AsrModelParameters {
     }
 }
 
+/// ASR Tokens
+public struct AsrToken {
+    public let value: String
+    public let confidence: Float
+    public let range: Range<Int>
+    public let asrDecodingDuration: AsrDecodingDuration
+    
+    init(cAsrToken: CAsrToken) {
+        self.value = String(cString: cAsrToken.value)
+        self.confidence = cAsrToken.confidence
+        self.range = Range(uncheckedBounds: (Int(cAsrToken.range_start), Int(cAsrToken.range_end)))
+        self.asrDecodingDuration = AsrDecodingDuration(start: cAsrToken.time.start, end: cAsrToken.time.end)
+    }
+}
+
+/// AsrDecodingDuration
+public struct AsrDecodingDuration {
+    public let start: Float
+    public let end: Float
+}
+
 /// TextCapturedMessage
 public struct TextCapturedMessage {
     public let text: String
-    public let tokens: CAsrTokenArray?
+    public let tokens: [AsrToken]
     public let likelihood: Float
     public let seconds: Float
     public let siteId: String
@@ -741,7 +777,12 @@ public struct TextCapturedMessage {
     
     init(cTextCapturedMessage: CTextCapturedMessage) {
         self.text = String(cString: cTextCapturedMessage.text)
-        self.tokens = nil
+        if let cTextCapturedMessage = cTextCapturedMessage.tokens?.pointee {
+            self.tokens = UnsafeBufferPointer(start: cTextCapturedMessage.entries, count: Int(cTextCapturedMessage.count))
+                .map { AsrToken(cAsrToken: $0!.pointee) }
+        } else {
+            self.tokens = []
+        }
         self.likelihood = cTextCapturedMessage.likelihood
         self.seconds = cTextCapturedMessage.seconds
         self.siteId = String(cString: cTextCapturedMessage.site_id)
