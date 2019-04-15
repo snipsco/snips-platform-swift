@@ -484,6 +484,10 @@ private extension SnipsPlatformTests {
         }
         
         try snips?.start()
+        
+        // TODO: Hack to wait for the platform to be fully loaded.
+        // Remove this when SnipsPlatform.start() will be blocking.
+        Thread.sleep(forTimeInterval: 5)
     }
     
     func playAudio(forResource resource: String?, withExtension ext: String? = "wav", completionHandler: (() -> ())? = nil) {
