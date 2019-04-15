@@ -26,6 +26,10 @@ public struct IntentMessage {
     public var intent: IntentClassifierResult
     /// Lists of parsed slots.
     public var slots: [Slot]
+    /// ASR tokens: the first array level represents the asr invocation, the second one the tokens
+    public let asrInvocationTokens: [[AsrToken]]?
+    /// ASR confidence score
+    public let asrConfidence: Float?
 
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
@@ -43,6 +47,17 @@ public struct IntentMessage {
         } else {
             self.slots = []
         }
+        if let cAsrTokenDoubleArray = cResult.asr_tokens?.pointee {
+            self.asrInvocationTokens = UnsafeBufferPointer(start: cAsrTokenDoubleArray.entries, count: Int(cAsrTokenDoubleArray.count))
+                .compactMap { $0?.pointee }
+                .map { asrTokens -> [AsrToken] in
+                    return UnsafeBufferPointer(start: asrTokens.entries, count: Int(asrTokens.count))
+                            .map { AsrToken(cAsrToken: $0!.pointee) }
+                }
+        } else {
+            self.asrInvocationTokens = nil
+        }
+        self.asrConfidence = (0 <= cResult.asr_confidence && cResult.asr_confidence <= 1) ? cResult.asr_confidence : nil
     }
 }
 
@@ -727,5 +742,88 @@ public struct AsrModelParameters {
         
         try body(withUnsafePointer(to: &cParameters) { $0 })
         cParameters.endpointing?.freeUnsafeMemory()
+    }
+}
+
+/// ASR Tokens
+public struct AsrToken {
+    public let value: String
+    public let confidence: Float
+    public let range: Range<Int>
+    public let asrDecodingDuration: AsrDecodingDuration
+    
+    init(cAsrToken: CAsrToken) {
+        self.value = String(cString: cAsrToken.value)
+        self.confidence = cAsrToken.confidence
+        self.range = Range(uncheckedBounds: (Int(cAsrToken.range_start), Int(cAsrToken.range_end)))
+        self.asrDecodingDuration = AsrDecodingDuration(start: cAsrToken.time.start, end: cAsrToken.time.end)
+    }
+}
+
+/// AsrDecodingDuration
+public struct AsrDecodingDuration {
+    public let start: Float
+    public let end: Float
+}
+
+/// TextCapturedMessage
+public struct TextCapturedMessage {
+    public let text: String
+    public let tokens: [AsrToken]
+    public let likelihood: Float
+    public let seconds: Float
+    public let siteId: String
+    public let sessionId: String?
+    
+    init(cTextCapturedMessage: CTextCapturedMessage) {
+        self.text = String(cString: cTextCapturedMessage.text)
+        if let cTextCapturedMessage = cTextCapturedMessage.tokens?.pointee {
+            self.tokens = UnsafeBufferPointer(start: cTextCapturedMessage.entries, count: Int(cTextCapturedMessage.count))
+                .map { AsrToken(cAsrToken: $0!.pointee) }
+        } else {
+            self.tokens = []
+        }
+        self.likelihood = cTextCapturedMessage.likelihood
+        self.seconds = cTextCapturedMessage.seconds
+        self.siteId = String(cString: cTextCapturedMessage.site_id)
+        self.sessionId = String.fromCStringPtr(cString: cTextCapturedMessage.session_id)
+    }
+}
+
+/// DialogueConfigureMessage
+///
+/// - siteId: Site where the intents will be filtered
+/// - intents: Intents to filter
+public struct DialogueConfigureMessage {
+    public let siteId: String?
+    public let intents: [DialogueConfigureIntent]
+    
+    public init(siteId: String? = nil, intents: [DialogueConfigureIntent]) {
+        self.siteId = siteId
+        self.intents = intents
+    }
+    
+    func toUnsafeCDialogueConfigureMessage(body: (UnsafePointer<CDialogueConfigureMessage>) throws -> Void) throws {
+        var cDialogueIntentArray = CDialogueConfigureIntentArray(intents: intents)
+        let unsafeCDialogueIntentArray = withUnsafePointer(to: &cDialogueIntentArray) { $0 }
+        var cDialogueConfigureMessage = CDialogueConfigureMessage(site_id: siteId?.unsafeMutablePointerRetained(), intents: unsafeCDialogueIntentArray)
+        let unsafeCDialogueConfigureMessage = withUnsafePointer(to: &cDialogueConfigureMessage) { $0 }
+        try body(unsafeCDialogueConfigureMessage)
+        unsafeCDialogueIntentArray.pointee.destroy()
+        unsafeCDialogueConfigureMessage.pointee.site_id?.freeUnsafeMemory()
+    }
+}
+
+/// DialogueConfigureIntent
+///
+/// - intentName: The name of the intent to filter
+/// - enable: Enable or disable this specific intent
+public struct DialogueConfigureIntent {
+    public let intentName: String
+    public let enable: Bool
+    
+    public init(intentName: String, enable: Bool) {
+        self.intentName = intentName
+        self.enable = enable
     }
 }

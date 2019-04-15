@@ -26,6 +26,8 @@ class SnipsPlatformTests: XCTestCase {
     var onSessionEndedHandler: ((SessionEndedMessage) -> ())?
     var onListeningStateChanged: ((Bool) -> ())?
     var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
+    var onTextCapturedHandler: ((TextCapturedMessage) -> ())?
+    var onPartialTextCapturedHandler: ((TextCapturedMessage) -> ())?
     
     let soundQueue = DispatchQueue(label: "ai.snips.SnipsPlatformTests.sound", qos: .userInteractive)
     var firstTimePlayedAudio: Bool = true
@@ -115,7 +117,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! self.snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
-        wait(for: [onIntentNotRecognizedExpectation], timeout: 20)
+        wait(for: [onIntentNotRecognizedExpectation], timeout: 40)
     }
     
     func test_empty_intent_filter_intent_not_recognized() {
@@ -132,7 +134,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
     
     func test_intent_filter() {
@@ -149,7 +151,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)
-        waitForExpectations(timeout: 20)
+        waitForExpectations(timeout: 40)
     }
     
     func test_listening_state_changed() {
@@ -353,6 +355,83 @@ class SnipsPlatformTests: XCTestCase {
             enforceOrder: true
         )
     }
+    
+    func test_asr_text_captured_handler() {
+        let onTextCaptured = expectation(description: "ASR Text was captured")
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
+        }
+        
+        onTextCapturedHandler = { message in
+            if message.text == "what will be the weather in madagascar in two days" {
+                onTextCaptured.fulfill()
+            } else {
+                XCTFail("Text captured wasn't equal to the text sent")
+            }
+        }
+        
+        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
+        
+        wait(for: [onTextCaptured], timeout: 20)
+    }
+    
+    func test_asr_partial_text_captured_handler() {
+        let onTextCaptured = expectation(description: "Partial ASR Text was captured")
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
+        }
+        
+        onPartialTextCapturedHandler = { message in
+            if message.text == "what will be the weather in madagascar in two days" {
+                onTextCaptured.fulfill()
+            }
+        }
+        
+        try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false, customData: nil, siteId: nil)
+        
+        wait(for: [onTextCaptured], timeout: 20)
+    }
+    
+    func test_dialoge_configuration() {
+        let intentName = "searchWeatherForecast"
+        let onIntentReceived = expectation(description: "Intent recognized after reenabling it in the dialogue configuration")
+        let onIntentNotRecognized = expectation(description: "Intent not recognized because it has been disabled")
+        let enableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: true)])
+        let disableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: false)])
+        
+        onSessionStartedHandler = { [weak self] message in
+            DispatchQueue.main.sync {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
+        }
+        
+        onIntentDetected = { intent in
+            if intent.intent.intentName == intentName {
+                onIntentReceived.fulfill()
+            }
+        }
+        
+        onSessionEndedHandler = { [weak self] message in
+            if message.sessionTermination.terminationType == .timeout {
+                onIntentNotRecognized.fulfill()
+                try! self?.snips?.dialogueConfiguration(with: enableIntent)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    try! self?.snips?.startSession()
+                }
+            }
+        }
+        
+        try! snips?.dialogueConfiguration(with: disableIntent)
+        try! snips?.startSession()
+        
+        wait(for: [onIntentNotRecognized, onIntentReceived], timeout: 40, enforceOrder: true)
+    }
 }
 
 private extension SnipsPlatformTests {
@@ -367,6 +446,7 @@ private extension SnipsPlatformTests {
                                   enableHtml: false,
                                   enableLogs: false,
                                   enableInjection: true,
+                                  enableAsrPartialText: true,
                                   userURL: userURL,
                                   g2pResources: g2pResources)
         
@@ -395,6 +475,12 @@ private extension SnipsPlatformTests {
         }
         snips?.onIntentNotRecognizedHandler = { [weak self] message in
             self?.onIntentNotRecognizedHandler?(message)
+        }
+        snips?.onTextCapturedHandler = { [weak self] text in
+            self?.onTextCapturedHandler?(text)
+        }
+        snips?.onPartialTextCapturedHandler = { [weak self] text in
+            self?.onPartialTextCapturedHandler?(text)
         }
         
         try snips?.start()

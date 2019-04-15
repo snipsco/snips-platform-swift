@@ -109,3 +109,26 @@ extension CInjectionRequestOperations {
         operations?.deallocate()
     }
 }
+
+extension CDialogueConfigureIntentArray {
+    init(intents: [DialogueConfigureIntent]) {
+        let entries = UnsafeMutablePointer<UnsafePointer<CDialogueConfigureIntent>?>.allocate(capacity: intents.count)
+        intents.enumerated().forEach {
+            let retainedIntent = UnsafeMutablePointer<CDialogueConfigureIntent>.allocate(capacity: 1)
+            retainedIntent.initialize(to: CDialogueConfigureIntent(intent_name: $0.element.intentName.unsafeMutablePointerRetained(), enable: $0.element.enable ? 1 : 0))
+            entries.advanced(by: $0.offset).pointee = UnsafePointer(retainedIntent)
+        }
+        self.init(entries: UnsafePointer(entries), count: Int32(intents.count))
+    }
+    
+    func destroy() {
+        for idx in 0..<count {
+            if let cDialogueConfigureIntent = entries.advanced(by: Int(idx)).pointee {
+                cDialogueConfigureIntent.pointee.intent_name.freeUnsafeMemory()
+                UnsafeMutablePointer(mutating: cDialogueConfigureIntent).deinitialize(count: 1)
+                cDialogueConfigureIntent.deallocate()
+            }
+        }
+        entries?.deallocate()
+    }
+}
