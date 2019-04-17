@@ -448,7 +448,8 @@ private extension SnipsPlatformTests {
                                   enableInjection: true,
                                   enableAsrPartialText: true,
                                   userURL: userURL,
-                                  g2pResources: g2pResources)
+                                  g2pResources: g2pResources,
+                                  asrPartialTextPeriodMs: 1000)
         
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)
