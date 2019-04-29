@@ -43,10 +43,10 @@ class SnipsPlatformTests: XCTestCase {
     }
 
     override func tearDown() {
+        super.tearDown()
         // TODO workaround to wait for the asr thread to stop, cf snips-megazord/src/lib.rs#L538
         Thread.sleep(forTimeInterval: 5)
         try! stopSnipsPlatform()
-        super.tearDown()
     }
 
     // MARK: - Tests
@@ -164,24 +164,38 @@ class SnipsPlatformTests: XCTestCase {
         waitForExpectations(timeout: 40)
     }
 
-    func test_listening_state_changed() {
+    func test_listening_state_changed_on() {
         let listeningStateChangedOn = expectation(description: "Listening state turned on")
-        let listeningStateChangedOff = expectation(description: "Listening state turned off")
 
         onListeningStateChanged = { state in
             if state {
                 listeningStateChangedOn.fulfill()
-            } else {
-                listeningStateChangedOff.fulfill()
             }
         }
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
-            Thread.sleep(forTimeInterval: 5)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
 
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
-        wait(for: [listeningStateChangedOn, listeningStateChangedOff], timeout: 10)
+        wait(for: [listeningStateChangedOn], timeout: 15)
+    }
+
+    func test_listening_state_changed_off() {
+        let listeningStateChangedOff = expectation(description: "Listening state turned off")
+        var fullfilled = false
+        onListeningStateChanged = { state in
+            // we can receive multiple Listening state turned off, only fullfill once
+            if !state && !fullfilled {
+                listeningStateChangedOff.fulfill()
+                fullfilled = true
+            }
+        }
+        onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
+        }
+        
+        try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
+        wait(for: [listeningStateChangedOff], timeout: 15)
     }
 
     func test_session_notification() {
@@ -448,8 +462,8 @@ class SnipsPlatformTests: XCTestCase {
 private extension SnipsPlatformTests {
    
     func stopSnipsPlatform() throws {
-        try removeSnipsUserDataIfNecessary()
         snips = nil
+        try removeSnipsUserDataIfNecessary()
     }
     
     func setupSnipsPlatform(url: URL, g2pResources: URL, userURL: URL? = nil) throws {
