@@ -36,7 +36,17 @@ class SnipsPlatformTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        try! setupSnipsPlatform()
+        let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
+        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
+        
+        try! setupSnipsPlatform(url: url,g2pResources: g2pResources)
+    }
+
+    override func tearDown() {
+        // TODO workaround to wait for the asr thread to stop, cf snips-megazord/src/lib.rs#L538
+        Thread.sleep(forTimeInterval: 5)
+        try! stopSnipsPlatform()
+        super.tearDown()
     }
 
     // MARK: - Tests
@@ -44,7 +54,7 @@ class SnipsPlatformTests: XCTestCase {
     func test_hotword() {
         let hotwordDetectedExpectation = expectation(description: "Hotword detected")
         let sessionEndedExpectation = expectation(description: "Session ended")
-        
+
         onHotwordDetected = hotwordDetectedExpectation.fulfill
         onSessionStartedHandler = { [weak self] sessionStarted in
             try! self?.snips?.endSession(sessionId: sessionStarted.sessionId)
@@ -52,9 +62,9 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { _ in
             sessionEndedExpectation.fulfill()
         }
-        
+
         playAudio(forResource: kHotwordAudioFile)
-        
+
         wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 40)
     }
     
@@ -105,7 +115,7 @@ class SnipsPlatformTests: XCTestCase {
     
     func test_intent_not_recognized() {
         let onIntentNotRecognizedExpectation = expectation(description: "Intent was not recognized")
-        
+
         onListeningStateChanged = { [weak self] isListening in
             if isListening {
                 self?.playAudio(forResource: kPlayMJAudioFile)
@@ -115,14 +125,14 @@ class SnipsPlatformTests: XCTestCase {
             onIntentNotRecognizedExpectation.fulfill()
             try! self?.snips?.endSession(sessionId: message.sessionId)
         }
-        
+
         try! self.snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
         wait(for: [onIntentNotRecognizedExpectation], timeout: 40)
     }
-    
+
     func test_empty_intent_filter_intent_not_recognized() {
         let intentNotRecognizedExpectation = expectation(description: "Intent not recognized")
-        
+
         onListeningStateChanged = { [weak self] isListening in
             if isListening {
                 self?.playAudio(forResource: kWeatherAudioFile)
@@ -132,14 +142,14 @@ class SnipsPlatformTests: XCTestCase {
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .intentNotRecognized)
             intentNotRecognizedExpectation.fulfill()
         }
-        
+
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_intent_filter() {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
-        
+
         onListeningStateChanged = { [weak self] isListening in
             if isListening {
                 self?.playAudio(forResource: kWeatherAudioFile)
@@ -149,15 +159,15 @@ class SnipsPlatformTests: XCTestCase {
             try! self?.snips?.endSession(sessionId: intent.sessionId)
             intentRecognizedExpectation.fulfill()
         }
-        
+
         try! snips?.startSession(intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_listening_state_changed() {
         let listeningStateChangedOn = expectation(description: "Listening state turned on")
         let listeningStateChangedOff = expectation(description: "Listening state turned off")
-        
+
         onListeningStateChanged = { state in
             if state {
                 listeningStateChangedOn.fulfill()
@@ -168,15 +178,15 @@ class SnipsPlatformTests: XCTestCase {
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
-        
+
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
         wait(for: [listeningStateChangedOn, listeningStateChangedOff], timeout: 10)
     }
-    
+
     func test_session_notification() {
         let notificationSentExpectation = expectation(description: "Notification sent")
         let notificationStartMessage = StartSessionMessage(initType: .notification(text: "Notification text"), customData: "Notification custom data", siteId: "iOS notification")
-        
+
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssertEqual(sessionStartedMessage.siteId, notificationStartMessage.siteId)
             XCTAssertEqual(sessionStartedMessage.customData, notificationStartMessage.customData)
@@ -185,30 +195,30 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { _ in
             notificationSentExpectation.fulfill()
         }
-        
+
         try! snips?.startSession(message: notificationStartMessage)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_session_notification_nil() {
         let notificationSentExpectation = expectation(description: "Notification sent")
         let notificationStartMessage = StartSessionMessage(initType: .notification(text: "Notification text"), customData: nil, siteId: nil)
-        
+
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         onSessionEndedHandler = { _ in
             notificationSentExpectation.fulfill()
         }
-        
+
         try! snips?.startSession(message: notificationStartMessage)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_session_action() {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: "Action!", intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: "Action Custom data", siteId: "iOS action")
-        
+
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
@@ -216,15 +226,15 @@ class SnipsPlatformTests: XCTestCase {
         onSessionEndedHandler = { _ in
             actionSentExpectation.fulfill()
         }
-        
+
         try! snips?.startSession(message: actionStartSessionMessage)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_session_action_nil() {
         let actionSentExpectation = expectation(description: "Action sent")
         let actionStartSessionMessage = StartSessionMessage(initType: .action(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false), customData: nil, siteId: nil)
-        
+
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             XCTAssertEqual(sessionStartedMessage.customData, actionStartSessionMessage.customData)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
@@ -235,11 +245,11 @@ class SnipsPlatformTests: XCTestCase {
         try! snips?.startSession(message: actionStartSessionMessage)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_speech_handler() {
         let speechExpectation = expectation(description: "Testing speech")
         let messageToSpeak = "Testing speech"
-        
+
         speechHandler = { [weak self] sayMessage in
             XCTAssertEqual(sayMessage.text, messageToSpeak)
             guard let sessionId = sayMessage.sessionId else {
@@ -250,23 +260,23 @@ class SnipsPlatformTests: XCTestCase {
             try! self?.snips?.endSession(sessionId: sessionId)
             speechExpectation.fulfill()
         }
-        
+
         try! snips?.startNotification(text: messageToSpeak)
         waitForExpectations(timeout: 15)
     }
-    
+
     func test_dialog_scenario() {
         let startSessionMessage = StartSessionMessage(initType: .notification(text: "Notification"), customData: "foobar", siteId: "iOS")
         var continueSessionMessage: ContinueSessionMessage?
         var hasSentContinueSessionMessage = false
         let sessionEndedExpectation = expectation(description: "Session ended")
-        
+
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
         onSessionEndedHandler = { [weak self] sessionEndedMessage in
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .nominal)
-            
+
             if !hasSentContinueSessionMessage {
                 hasSentContinueSessionMessage = true
                 continueSessionMessage = ContinueSessionMessage(sessionId: sessionEndedMessage.sessionId, text: "Continue session", intentFilter: nil)
@@ -277,11 +287,11 @@ class SnipsPlatformTests: XCTestCase {
                 sessionEndedExpectation.fulfill()
             }
         }
-        
+
         try! snips?.startSession(message: startSessionMessage)
         waitForExpectations(timeout: 40)
     }
-    
+
     func test_injection() {
         enum TestPhaseKind {
             case entityNotInjectedShouldNotBeDetected
@@ -355,16 +365,16 @@ class SnipsPlatformTests: XCTestCase {
             enforceOrder: true
         )
     }
-    
+
     func test_asr_text_captured_handler() {
         let onTextCaptured = expectation(description: "ASR Text was captured")
-        
+
         onSessionStartedHandler = { [weak self] message in
             DispatchQueue.main.sync {
                 self?.playAudio(forResource: kWeatherAudioFile)
             }
         }
-        
+
         onTextCapturedHandler = { message in
             if message.text == "what will be the weather in madagascar in two days" {
                 onTextCaptured.fulfill()
@@ -372,29 +382,29 @@ class SnipsPlatformTests: XCTestCase {
                 XCTFail("Text captured wasn't equal to the text sent")
             }
         }
-        
+
         try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
-        
+
         wait(for: [onTextCaptured], timeout: 40)
     }
     
     func test_asr_partial_text_captured_handler() {
         let onTextCaptured = expectation(description: "Partial ASR Text was captured")
-        
+
         onSessionStartedHandler = { [weak self] message in
             DispatchQueue.main.sync {
                 self?.playAudio(forResource: kWeatherAudioFile)
             }
         }
-        
+
         onPartialTextCapturedHandler = { message in
             if message.text == "what will be the weather in madagascar in two days" {
                 onTextCaptured.fulfill()
             }
         }
-        
+
         try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false, customData: nil, siteId: nil)
-        
+
         wait(for: [onTextCaptured], timeout: 40)
     }
     
@@ -404,19 +414,19 @@ class SnipsPlatformTests: XCTestCase {
         let onIntentNotRecognized = expectation(description: "Intent not recognized because it has been disabled")
         let enableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: true)])
         let disableIntent = DialogueConfigureMessage(intents: [DialogueConfigureIntent(intentName: intentName, enable: false)])
-        
+
         onSessionStartedHandler = { [weak self] message in
             DispatchQueue.main.sync {
                 self?.playAudio(forResource: kWeatherAudioFile)
             }
         }
-        
+
         onIntentDetected = { intent in
             if intent.intent.intentName == intentName {
                 onIntentReceived.fulfill()
             }
         }
-        
+
         onSessionEndedHandler = { [weak self] message in
             if message.sessionTermination.terminationType == .timeout {
                 onIntentNotRecognized.fulfill()
@@ -426,22 +436,23 @@ class SnipsPlatformTests: XCTestCase {
                 }
             }
         }
-        
+
         try! snips?.dialogueConfiguration(with: disableIntent)
         try! snips?.startSession()
-        
+
         wait(for: [onIntentNotRecognized, onIntentReceived], timeout: 40, enforceOrder: true)
     }
 }
 
 private extension SnipsPlatformTests {
-    
-    func setupSnipsPlatform(userURL: URL? = nil) throws {
-        let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
-        
+   
+    func stopSnipsPlatform() throws {
         try removeSnipsUserDataIfNecessary()
-        
+        snips = nil
+    }
+    
+    func setupSnipsPlatform(url: URL, g2pResources: URL, userURL: URL? = nil) throws {
+    
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
                                   enableLogs: false,
@@ -450,7 +461,6 @@ private extension SnipsPlatformTests {
                                   userURL: userURL,
                                   g2pResources: g2pResources,
                                   asrPartialTextPeriodMs: 1000)
-        
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)
         }
@@ -485,10 +495,6 @@ private extension SnipsPlatformTests {
         }
         
         try snips?.start()
-        
-        // TODO: Hack to wait for the platform to be fully loaded.
-        // Remove this when SnipsPlatform.start() will be blocking.
-        Thread.sleep(forTimeInterval: 5)
     }
     
     func playAudio(forResource resource: String?, withExtension ext: String? = "wav", completionHandler: (() -> ())? = nil) {
@@ -515,11 +521,12 @@ private extension SnipsPlatformTests {
     }
     
     func removeSnipsUserDataIfNecessary() throws {
-        let snipsUserDocumentURL = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("snips")
+        let manager = FileManager.default
+        let snipsUserDocumentURL = try manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("snips")
         var isDirectory = ObjCBool(true)
-        let exists = FileManager.default.fileExists(atPath: snipsUserDocumentURL.path, isDirectory: &isDirectory)
+        let exists = manager.fileExists(atPath: snipsUserDocumentURL.path, isDirectory: &isDirectory)
         if exists && isDirectory.boolValue {
-            try FileManager.default.removeItem(at: snipsUserDocumentURL)
+            try manager.removeItem(at: snipsUserDocumentURL)
         }
     }
 }
