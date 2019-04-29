@@ -176,6 +176,7 @@ class SnipsPlatformTests: XCTestCase {
             }
         }
         onSessionStartedHandler = { [weak self] sessionStartedMessage in
+            Thread.sleep(forTimeInterval: 5)
             try! self?.snips?.endSession(sessionId: sessionStartedMessage.sessionId)
         }
 
