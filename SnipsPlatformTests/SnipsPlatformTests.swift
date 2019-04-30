@@ -36,10 +36,7 @@ class SnipsPlatformTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
-        
-        try! setupSnipsPlatform(url: url,g2pResources: g2pResources)
+        try! setupSnipsPlatform()
     }
 
     override func tearDown() {
@@ -143,6 +140,23 @@ class SnipsPlatformTests: XCTestCase {
             intentNotRecognizedExpectation.fulfill()
         }
 
+        try! snips?.startSession(intentFilter: [], canBeEnqueued: false)
+        waitForExpectations(timeout: 40)
+    }
+    
+    func test_unknown_intent_filter_error() {
+        let intentNotRecognizedExpectation = expectation(description: "Error")
+        
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
+        }
+        onSessionEndedHandler = { sessionEndedMessage in
+            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .error)
+            intentNotRecognizedExpectation.fulfill()
+        }
+        
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
         waitForExpectations(timeout: 40)
     }
@@ -466,16 +480,18 @@ private extension SnipsPlatformTests {
         try removeSnipsUserDataIfNecessary()
     }
     
-    func setupSnipsPlatform(url: URL, g2pResources: URL, userURL: URL? = nil) throws {
-    
+    func setupSnipsPlatform() throws {
+        let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
+        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
+        
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
                                   enableLogs: false,
                                   enableInjection: true,
                                   enableAsrPartialText: true,
-                                  userURL: userURL,
                                   g2pResources: g2pResources,
                                   asrPartialTextPeriodMs: 1000)
+        
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)
         }
