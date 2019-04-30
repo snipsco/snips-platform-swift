@@ -140,6 +140,23 @@ class SnipsPlatformTests: XCTestCase {
             intentNotRecognizedExpectation.fulfill()
         }
 
+        try! snips?.startSession(intentFilter: [], canBeEnqueued: false)
+        waitForExpectations(timeout: 40)
+    }
+    
+    func test_unknown_intent_filter_error() {
+        let intentNotRecognizedExpectation = expectation(description: "Error")
+        
+        onListeningStateChanged = { [weak self] isListening in
+            if isListening {
+                self?.playAudio(forResource: kWeatherAudioFile)
+            }
+        }
+        onSessionEndedHandler = { sessionEndedMessage in
+            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .error)
+            intentNotRecognizedExpectation.fulfill()
+        }
+        
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
         waitForExpectations(timeout: 40)
     }
