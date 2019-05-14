@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		001CDFCD213419AB0090C176 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		006E013020F8A8DA00923180 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
+		00797345228AC1E000D3DFBF /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00797344228AC1E000D3DFBF /* BaseTests.swift */; };
+		00797347228AC68300D3DFBF /* SnipsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00797346228AC68300D3DFBF /* SnipsEngine.swift */; };
+		00FB1240228AF3A300D6370A /* SnipsEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00797346228AC68300D3DFBF /* SnipsEngine.swift */; };
+		00FB1241228AF3A300D6370A /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00797344228AC1E000D3DFBF /* BaseTests.swift */; };
+		00FB1242228AF3A300D6370A /* InjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FB123E228AF07400D6370A /* InjectionTests.swift */; };
+		00FB1243228AF3A300D6370A /* ASRPartialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FB123F228AF17300D6370A /* ASRPartialTests.swift */; };
+		00FB1244228AF3A400D6370A /* InjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FB123E228AF07400D6370A /* InjectionTests.swift */; };
+		00FB1245228AF3A400D6370A /* ASRPartialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FB123F228AF17300D6370A /* ASRPartialTests.swift */; };
 		F71E4BE422297966006AC6D3 /* hey_snips.wav in Resources */ = {isa = PBXBuildFile; fileRef = F71E4BE022297966006AC6D3 /* hey_snips.wav */; };
 		F71E4BE522297966006AC6D3 /* hey_snips.wav in Resources */ = {isa = PBXBuildFile; fileRef = F71E4BE022297966006AC6D3 /* hey_snips.wav */; };
 		F71E4BE622297966006AC6D3 /* what_will_be_the_weather_in_Madagascar_in_two_days.wav in Resources */ = {isa = PBXBuildFile; fileRef = F71E4BE122297966006AC6D3 /* what_will_be_the_weather_in_Madagascar_in_two_days.wav */; };
@@ -35,8 +43,6 @@
 		F7BB4FE6215A838B00FEEA43 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F7FF0FAD1FBF519A00595F07 /* libc++.tbd */; };
 		F7BB4FEB215A913700FEEA43 /* snips-g2p-resources in Resources */ = {isa = PBXBuildFile; fileRef = 001CDFCC213419AB0090C176 /* snips-g2p-resources */; };
 		F7BB4FEC215A913900FEEA43 /* assistant in Resources */ = {isa = PBXBuildFile; fileRef = 006E012F20F8A8DA00923180 /* assistant */; };
-		F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
-		F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +65,10 @@
 /* Begin PBXFileReference section */
 		001CDFCC213419AB0090C176 /* snips-g2p-resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "snips-g2p-resources"; sourceTree = "<group>"; };
 		006E012F20F8A8DA00923180 /* assistant */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assistant; sourceTree = "<group>"; };
+		00797344228AC1E000D3DFBF /* BaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTests.swift; sourceTree = "<group>"; };
+		00797346228AC68300D3DFBF /* SnipsEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsEngine.swift; sourceTree = "<group>"; };
+		00FB123E228AF07400D6370A /* InjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectionTests.swift; sourceTree = "<group>"; };
+		00FB123F228AF17300D6370A /* ASRPartialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASRPartialTests.swift; sourceTree = "<group>"; };
 		F71E4BE022297966006AC6D3 /* hey_snips.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hey_snips.wav; sourceTree = "<group>"; };
 		F71E4BE122297966006AC6D3 /* what_will_be_the_weather_in_Madagascar_in_two_days.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = what_will_be_the_weather_in_Madagascar_in_two_days.wav; sourceTree = "<group>"; };
 		F71E4BE222297966006AC6D3 /* what_will_be_the_weather_in_Wonderland.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = what_will_be_the_weather_in_Wonderland.wav; sourceTree = "<group>"; };
@@ -78,7 +88,6 @@
 		F7CF58981FBDA00200027852 /* SnipsPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SnipsPlatform.h; sourceTree = "<group>"; };
 		F7CF58991FBDA00200027852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F7CF589E1FBDA00200027852 /* AllTests-iOS.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "AllTests-iOS.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsPlatformTests.swift; sourceTree = "<group>"; };
 		F7CF58A51FBDA00200027852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F7CF58AF1FBDA16E00027852 /* SnipsPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnipsPlatform.swift; sourceTree = "<group>"; };
 		F7FF0FAD1FBF519A00595F07 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -176,7 +185,10 @@
 				F7F5F8912226A1EA00B36A57 /* wavs */,
 				001CDFCC213419AB0090C176 /* snips-g2p-resources */,
 				006E012F20F8A8DA00923180 /* assistant */,
-				F7CF58A31FBDA00200027852 /* SnipsPlatformTests.swift */,
+				00797346228AC68300D3DFBF /* SnipsEngine.swift */,
+				00797344228AC1E000D3DFBF /* BaseTests.swift */,
+				00FB123E228AF07400D6370A /* InjectionTests.swift */,
+				00FB123F228AF17300D6370A /* ASRPartialTests.swift */,
 				F7CF58A51FBDA00200027852 /* Info.plist */,
 			);
 			path = SnipsPlatformTests;
@@ -506,7 +518,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7BB4FED215A913C00FEEA43 /* SnipsPlatformTests.swift in Sources */,
+				00FB1242228AF3A300D6370A /* InjectionTests.swift in Sources */,
+				00FB1240228AF3A300D6370A /* SnipsEngine.swift in Sources */,
+				00FB1241228AF3A300D6370A /* BaseTests.swift in Sources */,
+				00FB1243228AF3A300D6370A /* ASRPartialTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,7 +540,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7CF58A41FBDA00200027852 /* SnipsPlatformTests.swift in Sources */,
+				00797345228AC1E000D3DFBF /* BaseTests.swift in Sources */,
+				00FB1244228AF3A400D6370A /* InjectionTests.swift in Sources */,
+				00797347228AC68300D3DFBF /* SnipsEngine.swift in Sources */,
+				00FB1245228AF3A400D6370A /* ASRPartialTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
