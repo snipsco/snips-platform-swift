@@ -124,11 +124,10 @@ class BaseTests: XCTestCase {
     func test_unknown_intent_filter_error() {
         let intentNotRecognizedExpectation = expectation(description: "Error")
         
-        SnipsEngine.shared.onListeningStateChanged = { isListening in
-            if isListening {
-                SnipsEngine.shared.playAudio(forResource: kWeatherAudioFile)
-            }
+        SnipsEngine.shared.onSessionStartedHandler = { _ in
+            SnipsEngine.shared.playAudio(forResource: kWeatherAudioFile)
         }
+        
         SnipsEngine.shared.onSessionEndedHandler = { sessionEndedMessage in
             XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .error)
             intentNotRecognizedExpectation.fulfill()
