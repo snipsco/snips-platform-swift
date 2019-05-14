@@ -121,21 +121,21 @@ class BaseTests: XCTestCase {
         waitForExpectations(timeout: 40)
     }
     
-    func test_unknown_intent_filter_error() {
-        let intentNotRecognizedExpectation = expectation(description: "Error")
-        
-        SnipsEngine.shared.onSessionStartedHandler = { _ in
-            SnipsEngine.shared.playAudio(forResource: kWeatherAudioFile)
-        }
-        
-        SnipsEngine.shared.onSessionEndedHandler = { sessionEndedMessage in
-            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .error)
-            intentNotRecognizedExpectation.fulfill()
-        }
-        
-        try! SnipsEngine.shared.snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
-        waitForExpectations(timeout: 40)
-    }
+//    func test_unknown_intent_filter_error() {
+//        let intentNotRecognizedExpectation = expectation(description: "Error")
+//
+//        SnipsEngine.shared.onSessionStartedHandler = { _ in
+//            SnipsEngine.shared.playAudio(forResource: kWeatherAudioFile)
+//        }
+//
+//        SnipsEngine.shared.onSessionEndedHandler = { sessionEndedMessage in
+//            XCTAssertEqual(sessionEndedMessage.sessionTermination.terminationType, .error)
+//            intentNotRecognizedExpectation.fulfill()
+//        }
+//
+//        try! SnipsEngine.shared.snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
+//        waitForExpectations(timeout: 40)
+//    }
     
     func test_intent_filter() {
         let intentRecognizedExpectation = expectation(description: "Intent recognized")
