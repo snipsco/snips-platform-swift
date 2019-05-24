@@ -366,14 +366,6 @@ class SnipsPlatformTests: XCTestCase {
                 testPhase = .injectingEntities
                 injectionBlock()
                 
-                // TODO: Hack to wait for the injection to be finished + models fully reloaded.
-                // Remove this when the platform will have a callback to notify for injection status.
-                DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 15) {
-                    injectingEntitiesExpectation.fulfill()
-                    testPhase = .entityInjectedShouldBeDetected
-                    try! self?.snips?.startSession()
-                }
-                
             case .entityInjectedShouldBeDetected:
                 XCTAssertEqual(slotLocalityWonderland.count, 1, "should have found the slot wonderland")
                 entityInjectedShouldBeDetectedExpectation.fulfill()
@@ -381,6 +373,12 @@ class SnipsPlatformTests: XCTestCase {
                 
             case .injectingEntities: XCTFail("For test purposes, intents shouldn't be detected while injecting")
             }
+        }
+        
+        onInjectionCompleteHandler = { [weak self] injectionComplete in
+            injectingEntitiesExpectation.fulfill()
+            testPhase = .entityInjectedShouldBeDetected
+            try! self?.snips?.startSession()
         }
         
         try! self.snips?.startSession()
@@ -487,7 +485,7 @@ private extension SnipsPlatformTests {
         
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
-                                  enableLogs: true,
+                                  enableLogs: false,
                                   enableInjection: true,
                                   enableAsrPartialText: true,
                                   g2pResources: g2pResources,
@@ -525,8 +523,8 @@ private extension SnipsPlatformTests {
         snips?.onPartialTextCapturedHandler = { [weak self] text in
             self?.onPartialTextCapturedHandler?(text)
         }
-        snips?.onInjectionComplete = { injectionComplete in
-            print("injection complete: \(injectionComplete)")
+        snips?.onInjectionComplete = { [weak self] message in
+            self?.onInjectionCompleteHandler?(message)
         }
         try snips?.start()
     }
