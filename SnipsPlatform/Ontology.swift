@@ -718,7 +718,7 @@ public struct InjectionRequestOperation {
 /// The injection complete message
 ///
 /// - requestId: The id of the injection request.
-public struct InjectionComplete {
+public struct InjectionCompleteMessage {
     public let requestId: String?
     
     init(cMessage: CInjectionCompleteMessage) {
@@ -763,23 +763,6 @@ public struct InjectionRequestMessage {
         cUnsafeOperations.pointee.destroy()
         cMessage.cross_language?.freeUnsafeMemory()
         cMessage.id?.freeUnsafeMemory()
-    }
-}
-
-/// Components of Snips platform
-///
-/// - asr: Stand for Automatic Speech Recognition. This component is responsible of converting voice into text.
-/// - nlu: Stand for Natual Language Understanding. This component is responsible of converting text into intention.
-public enum Component {
-    case asr
-    case nlu
-    
-    init(cValue: SNIPS_COMPONENT) throws {
-        switch cValue {
-        case SNIPS_COMPONENT_ASR: self = .asr
-        case SNIPS_COMPONENT_NLU: self = .nlu
-        default: throw SnipsPlatformError(message: "Internal error: bad type conversion")
-        }
     }
 }
 

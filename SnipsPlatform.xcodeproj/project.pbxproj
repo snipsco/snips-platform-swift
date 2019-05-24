@@ -486,7 +486,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SNIPS_TARGET_PLATFORM=macos $PROJECT_DIR/scripts/download_core.sh\n";
+			shellScript = "export SNIPS_USE_LOCAL=true\nSNIPS_TARGET_PLATFORM=macos $PROJECT_DIR/scripts/download_core.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -35,7 +35,7 @@ public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
 public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
 public typealias TextCapturedHandler = (TextCapturedMessage) -> Void
-public typealias InjectionCompleteHandler = (InjectionComplete) -> Void
+public typealias InjectionCompleteHandler = (InjectionCompleteMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -290,30 +290,16 @@ public class SnipsPlatform {
             if newValue != nil {
                 _onInjectionComplete = newValue
                 megazord_set_injection_complete_handler(ptr) { cMessage, _ in
-//                    defer {
-//                        megazord_destry_injection(UnsafeMutablePointer(mutating: cSessionEndedMessage))
-//                    }
+                    defer {
+                        megazord_destroy_injection_complete_message(UnsafeMutablePointer(mutating: cMessage))
+                    }
                     guard let cMessage = cMessage?.pointee else { return }
-                    _onInjectionComplete?(InjectionComplete(cMessage: cMessage))
+                    _onInjectionComplete?(InjectionCompleteMessage(cMessage: cMessage))
                 }
             }
         }
     }
     
-    public var onComponentLoaded: ComponentLoadedHandler? {
-        get {
-            return _componentLoaded
-        }
-        set {
-            if newValue != nil {
-                _componentLoaded = newValue
-                megazord_set_component_loaded_handler(ptr) { cComponent, _ in
-                    _componentLoaded?(try! Component(cValue: cComponent))
-                }
-            }
-        }
-    }
-
     /// A closure executed to delegate text-to-speech operations.
     public var speechHandler: SpeechHandler? {
         get {

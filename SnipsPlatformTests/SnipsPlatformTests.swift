@@ -28,6 +28,7 @@ class SnipsPlatformTests: XCTestCase {
     var onIntentNotRecognizedHandler: ((IntentNotRecognizedMessage) -> ())?
     var onTextCapturedHandler: ((TextCapturedMessage) -> ())?
     var onPartialTextCapturedHandler: ((TextCapturedMessage) -> ())?
+    var onInjectionCompleteHandler: ((InjectionCompleteMessage) -> ())?
     
     let soundQueue = DispatchQueue(label: "ai.snips.SnipsPlatformTests.sound", qos: .userInteractive)
     var firstTimePlayedAudio: Bool = true
@@ -486,7 +487,7 @@ private extension SnipsPlatformTests {
         
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
-                                  enableLogs: false,
+                                  enableLogs: true,
                                   enableInjection: true,
                                   enableAsrPartialText: true,
                                   g2pResources: g2pResources,
@@ -524,10 +525,7 @@ private extension SnipsPlatformTests {
         snips?.onPartialTextCapturedHandler = { [weak self] text in
             self?.onPartialTextCapturedHandler?(text)
         }
-        snips?.onComponentLoaded = { [weak self] component in
-            print("component loaded: \(component)")
-        }
-        snips?.onInjectionComplete = { [weak self] injectionComplete in
+        snips?.onInjectionComplete = { injectionComplete in
             print("injection complete: \(injectionComplete)")
         }
         try snips?.start()
