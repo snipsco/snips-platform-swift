@@ -178,21 +178,36 @@ private extension ViewController {
     func startRecording() throws {
         let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: [])
-        try audioSession.setPreferredSampleRate(16_000)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 
         let inputNode = audioEngine.inputNode
+        let inputFormat = inputNode.inputFormat(forBus: 0)
         let recordingFormat = AVAudioFormat(commonFormat: .pcmFormatInt16,
                                             sampleRate: 16_000,
                                             channels: 1,
-                                            interleaved: true)
-
-        let downMixer = AVAudioMixerNode()
-        audioEngine.attach(downMixer)
-        audioEngine.connect(inputNode, to: downMixer, format: nil)
-
-        downMixer.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
-            try? self?.snips?.appendBuffer(buffer)
+                                            interleaved: true)!
+        
+        let audioConverter = AVAudioConverter(from: inputFormat, to: recordingFormat)!
+        let sampleRateConversionRatio = Float(inputFormat.sampleRate / 16000.0)
+        
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: inputFormat) { [weak self] (buffer, when) in
+            let capacity = AVAudioFrameCount(Float(buffer.frameCapacity)/sampleRateConversionRatio)
+            guard let convertedBuffer = AVAudioPCMBuffer(pcmFormat: recordingFormat, frameCapacity: capacity) else {
+                print("Audio converter couldn't create AVAudioPCMBuffer for new format")
+                return
+            }
+            let inputBlock: AVAudioConverterInputBlock = { inNumPackets, outStatus in
+                outStatus.pointee = AVAudioConverterInputStatus.haveData
+                return buffer
+            }
+            
+            var error: NSError? = nil
+            let _ = audioConverter.convert(to: convertedBuffer, error: &error, withInputFrom: inputBlock)
+            if let error = error {
+                print("Audio converter error \(error.debugDescription)")
+            } else {
+                try? self?.snips?.appendBuffer(convertedBuffer)
+            }
         }
 
         audioEngine.prepare()
