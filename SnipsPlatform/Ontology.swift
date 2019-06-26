@@ -343,7 +343,7 @@ public struct Slot {
         self.range = Range(uncheckedBounds: (Int(cSlot.nlu_slot.pointee.range_start), Int(cSlot.nlu_slot.pointee.range_end)))
         self.entity = String(cString: cSlot.nlu_slot.pointee.entity)
         self.slotName = String(cString: cSlot.nlu_slot.pointee.slot_name)
-        self.confidenceScore = (cSlot.nlu_slot.pointee.confidence_score < 0) ? cSlot.nlu_slot.pointee.confidence_score : nil
+        self.confidenceScore = (0 <= cSlot.nlu_slot.pointee.confidence_score && cSlot.nlu_slot.pointee.confidence_score <= 1) ? cSlot.nlu_slot.pointee.confidence_score : nil
     }
 }
 
