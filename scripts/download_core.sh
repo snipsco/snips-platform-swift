@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION="0.63.0"
+VERSION="0.63.3"
 LIBRARY_NAME=libsnips_megazord
 LIBRARY_NAME_A_IOS=${LIBRARY_NAME}-ios.a
 LIBRARY_NAME_A_MACOS=${LIBRARY_NAME}-macos.a
