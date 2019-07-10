@@ -13,7 +13,7 @@ import Clibsnips_megazord_ios
 #endif
 
 /// A detected intent.
-public struct IntentMessage {
+public struct IntentMessage: Codable {
     /// ID of the session.
     public let sessionId: String
     /// Custom data provided by the developer at the beginning of the session.
@@ -30,7 +30,7 @@ public struct IntentMessage {
     public let asrInvocationTokens: [[AsrToken]]?
     /// ASR confidence score
     public let asrConfidence: Float?
-
+    
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
         self.customData = String.fromCStringPtr(cString: cResult.custom_data)
@@ -61,7 +61,7 @@ public struct IntentMessage {
     }
 }
 
-public struct IntentNotRecognizedMessage {
+public struct IntentNotRecognizedMessage: Codable {
     /// Site ID where the intent was detected.
     public var siteId: String
     /// ID of the session.
@@ -80,7 +80,7 @@ public struct IntentNotRecognizedMessage {
 }
 
 /// An intent description.
-public struct IntentClassifierResult {
+public struct IntentClassifierResult: Codable {
     /// The name of the intent.
     public let intentName: String
     /// The probability between 0.0 and 1.0 of the intent.
@@ -170,6 +170,7 @@ public enum SlotValue {
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
     }
+    
 }
 
 public typealias NumberValue = Double
@@ -179,7 +180,7 @@ public typealias OrdinalValue = Int
 public typealias PercentageValue = Double
 
 /// A date.
-public struct InstantTimeValue {
+public struct InstantTimeValue: Codable {
     /// The date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
     public let value: String
     /// Granularity of the date e.g. for "tomorrow" the granularity would be `Grain.day`.
@@ -195,7 +196,7 @@ public struct InstantTimeValue {
 }
 
 /// A date range.
-public struct TimeIntervalValue {
+public struct TimeIntervalValue: Codable {
     /// Start date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
     public let from: String?
     /// End date in ISO 8601 format e.g. 2018-03-26T17:27:48+00:00.
@@ -208,7 +209,7 @@ public struct TimeIntervalValue {
 }
 
 /// A quantity of money.
-public struct AmountOfMoneyValue {
+public struct AmountOfMoneyValue: Codable {
     /// The amount.
     public let value: Float
     /// The precision of this amount.
@@ -224,7 +225,7 @@ public struct AmountOfMoneyValue {
 }
 
 /// A temperature.
-public struct TemperatureValue {
+public struct TemperatureValue: Codable {
     /// The value of the temperature.
     public let value: Float
     /// The unit of this temperature e.g. "degree", "celcius", "fahrenheit".
@@ -237,7 +238,7 @@ public struct TemperatureValue {
 }
 
 /// A duration.
-public struct DurationValue {
+public struct DurationValue: Codable {
     /// Numbers of years.
     public let years: Int
     /// Numbers of quarters.
@@ -280,7 +281,7 @@ public struct DurationValue {
 /// - hour: When a date represent an hour e.g. "1pm".
 /// - minute: When a date represent a minute e.g. "1h30".
 /// - second: When a date represent seconds e.g. "1:40:02".
-public enum Grain {
+public enum Grain: String, Codable {
     case year
     case quarter
     case month
@@ -309,7 +310,7 @@ public enum Grain {
 ///
 /// - approximate: When a user explicitly gave an approximation quantifier with the slot.
 /// - exact: Default case when no information about the precision of the slot is available.
-public enum Precision {
+public enum Precision: String, Codable {
     case approximate
     case exact
 
@@ -323,7 +324,7 @@ public enum Precision {
 }
 
 /// A slot.
-public struct Slot {
+public struct Slot: Codable {
     /// The matching string.
     public let rawValue: String
     /// The structured representation of the slot.
@@ -336,6 +337,16 @@ public struct Slot {
     public let slotName: String
     /// The confidence of the slot.
     public let confidenceScore: Float?
+    
+    enum CodingKeys: CodingKey {
+        case rawValue
+        case value
+        case rangeEnd
+        case rangeStart
+        case entity
+        case slotName
+        case confidenceScore
+    }
 
     init(cSlot: CNluSlot) throws {
         self.rawValue = String(cString: cSlot.nlu_slot.pointee.raw_value)
@@ -345,16 +356,79 @@ public struct Slot {
         self.slotName = String(cString: cSlot.nlu_slot.pointee.slot_name)
         self.confidenceScore = (0 <= cSlot.nlu_slot.pointee.confidence_score && cSlot.nlu_slot.pointee.confidence_score <= 1) ? cSlot.nlu_slot.pointee.confidence_score : nil
     }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        rawValue = try container.decode(String.self, forKey: .rawValue)
+        entity = try container.decode(String.self, forKey: .entity)
+        ///
+        value = SlotValue.custom(try container.decode(String.self, forKey: .value))
+        let rangeStart = try container.decode(Int.self, forKey: .rangeStart)
+        let rangeEnd = try container.decode(Int.self, forKey: .rangeEnd)
+        range = Range(uncheckedBounds: (rangeStart, rangeEnd))
+        slotName = try container.decode(String.self, forKey: .slotName)
+        confidenceScore = try container.decode(Float.self, forKey: .confidenceScore)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(rawValue, forKey: .rawValue)
+        try container.encode("\(value)", forKey: .value)
+        try container.encode(range.startIndex, forKey: .rangeStart)
+        try container.encode(range.endIndex, forKey: .rangeEnd)
+        try container.encode(entity, forKey: .entity)
+        try container.encode(slotName, forKey: .slotName)
+        try container.encode(confidenceScore, forKey: .confidenceScore)
+    }
+    
 }
 
 /// A session type of a session
 ///
 /// - action: When an intent is expected to be parsed.
 /// - notification: Notify the user about something via the tts.
-public enum SessionInitType {
+public enum SessionInitType: Codable {
     case action(text: String?, intentFilter: [String]?, canBeEnqueued: Bool, sendIntentNotRecognized: Bool)
     case notification(text: String)
 
+    enum CodingKeys: String, CodingKey {
+        case action, notification
+    }
+    
+    struct ActionParameters: Codable {
+        let type: String
+        let text: String?
+        let intentFilter: [String]?
+        let canBeEnqueued: Bool
+        let sendIntentNotRecognized: Bool
+    }
+    
+    struct NotificationParameters: Codable {
+        let type: String
+        let text: String
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .action(let text, let intentFilter, let canBeEnqueued, let sendIntentNotRecognized):
+            try container.encode(ActionParameters(type: "action", text: text, intentFilter: intentFilter, canBeEnqueued: canBeEnqueued, sendIntentNotRecognized: sendIntentNotRecognized), forKey: .action)
+        case .notification(let text):
+            try container.encode(NotificationParameters(type: "notification", text: text), forKey: .notification)
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        do {
+            let action = try container.decode(ActionParameters.self, forKey: .action)
+            self = .action(text: action.text, intentFilter: action.intentFilter, canBeEnqueued: action.canBeEnqueued, sendIntentNotRecognized: action.sendIntentNotRecognized)
+        } catch {
+            let notification = try container.decode(NotificationParameters.self, forKey: .action)
+            self = .notification(text: notification.text)
+        }
+    }
+    
     func toUnsafeCMessage(body: (UnsafePointer<CSessionInit>) throws -> Void) rethrows {
         switch self {
         case .action(let text, let intentFilter, let canBeEnqueued, let sendIntentNotRecognized):
@@ -386,7 +460,7 @@ public enum SessionInitType {
 }
 
 /// A message to start a session.
-public struct StartSessionMessage {
+public struct StartSessionMessage: Codable {
     /// The type of the session.
     public let initType: SessionInitType
     /// An optional piece of data that will be given back in `IntentMessage`, `IntentNotRecognizedMessage`, `SessionQueuedMessage`, `SessionStartedMessage` and `SessionEndedMessage` that are related to this session
@@ -629,7 +703,7 @@ public struct SayFinishedMessage {
 ///
 /// - add: Add new entities on top of the latest injected assistant.
 /// - addFromVanilla: Add new entities on top of the vanilla assistant (the assistant without any injection).
-public enum InjectionKind {
+public enum InjectionKind: String, Codable {
     case add
     case addFromVanilla
 
@@ -659,7 +733,7 @@ public enum InjectionKind {
 ///     ```
 ///
 /// - kind: Injection kind case
-public struct InjectionRequestOperation {
+public struct InjectionRequestOperation: Codable {
     public let entities: [String: [String]]
     public let kind: InjectionKind
 
@@ -675,7 +749,7 @@ public struct InjectionRequestOperation {
 /// - lexicon: String dictionary containing the pronunciation of each new entity. It will replace the g2p resources provided by Snips. This lexicon is generated by Snips.
 /// - crossLanguage: If set, this will be generate pronunciations into the given language in addition of the assistant language e.g. french words into the english phonology.
 /// - requestId: The id of the injection request.
-public struct InjectionRequestMessage {
+public struct InjectionRequestMessage: Codable {
     public let operations: [InjectionRequestOperation]
     public let lexicon: [String: [String]]
     public let crossLanguage: String?
@@ -746,7 +820,7 @@ public struct AsrModelParameters {
 }
 
 /// ASR Tokens
-public struct AsrToken {
+public struct AsrToken: Codable {
     public let value: String
     public let confidence: Float
     public let range: Range<Int>
@@ -761,7 +835,7 @@ public struct AsrToken {
 }
 
 /// AsrDecodingDuration
-public struct AsrDecodingDuration {
+public struct AsrDecodingDuration: Codable {
     public let start: Float
     public let end: Float
 }
