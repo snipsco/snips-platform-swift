@@ -31,6 +31,17 @@ public struct IntentMessage: Codable {
     /// ASR confidence score
     public let asrConfidence: Float?
     
+    enum CodingKeys: String, CodingKey {
+        case sessionId
+        case customData
+        case siteId
+        case input
+        case intent
+        case slots
+        case asrInvocationTokens = "asrTokens"
+        case asrConfidence
+    }
+    
     init(cResult: CIntentMessage) throws {
         self.sessionId = String(cString: cResult.session_id)
         self.customData = String.fromCStringPtr(cString: cResult.custom_data)
@@ -341,8 +352,7 @@ public struct Slot: Codable {
     enum CodingKeys: CodingKey {
         case rawValue
         case value
-        case rangeEnd
-        case rangeStart
+        case range
         case entity
         case slotName
         case confidenceScore
@@ -361,11 +371,9 @@ public struct Slot: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         rawValue = try container.decode(String.self, forKey: .rawValue)
         entity = try container.decode(String.self, forKey: .entity)
-        ///
         value = SlotValue.custom(try container.decode(String.self, forKey: .value))
-        let rangeStart = try container.decode(Int.self, forKey: .rangeStart)
-        let rangeEnd = try container.decode(Int.self, forKey: .rangeEnd)
-        range = Range(uncheckedBounds: (rangeStart, rangeEnd))
+        let rangeJSON = try container.decode(RangeCodable.self, forKey: .range)
+        range = Range(uncheckedBounds: (rangeJSON.start, rangeJSON.end))
         slotName = try container.decode(String.self, forKey: .slotName)
         confidenceScore = try container.decode(Float.self, forKey: .confidenceScore)
     }
@@ -374,13 +382,12 @@ public struct Slot: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(rawValue, forKey: .rawValue)
         try container.encode("\(value)", forKey: .value)
-        try container.encode(range.startIndex, forKey: .rangeStart)
-        try container.encode(range.endIndex, forKey: .rangeEnd)
+        let rangeJSON = RangeCodable(start: range.startIndex, end: range.endIndex)
+        try container.encode(rangeJSON, forKey: .range)
         try container.encode(entity, forKey: .entity)
         try container.encode(slotName, forKey: .slotName)
         try container.encode(confidenceScore, forKey: .confidenceScore)
     }
-    
 }
 
 /// A session type of a session
@@ -832,6 +839,38 @@ public struct AsrToken: Codable {
         self.range = Range(uncheckedBounds: (Int(cAsrToken.range_start), Int(cAsrToken.range_end)))
         self.asrDecodingDuration = AsrDecodingDuration(start: cAsrToken.time.start, end: cAsrToken.time.end)
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case value
+        case confidence
+        case rangeEnd
+        case rangeStart
+        case asrDecodingDuration = "time"
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        value = try container.decode(String.self, forKey: .value)
+        confidence = try container.decode(Float.self, forKey: .confidence)
+        let rangeStart = try container.decode(Int.self, forKey: .rangeStart)
+        let rangeEnd = try container.decode(Int.self, forKey: .rangeEnd)
+        range = Range(uncheckedBounds: (rangeStart, rangeEnd))
+        asrDecodingDuration = try container.decode(AsrDecodingDuration.self, forKey: .asrDecodingDuration)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(value, forKey: .value)
+        try container.encode(confidence, forKey: .confidence)
+        try container.encode(range.startIndex, forKey: .rangeStart)
+        try container.encode(range.endIndex, forKey: .rangeEnd)
+    }
+}
+
+/// Range struct used only for JSON parsing
+struct RangeCodable: Codable {
+    let start: Int
+    let end: Int
 }
 
 /// AsrDecodingDuration
