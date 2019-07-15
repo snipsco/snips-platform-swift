@@ -116,6 +116,9 @@ public enum SlotValue {
     case musicAlbum(String)
     case musicArtist(String)
     case musicTrack(String)
+    case city(String)
+    case country(String)
+    case region(String)
 
     init(cSlotValue: CSlotValue) throws {
         switch cSlotValue.value_type {
@@ -166,6 +169,18 @@ public enum SlotValue {
         case SNIPS_SLOT_VALUE_TYPE_MUSICTRACK:
             let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
             self = .musicTrack(String(cString: x))
+
+        case SNIPS_SLOT_VALUE_TYPE_CITY:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .city(String(cString: x))
+
+        case SNIPS_SLOT_VALUE_TYPE_COUNTRY:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .country(String(cString: x))
+
+        case SNIPS_SLOT_VALUE_TYPE_REGION:
+            let x = cSlotValue.value.assumingMemoryBound(to: CChar.self)
+            self = .region(String(cString: x))
 
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
