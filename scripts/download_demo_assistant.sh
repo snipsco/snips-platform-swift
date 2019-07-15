@@ -9,7 +9,7 @@ fi
 
 target_dir=$1
 
-assistant_filename="assistant-weather-EN-0.19.0-dyn-heysnipsv4.zip"
+assistant_filename="assistant-weather-EN-0.20.0-dyn-heysnipsv4.zip"
 url="https://resources.snips.ai/assistants/$assistant_filename"
 
 if [ ! -f $target_dir/assistant/assistant.json ]; then
