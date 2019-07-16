@@ -181,7 +181,6 @@ public enum SlotValue {
         default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
     }
-    
 }
 
 public typealias NumberValue = Double
@@ -371,7 +370,8 @@ public struct Slot: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         rawValue = try container.decode(String.self, forKey: .rawValue)
         entity = try container.decode(String.self, forKey: .entity)
-        value = SlotValue.custom(try container.decode(String.self, forKey: .value))
+        let valueCodable = try container.decode(SlotValueCodable.self, forKey: .value)
+        value = SlotValue.custom(valueCodable.value)
         let rangeJSON = try container.decode(RangeCodable.self, forKey: .range)
         range = Range(uncheckedBounds: (rangeJSON.start, rangeJSON.end))
         slotName = try container.decode(String.self, forKey: .slotName)
@@ -871,6 +871,12 @@ public struct AsrToken: Codable {
 struct RangeCodable: Codable {
     let start: Int
     let end: Int
+}
+
+/// SlotValue struct used only for JSON parsing
+struct SlotValueCodable: Codable {
+    let kind: String
+    let value: String
 }
 
 /// AsrDecodingDuration
