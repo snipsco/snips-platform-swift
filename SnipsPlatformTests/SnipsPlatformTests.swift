@@ -457,7 +457,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         onSessionEndedHandler = { [weak self] message in
-            if message.sessionTermination.terminationType == .timeout {
+            if message.sessionTermination.terminationType == .intentNotRecognized {
                 onIntentNotRecognized.fulfill()
                 try! self?.snips?.dialogueConfiguration(with: enableIntent)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
