@@ -831,14 +831,14 @@ public struct DialogueConfigureMessage {
 
 /// DialogueConfigureIntent
 ///
-/// - intentName: The name of the intent to filter
+/// - intentId: The name of the intent to filter
 /// - enable: Enable or disable this specific intent
 public struct DialogueConfigureIntent {
-    public let intentName: String
+    public let intentId: String
     public let enable: Bool
     
-    public init(intentName: String, enable: Bool) {
-        self.intentName = intentName
+    public init(intentId: String, enable: Bool) {
+        self.intentId = intentId
         self.enable = enable
     }
 }
