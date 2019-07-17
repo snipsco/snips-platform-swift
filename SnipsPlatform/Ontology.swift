@@ -337,6 +337,34 @@ public enum Precision {
     }
 }
 
+/// Snips Hermes components
+public enum SnipsHermesComponent {
+    case none
+    case audioServer
+    case hotword
+    case asr
+    case nlu
+    case dialogue
+    case tts
+    case injection
+    case clientApp
+    
+    init(cValue: SNIPS_HERMES_COMPONENT) throws {
+        switch cValue {
+        case SNIPS_HERMES_COMPONENT_NONE: self = .none
+        case SNIPS_HERMES_COMPONENT_AUDIO_SERVER: self = .audioServer
+        case SNIPS_HERMES_COMPONENT_HOTWORD: self = .hotword
+        case SNIPS_HERMES_COMPONENT_ASR: self = .asr
+        case SNIPS_HERMES_COMPONENT_NLU: self = .nlu
+        case SNIPS_HERMES_COMPONENT_DIALOGUE: self = .dialogue
+        case SNIPS_HERMES_COMPONENT_TTS: self = .tts
+        case SNIPS_HERMES_COMPONENT_INJECTION: self = .injection
+        case SNIPS_HERMES_COMPONENT_CLIENT_APP: self = .clientApp
+        default: throw SnipsPlatformError(message: "Internal error: Bad type conversion")
+        }
+    }
+}
+
 /// A slot.
 public struct Slot {
     /// The matching string.
@@ -561,10 +589,13 @@ public struct SessionTermination {
     public let terminationType: SessionTerminationType
     /// In case of an error, there can be data provided for more details.
     public let data: String?
+    /// The Snips component that has been terminated
+    public let component: SnipsHermesComponent
 
     init(cSessionTermination: CSessionTermination) throws {
         self.data = String.fromCStringPtr(cString: cSessionTermination.data)
         self.terminationType = try SessionTerminationType(cValue: cSessionTermination.termination_type)
+        self.component = try SnipsHermesComponent(cValue: cSessionTermination.component)
     }
 }
 
