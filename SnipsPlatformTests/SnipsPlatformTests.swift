@@ -29,6 +29,7 @@ class SnipsPlatformTests: XCTestCase {
     var onTextCapturedHandler: ((TextCapturedMessage) -> ())?
     var onPartialTextCapturedHandler: ((TextCapturedMessage) -> ())?
     var onInjectionCompleteHandler: ((InjectionCompleteMessage) -> ())?
+    var onInjectionResetCompleteHandler: ((InjectionResetCompleteMessage) -> ())?
     
     let soundQueue = DispatchQueue(label: "ai.snips.SnipsPlatformTests.sound", qos: .userInteractive)
     var firstTimePlayedAudio: Bool = true
@@ -326,12 +327,16 @@ class SnipsPlatformTests: XCTestCase {
         enum TestPhaseKind {
             case entityNotInjectedShouldNotBeDetected
             case injectingEntities
+            case resetting
             case entityInjectedShouldBeDetected
+            case entityInjectedShouldNotBeDetectedAfterReset
         }
         
         let entityNotInjectedShouldNotBeDetectedExpectation = expectation(description: "Entity not injected was not detected")
         let injectingEntitiesExpectation = expectation(description: "Injecting entities done")
         let entityInjectedShouldBeDetectedExpectation = expectation(description: "Entity injected was detected")
+        let entityInjectedShouldNotBeDetectedAfterResetExpectation = expectation(description: "Entity injected should not be detected")
+        let injectionResetDoneExpectation = expectation(description: "Injection reset request done")
         
         var testPhase: TestPhaseKind = .entityNotInjectedShouldNotBeDetected
         
@@ -339,18 +344,26 @@ class SnipsPlatformTests: XCTestCase {
             let operation = InjectionRequestOperation(entities: ["locality": ["wonderland"], "region": ["wonderland"]], kind: .add)
             do {
                 try self?.snips?.requestInjection(with: InjectionRequestMessage(operations: [operation]))
-            } catch let error {
+            } catch {
                 XCTFail("Injection failed, reason: \(error)")
+            }
+        }
+        
+        let injectionResetBlock = { [weak self] in
+            do {
+                try self?.snips?.requestInjectionReset()
+            } catch {
+                XCTFail("Injection reset failed, reason: \(error)")
             }
         }
         
         onListeningStateChanged = { [weak self] isListening in
             if isListening {
                 switch testPhase {
-                case .entityNotInjectedShouldNotBeDetected, .entityInjectedShouldBeDetected:
+                case .entityNotInjectedShouldNotBeDetected, .entityInjectedShouldBeDetected, .entityInjectedShouldNotBeDetectedAfterReset:
                     self?.playAudio(forResource: kWonderlandAudioFile)
                     break
-                case .injectingEntities: XCTFail("For test purposes, shouldn't start listening in this state")
+                case .injectingEntities, .resetting: XCTFail("For test purposes, shouldn't start listening in this state")
                 }
             }
         }
@@ -370,14 +383,27 @@ class SnipsPlatformTests: XCTestCase {
                 XCTAssertEqual(slotLocalityWonderland.count, 1, "should have found the slot wonderland")
                 entityInjectedShouldBeDetectedExpectation.fulfill()
                 try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
+                testPhase = .resetting
+                injectionResetBlock()
                 
-            case .injectingEntities: XCTFail("For test purposes, intents shouldn't be detected while injecting")
+            case .injectingEntities, .resetting: XCTFail("For test purposes, intents shouldn't be detected while injecting")
+                
+            case .entityInjectedShouldNotBeDetectedAfterReset:
+                XCTAssertEqual(slotLocalityWonderland.count, 0, "should not have found any slot")
+                entityInjectedShouldNotBeDetectedAfterResetExpectation.fulfill()
+                try! self?.snips?.endSession(sessionId: intentMessage.sessionId)
             }
         }
         
         onInjectionCompleteHandler = { [weak self] injectionComplete in
             injectingEntitiesExpectation.fulfill()
             testPhase = .entityInjectedShouldBeDetected
+            try! self?.snips?.startSession()
+        }
+        
+        onInjectionResetCompleteHandler = { [weak self] injectionResetComplete in
+            injectionResetDoneExpectation.fulfill()
+            testPhase = .entityInjectedShouldNotBeDetectedAfterReset
             try! self?.snips?.startSession()
         }
         
@@ -388,6 +414,8 @@ class SnipsPlatformTests: XCTestCase {
                 entityNotInjectedShouldNotBeDetectedExpectation,
                 injectingEntitiesExpectation,
                 entityInjectedShouldBeDetectedExpectation,
+                injectionResetDoneExpectation,
+                entityInjectedShouldNotBeDetectedAfterResetExpectation
             ],
             timeout: 100,
             enforceOrder: true
@@ -525,6 +553,9 @@ private extension SnipsPlatformTests {
         }
         snips?.onInjectionComplete = { [weak self] message in
             self?.onInjectionCompleteHandler?(message)
+        }
+        snips?.onInjectionResetComplete = { [weak self] message in
+            self?.onInjectionResetCompleteHandler?(message)
         }
         try snips?.start()
     }

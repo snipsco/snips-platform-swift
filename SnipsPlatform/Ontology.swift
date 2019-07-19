@@ -884,3 +884,29 @@ public struct DialogueConfigureIntent {
         self.enable = enable
     }
 }
+
+/// InjectionResetRequestMessage
+/// - requestId: The id of the request
+public struct InjectionResetRequestMessage {
+    public let requestId: String?
+    
+    public init(requestId: String? = nil) {
+        self.requestId = requestId
+    }
+    
+    func toUnsafeCInjectionResetRequestMessage(body: (UnsafePointer<CInjectionResetRequestMessage>) throws -> Void) throws {
+        var cMessage = CInjectionResetRequestMessage(request_id: requestId?.unsafeMutablePointerRetained())
+        try body(withUnsafePointer(to: &cMessage) { $0 })
+        cMessage.request_id?.freeUnsafeMemory()
+    }
+}
+
+/// InjectionResetCompleteMessage
+/// - requestId: The id of the request
+public struct InjectionResetCompleteMessage {
+    public let requestId: String?
+    
+    init(cValue: CInjectionResetCompleteMessage) {
+        requestId = String.fromCStringPtr(cString: cValue.request_id)
+    }
+}
