@@ -715,6 +715,17 @@ public struct InjectionRequestOperation {
     }
 }
 
+/// The injection complete message
+///
+/// - requestId: The id of the injection request.
+public struct InjectionCompleteMessage {
+    public let requestId: String?
+    
+    init(cMessage: CInjectionCompleteMessage) {
+        self.requestId = String.fromCStringPtr(cString: cMessage.request_id)
+    }
+}
+
 /// Injection request message
 ///
 /// - operations: Array of `InjectionRequestOperation`.
@@ -727,7 +738,7 @@ public struct InjectionRequestMessage {
     public let crossLanguage: String?
     public let requestId: String?
 
-    public init(operations: [InjectionRequestOperation], lexicon: [String: [String]] = [:], crossLanguage: String? = nil, requestId: String? = nil) {
+    public init(operations: [InjectionRequestOperation], lexicon: [String: [String]] = [:], crossLanguage: String? = nil, requestId: String? = UUID().uuidString) {
         self.operations = operations
         self.lexicon = lexicon
         self.crossLanguage = crossLanguage
@@ -871,5 +882,31 @@ public struct DialogueConfigureIntent {
     public init(intentId: String, enable: Bool) {
         self.intentId = intentId
         self.enable = enable
+    }
+}
+
+/// InjectionResetRequestMessage
+/// - requestId: The id of the request
+public struct InjectionResetRequestMessage {
+    public let requestId: String?
+    
+    public init(requestId: String? = nil) {
+        self.requestId = requestId
+    }
+    
+    func toUnsafeCInjectionResetRequestMessage(body: (UnsafePointer<CInjectionResetRequestMessage>) throws -> Void) throws {
+        var cMessage = CInjectionResetRequestMessage(request_id: requestId?.unsafeMutablePointerRetained())
+        try body(withUnsafePointer(to: &cMessage) { $0 })
+        cMessage.request_id?.freeUnsafeMemory()
+    }
+}
+
+/// InjectionResetCompleteMessage
+/// - requestId: The id of the request
+public struct InjectionResetCompleteMessage {
+    public let requestId: String?
+    
+    init(cValue: CInjectionResetCompleteMessage) {
+        requestId = String.fromCStringPtr(cString: cValue.request_id)
     }
 }

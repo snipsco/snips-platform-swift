@@ -23,6 +23,8 @@ private typealias CSessionQueuedHandler = @convention(c) (UnsafePointer<CSession
 private typealias CSessionStartedHandler = @convention(c) (UnsafePointer<CSessionStartedMessage>) -> Void
 private typealias CIntentNotRecognizedHandler = @convention(c) (UnsafePointer<CIntentNotRecognizedMessage>) -> Void
 private typealias CTextCapturedHandler = @convention(c) (UnsafePointer<CTextCapturedMessage>) -> Void
+private typealias CInjectionCompleteHandler = @convention(c) (UnsafePointer<CInjectionCompleteMessage>) -> Void
+private typealias CInjectionResetCompleteHandler = @convention(c) (UnsafePointer<CInjectionResetCompleteMessage>) -> Void
 
 public typealias IntentHandler = (IntentMessage) -> Void
 public typealias SpeechHandler = (SayMessage) -> Void
@@ -34,6 +36,8 @@ public typealias SessionQueuedHandler = (SessionQueuedMessage) -> Void
 public typealias SessionEndedHandler = (SessionEndedMessage) -> Void
 public typealias IntentNotRecognizedHandler = (IntentNotRecognizedMessage) -> Void
 public typealias TextCapturedHandler = (TextCapturedMessage) -> Void
+public typealias InjectionCompleteHandler = (InjectionCompleteMessage) -> Void
+public typealias InjectionResetCompleteHandler = (InjectionResetCompleteMessage) -> Void
 
 /// `SnipsPlatformError` is the error type returned by SnipsPlatform.
 public struct SnipsPlatformError: Error {
@@ -62,6 +66,8 @@ private var _onSessionEnded: SessionEndedHandler?
 private var _onIntentNotRecognizedHandler: IntentNotRecognizedHandler?
 private var _onTextCapturedHandler: TextCapturedHandler?
 private var _onPartialTextCapturedHandler: TextCapturedHandler?
+private var _onInjectionComplete: InjectionCompleteHandler?
+private var _onInjectionResetComplete: InjectionResetCompleteHandler?
 
 /// SnipsPlatform is an assistant
 public class SnipsPlatform {
@@ -277,7 +283,45 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
+    /// A closure executed when an injection completed
+    public var onInjectionComplete: InjectionCompleteHandler? {
+        get {
+            return _onInjectionComplete
+        }
+        set {
+            if newValue != nil {
+                _onInjectionComplete = newValue
+                megazord_set_injection_complete_handler(ptr) { cMessage, _ in
+                    defer {
+                        megazord_destroy_injection_complete_message(UnsafeMutablePointer(mutating: cMessage))
+                    }
+                    guard let cMessage = cMessage?.pointee else { return }
+                    _onInjectionComplete?(InjectionCompleteMessage(cMessage: cMessage))
+                }
+            }
+        }
+    }
+    
+    /// A closure executed when an injection reset has completed
+    public var onInjectionResetComplete: InjectionResetCompleteHandler? {
+        get {
+            return _onInjectionResetComplete
+        }
+        set {
+            if newValue != nil {
+                _onInjectionResetComplete = newValue
+                megazord_set_injection_reset_complete_handler(ptr) { cMessage, _ in
+                    defer {
+                        megazord_destroy_injection_reset_complete_message(UnsafeMutablePointer(mutating: cMessage))
+                    }
+                    guard let cMessage = cMessage?.pointee else { return }
+                    _onInjectionResetComplete?(InjectionResetCompleteMessage(cValue: cMessage))
+                }
+            }
+        }
+    }
+    
     /// A closure executed to delegate text-to-speech operations.
     public var speechHandler: SpeechHandler? {
         get {
@@ -504,7 +548,7 @@ public class SnipsPlatform {
             }
         }
     }
-
+    
     /// Request an injection of new entities values in the ASR model.
     ///
     /// - Parameters:
@@ -526,6 +570,17 @@ public class SnipsPlatform {
     public func requestInjection(with message: InjectionRequestMessage) throws {
         try message.toUnsafeCInjectionRequestMessage { cMessage in
             guard megazord_request_injection(ptr, cMessage) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
+    
+    /// Request to reset the injection data that has been generated.
+    /// - Parameters:
+    ///   - message: Optional InjectionResetRequestMessage containing an id that will help you track the request when it is completed
+    public func requestInjectionReset(with message: InjectionResetRequestMessage = InjectionResetRequestMessage()) throws {
+        try message.toUnsafeCInjectionResetRequestMessage { cMessage in
+            guard megazord_request_injection_reset(ptr, cMessage) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
