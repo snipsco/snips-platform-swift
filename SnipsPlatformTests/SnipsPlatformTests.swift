@@ -509,7 +509,7 @@ private extension SnipsPlatformTests {
     
     func setupSnipsPlatform() throws {
         let url = Bundle(for: type(of: self)).url(forResource: "assistant", withExtension: nil)!
-        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources", withExtension: nil)!
+        let g2pResources = Bundle(for: type(of: self)).url(forResource: "snips-g2p-resources/en", withExtension: nil)!
         
         snips = try SnipsPlatform(assistantURL: url,
                                   enableHtml: false,
