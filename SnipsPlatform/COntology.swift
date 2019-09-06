@@ -132,3 +132,27 @@ extension CDialogueConfigureIntentArray {
         entries?.deallocate()
     }
 }
+
+extension CSlotValueArray {
+    func toSwiftArray() throws -> [SlotValue] {
+        return try UnsafeBufferPointer(start: slot_values, count: Int(size))
+            .compactMap { $0 }
+            .map { try SlotValue(cSlotValue: $0) }
+    }
+}
+
+extension CNluSlotArray {
+    func toSwiftArray() throws -> [Slot] {
+        return try UnsafeBufferPointer(start: entries, count: Int(count))
+            .compactMap { $0 }
+            .map { try Slot(cSlot: $0.pointee) }
+    }
+}
+
+extension CNluIntentAlternativeArray {
+    func toSwiftArray() throws -> [IntentAlternative] {
+        return try UnsafeBufferPointer(start: entries, count: Int(count))
+            .compactMap { $0 }
+            .map { try IntentAlternative(cNlu: $0.pointee) }
+    }
+}

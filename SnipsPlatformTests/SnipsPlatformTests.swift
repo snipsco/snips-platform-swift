@@ -71,6 +71,7 @@ class SnipsPlatformTests: XCTestCase {
         let countrySlotExpectation = expectation(description: "City slot")
         let timeSlotExpectation = expectation(description: "Time slot")
         let sessionEndedExpectation = expectation(description: "Session ended")
+        let alternativeIntentsExpectation = expectation(description: "Alternative intents")
         
         onListeningStateChanged = { [weak self] isListening in
             if isListening {
@@ -82,6 +83,10 @@ class SnipsPlatformTests: XCTestCase {
             XCTAssertEqual(intent.intent.intentName, "searchWeatherForecast")
             XCTAssertEqual(intent.slots.count, 2)
 
+            if !intent.alternativeIntents.isEmpty {
+                alternativeIntentsExpectation.fulfill()
+            }
+            
             intent.slots.forEach { slot in
                 if slot.slotName.contains("forecast_country") {
                     if case .custom(let country) = slot.value {
@@ -109,7 +114,7 @@ class SnipsPlatformTests: XCTestCase {
 
         try! self.snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         
-        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation], timeout: 40)
+        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation, alternativeIntentsExpectation], timeout: 40)
     }
     
     func test_intent_not_recognized() {
@@ -517,7 +522,8 @@ private extension SnipsPlatformTests {
                                   enableInjection: true,
                                   enableAsrPartialText: true,
                                   g2pResources: g2pResources,
-                                  asrPartialTextPeriodMs: 1000)
+                                  asrPartialTextPeriodMs: 1000,
+                                  nluConfiguration: NluConfiguration(maxNumberOfIntentAlternatives: 3, maxNumberOfSlotAlternatives: 3))
         
         snips?.onIntentDetected = { [weak self] intent in
             self?.onIntentDetected?(intent)

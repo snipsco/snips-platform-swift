@@ -24,8 +24,10 @@ public struct IntentMessage {
     public var input: String
     /// The intent classification result.
     public var intent: IntentClassifierResult
-    /// Lists of parsed slots.
+    /// List of parsed slots.
     public var slots: [Slot]
+    /// List of alternatives intents.
+    public let alternativeIntents: [IntentAlternative]
     /// ASR tokens: the first array level represents the asr invocation, the second one the tokens
     public let asrInvocationTokens: [[AsrToken]]?
     /// ASR confidence score
@@ -42,10 +44,14 @@ public struct IntentMessage {
             throw SnipsPlatformError(message: "Internal error: Bad type conversion")
         }
         if let cSlotList = cResult.slots?.pointee {
-            self.slots = try UnsafeBufferPointer(start: cSlotList.entries, count: Int(cSlotList.count))
-                .map({ try Slot(cSlot: $0!.pointee) })
+            self.slots = try cSlotList.toSwiftArray()
         } else {
             self.slots = []
+        }
+        if let cIntentAlternative = cResult.alternatives?.pointee {
+            self.alternativeIntents = try cIntentAlternative.toSwiftArray()
+        } else {
+            self.alternativeIntents = []
         }
         if let cAsrTokenDoubleArray = cResult.asr_tokens?.pointee {
             self.asrInvocationTokens = UnsafeBufferPointer(start: cAsrTokenDoubleArray.entries, count: Int(cAsrTokenDoubleArray.count))
@@ -70,12 +76,22 @@ public struct IntentNotRecognizedMessage {
     public var input: String?
     /// Custom data provided by the developer at the beginning of the session.
     public var customData: String?
+    /// List of alternatives intents.
+    public let alternativeIntents: [IntentAlternative]
+    /// Confidence score between 0 and 1
+    public let confidenceScore: Float
 
-    init(cResult: CIntentNotRecognizedMessage) {
+    init(cResult: CIntentNotRecognizedMessage) throws {
         self.siteId = String(cString: cResult.site_id)
         self.sessionId = String(cString: cResult.session_id)
         self.input = String.fromCStringPtr(cString: cResult.input)
         self.customData = String.fromCStringPtr(cString: cResult.custom_data)
+        if let cIntentAlternative = cResult.alternatives?.pointee {
+            self.alternativeIntents = try cIntentAlternative.toSwiftArray()
+        } else {
+            self.alternativeIntents = []
+        }
+        self.confidenceScore = cResult.confidence_score
     }
 }
 
@@ -371,6 +387,8 @@ public struct Slot {
     public let rawValue: String
     /// The structured representation of the slot.
     public let value: SlotValue
+    /// The alternative slot values
+    public let alternativeValues: [SlotValue]
     /// The range of the matching string in the given sentence.
     public let range: Range<Int>
     /// The entity name.
@@ -382,11 +400,45 @@ public struct Slot {
 
     init(cSlot: CNluSlot) throws {
         self.rawValue = String(cString: cSlot.nlu_slot.pointee.raw_value)
-        self.value = try SlotValue(cSlotValue: cSlot.nlu_slot.pointee.value)
+        self.value = try SlotValue(cSlotValue: cSlot.nlu_slot.pointee.value.pointee)
+        self.alternativeValues = try cSlot.nlu_slot.pointee.alternatives.pointee.toSwiftArray()
         self.range = Range(uncheckedBounds: (Int(cSlot.nlu_slot.pointee.range_start), Int(cSlot.nlu_slot.pointee.range_end)))
         self.entity = String(cString: cSlot.nlu_slot.pointee.entity)
         self.slotName = String(cString: cSlot.nlu_slot.pointee.slot_name)
         self.confidenceScore = (0 <= cSlot.nlu_slot.pointee.confidence_score && cSlot.nlu_slot.pointee.confidence_score <= 1) ? cSlot.nlu_slot.pointee.confidence_score : nil
+    }
+}
+
+/// Alternative intent
+public struct IntentAlternative {
+    /// Name of the intent detected (null == no intent)
+    public let intentName: String?
+    /// Slots
+    public let slots: [Slot]
+    /// Confidence score between 0 and 1
+    public let confidenceScore: Float
+    
+    init(cNlu: CNluIntentAlternative) throws {
+        self.intentName = String.fromCStringPtr(cString: cNlu.intent_name)
+        if let cSlots = cNlu.slots?.pointee {
+            self.slots = try cSlots.toSwiftArray()
+        } else {
+            self.slots = []
+        }
+        self.confidenceScore = cNlu.confidence_score
+    }
+}
+
+/// Nlu configuration for alternatives intents
+public struct NluConfiguration {
+    /// Maximum number of intent alternatives to generate, set to a negative value to use the default value. Default is 2.
+    public let maxNumberOfIntentAlternatives: Int
+    /// Maximum number of slot alternatives to generate, set to a negative value to use the default value. Default is 2.
+    public let maxNumberOfSlotAlternatives: Int
+    
+    func toUnsafeCMessage(body: (UnsafePointer<CNluConfiguration>) throws -> Void) rethrows {
+        var config = CNluConfiguration(num_intent_alternatives: Int32(maxNumberOfIntentAlternatives), num_slot_alternatives: Int32(maxNumberOfSlotAlternatives))
+        try body(withUnsafePointer(to: &config) { $0 })
     }
 }
 
