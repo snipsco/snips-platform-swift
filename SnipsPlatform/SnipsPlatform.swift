@@ -86,6 +86,7 @@ public class SnipsPlatform {
     ///   - g2pResources: When enabling injection, g2p resources are used to generated new word pronunciation. You either need g2p data or a lexicon when injecting new entities.
     ///   - asrModelParameters: Override default ASR model parameters
     ///   - asrPartialTextPeriodMs: ASR partial text capture period in ms. `250ms` by default. You need to have ASR partial text capture enabled.
+    ///   - nluConfiguration: Override default NLU configuration to setup the maximum number of intent & slot alternatives. Default is 2 for each.
     /// - Throws: A `SnipsPlatformError` if something went wrong while parsing the given the assistant.
     public init(assistantURL: URL,
                 hotwordSensitivity: Float = 0.5,
@@ -96,7 +97,8 @@ public class SnipsPlatform {
                 userURL: URL? = nil,
                 g2pResources: URL? = nil,
                 asrModelParameters: AsrModelParameters? = nil,
-                asrPartialTextPeriodMs: Float = 250) throws {
+                asrPartialTextPeriodMs: Float = 250,
+                nluConfiguration: NluConfiguration? = nil) throws {
         var client: UnsafePointer<MegazordClient>?
         guard megazord_create(assistantURL.path, &client, nil) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
         ptr = UnsafeMutablePointer(mutating: client)
@@ -112,6 +114,14 @@ public class SnipsPlatform {
         if let asrModelParameters = asrModelParameters {
             try asrModelParameters.toUnsafeCModelParameters { cParams in
                 guard megazord_set_asr_model_parameters(ptr, cParams) == SNIPS_RESULT_OK else { throw SnipsPlatformError.getLast }
+            }
+        }
+        
+        if let nluConfiguration = nluConfiguration {
+            try nluConfiguration.toUnsafeCMessage { cMessage in
+                guard megazord_set_nlu_configuration(ptr, cMessage) == SNIPS_RESULT_OK else {
+                    throw SnipsPlatformError.getLast
+                }
             }
         }
 
@@ -185,7 +195,7 @@ public class SnipsPlatform {
                 _onIntentNotRecognizedHandler = newValue
                 megazord_set_intent_not_recognized_handler(ptr) { cIntent, _ in
                     guard let cIntent = cIntent?.pointee else { return }
-                    _onIntentNotRecognizedHandler?(IntentNotRecognizedMessage(cResult: cIntent))
+                    _onIntentNotRecognizedHandler?(try! IntentNotRecognizedMessage(cResult: cIntent))
                 }
             } else {
                 megazord_set_intent_not_recognized_handler(ptr, nil)
@@ -593,6 +603,15 @@ public class SnipsPlatform {
     public func dialogueConfiguration(with configuration: DialogueConfigureMessage) throws {
         try configuration.toUnsafeCDialogueConfigureMessage { cMessage in
             guard megazord_dialogue_configure(ptr, cMessage) == SNIPS_RESULT_OK else {
+                throw SnipsPlatformError.getLast
+            }
+        }
+    }
+    
+    /// Helper to convert
+    private func nluConfiguration(with configuration: NluConfiguration) throws {
+        try configuration.toUnsafeCMessage { cMessage in
+            guard megazord_set_nlu_configuration(ptr, cMessage) == SNIPS_RESULT_OK else {
                 throw SnipsPlatformError.getLast
             }
         }
