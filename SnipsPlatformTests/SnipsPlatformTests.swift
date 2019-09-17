@@ -14,6 +14,7 @@ let kWeatherAudioFile = "what_will_be_the_weather_in_Madagascar_in_two_days"
 let kWonderlandAudioFile = "what_will_be_the_weather_in_Wonderland"
 let kPlayMJAudioFile = "hey_snips_can_you_play_me_some_Michael_Jackson"
 let kFrameCapacity: AVAudioFrameCount = 256
+let testTimeout = 60.0
 
 class SnipsPlatformTests: XCTestCase {
     var snips: SnipsPlatform?
@@ -64,7 +65,7 @@ class SnipsPlatformTests: XCTestCase {
 
         playAudio(forResource: kHotwordAudioFile)
 
-        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: 40)
+        wait(for: [hotwordDetectedExpectation, sessionEndedExpectation], timeout: testTimeout)
     }
     
     func test_intent() {
@@ -114,7 +115,7 @@ class SnipsPlatformTests: XCTestCase {
 
         try! self.snips?.startSession(intentFilter: nil, canBeEnqueued: true)
         
-        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation, alternativeIntentsExpectation], timeout: 40)
+        wait(for: [countrySlotExpectation, timeSlotExpectation, sessionEndedExpectation, alternativeIntentsExpectation], timeout: testTimeout)
     }
     
     func test_intent_not_recognized() {
@@ -131,7 +132,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! self.snips?.startSession(canBeEnqueued: false, sendIntentNotRecognized: true)
-        wait(for: [onIntentNotRecognizedExpectation], timeout: 40)
+        wait(for: [onIntentNotRecognizedExpectation], timeout: testTimeout)
     }
 
     func test_empty_intent_filter_intent_not_recognized() {
@@ -148,7 +149,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(intentFilter: [], canBeEnqueued: false)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
     
     func test_unknown_intent_filter_error() {
@@ -165,7 +166,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: ["nonExistentIntent"], canBeEnqueued: false)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_intent_filter() {
@@ -182,7 +183,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(intentFilter: ["searchWeatherForecast"], canBeEnqueued: false)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_listening_state_changed_on() {
@@ -198,7 +199,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
-        wait(for: [listeningStateChangedOn], timeout: 15)
+        wait(for: [listeningStateChangedOn], timeout: testTimeout)
     }
 
     func test_listening_state_changed_off() {
@@ -216,7 +217,7 @@ class SnipsPlatformTests: XCTestCase {
         }
         
         try! snips?.startSession(intentFilter: nil, canBeEnqueued: false)
-        wait(for: [listeningStateChangedOff], timeout: 15)
+        wait(for: [listeningStateChangedOff], timeout: testTimeout)
     }
 
     func test_session_notification() {
@@ -233,7 +234,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_session_notification_nil() {
@@ -248,7 +249,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(message: notificationStartMessage)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_session_action() {
@@ -264,7 +265,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_session_action_nil() {
@@ -279,7 +280,7 @@ class SnipsPlatformTests: XCTestCase {
             actionSentExpectation.fulfill()
         }
         try! snips?.startSession(message: actionStartSessionMessage)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_speech_handler() {
@@ -298,7 +299,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startNotification(text: messageToSpeak)
-        waitForExpectations(timeout: 15)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_dialog_scenario() {
@@ -325,7 +326,7 @@ class SnipsPlatformTests: XCTestCase {
         }
 
         try! snips?.startSession(message: startSessionMessage)
-        waitForExpectations(timeout: 40)
+        waitForExpectations(timeout: testTimeout)
     }
 
     func test_injection() {
@@ -446,7 +447,7 @@ class SnipsPlatformTests: XCTestCase {
 
         try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: true, customData: nil, siteId: nil)
 
-        wait(for: [onTextCaptured], timeout: 40)
+        wait(for: [onTextCaptured], timeout: testTimeout)
     }
     
     func test_asr_partial_text_captured_handler() {
@@ -466,7 +467,7 @@ class SnipsPlatformTests: XCTestCase {
 
         try! snips?.startSession(text: nil, intentFilter: nil, canBeEnqueued: false, sendIntentNotRecognized: false, customData: nil, siteId: nil)
 
-        wait(for: [onTextCaptured], timeout: 40)
+        wait(for: [onTextCaptured], timeout: testTimeout)
     }
     
     func test_dialoge_configuration() {
@@ -501,7 +502,7 @@ class SnipsPlatformTests: XCTestCase {
         try! snips?.dialogueConfiguration(with: disableIntent)
         try! snips?.startSession()
 
-        wait(for: [onIntentNotRecognized, onIntentReceived], timeout: 40, enforceOrder: true)
+        wait(for: [onIntentNotRecognized, onIntentReceived], timeout: testTimeout, enforceOrder: true)
     }
 }
 
