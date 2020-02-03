@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
 
   s.prepare_command = 'PROJECT_DIR=$(pwd) scripts/download_core.sh'
 
-  s.ios.deployment_target = '11.0'
+  s.ios.deployment_target = '13.0'
   s.osx.deployment_target = '10.11'
 
   s.pod_target_xcconfig = {
